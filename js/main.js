@@ -42,10 +42,25 @@ jQuery(document).ready(function($) {
 
 
 
-        $(".box-video").click(function(){
-          $('iframe',this)[0].src += "&amp;autoplay=1";
-          $(this).addClass('open');
-        });
+        $(".box-video").click(function() {
+    // 1. Megkeressük az iframe-et a kattintott elemen belül
+    var $iframe = $(this).find('iframe');
+
+    // 2. Ellenőrizzük, hogy létezik-e (hossz > 0)
+    if ($iframe.length > 0) {
+        var currentSrc = $iframe.attr('src');
+
+        // 3. Csak akkor adjuk hozzá, ha még nincs benne az autoplay
+        if (currentSrc.indexOf('autoplay') === -1) {
+            // Sima '&' jelet használunk HTML entitás helyett
+            var newSrc = currentSrc + (currentSrc.indexOf('?') === -1 ? '?' : '&') + "autoplay=1";
+            $iframe.attr('src', newSrc);
+        }
+    }
+
+    // 4. Az osztályt mindenképp hozzáadjuk
+    $(this).addClass('open');
+});
 
         $('.owl-carousel').owlCarousel({
             loop:true,
