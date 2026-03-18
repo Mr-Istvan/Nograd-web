@@ -1,0 +1,3 @@
+ErrorDocument 404 /nograd-web/404.php 
+
+AddType application/x-httpd-php .html;

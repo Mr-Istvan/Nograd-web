@@ -1,148 +1,245 @@
 /**
  * Owl Carousel v2.3.1
- * Copyright 2013-2018 David Deutsch
- * Licensed under: SEE LICENSE IN https://github.com/OwlCarousel2/OwlCarousel2/blob/master/LICENSE
+ * JAVÍTOTT VÁLTOZAT - Mobil görgetés fixálva
  */
-/*
- *  Owl Carousel - Core
- */
+
 .owl-carousel {
   display: none;
   width: 100%;
   -webkit-tap-highlight-color: transparent;
-  /* position relative and z-index fix webkit rendering fonts issue */
   position: relative;
-  z-index: 1; }
-  .owl-carousel .owl-stage {
-    position: relative;
-    -ms-touch-action: pan-Y;
-    touch-action: manipulation;
-    -moz-backface-visibility: hidden;
-    /* fix firefox animation glitch */ }
-  .owl-carousel .owl-stage:after {
-    content: ".";
-    display: block;
-    clear: both;
-    visibility: hidden;
-    line-height: 0;
-    height: 0; }
-  .owl-carousel .owl-stage-outer {
-    position: relative;
-    overflow: hidden;
-    /* fix for flashing background */
-    -webkit-transform: translate3d(0px, 0px, 0px); }
-  .owl-carousel .owl-wrapper,
-  .owl-carousel .owl-item {
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-    -ms-backface-visibility: hidden;
-    -webkit-transform: translate3d(0, 0, 0);
-    -moz-transform: translate3d(0, 0, 0);
-    -ms-transform: translate3d(0, 0, 0); }
-  .owl-carousel .owl-item {
-    position: relative;
-    min-height: 1px;
-    float: left;
-    -webkit-backface-visibility: hidden;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none; }
-  .owl-carousel .owl-item img {
-    display: block;
-    width: 100%; }
-  .owl-carousel .owl-nav.disabled,
-  .owl-carousel .owl-dots.disabled {
-    display: none; }
-  .owl-carousel .owl-nav .owl-prev,
-  .owl-carousel .owl-nav .owl-next,
-  .owl-carousel .owl-dot {
+  z-index: 1; 
+}
+
+.owl-carousel .owl-stage {
+  position: relative;
+  /* JAVÍTÁS: manipulation helyett pan-Y a biztos görgetésért */
+  -ms-touch-action: pan-Y;
+  touch-action: pan-Y; 
+  -moz-backface-visibility: hidden;
+}
+
+.owl-carousel .owl-stage:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0; 
+}
+
+.owl-carousel .owl-stage-outer {
+  touch-action: pan-y !important;
+  position: relative;
+  overflow: hidden;
+  -webkit-transform: translate3d(0px, 0px, 0px); 
+}
+
+.owl-carousel .owl-wrapper,
+.owl-carousel .owl-item {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0); 
+}
+
+.owl-carousel .owl-item {
+  touch-action: pan-y !important;
+  position: relative;
+  min-height: 1px;
+  float: left;
+  -webkit-backface-visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+  /* JAVÍTÁS: Engedélyezzük a touch hívásokat */
+  -webkit-touch-callout: default; 
+}
+
+.owl-carousel .owl-item img {
+  display: block;
+  width: 100%; 
+}
+
+.owl-carousel .owl-nav.disabled,
+.owl-carousel .owl-dots.disabled {
+  display: none; 
+}
+
+/* 1. Kényszerítjük a megjelenítést, akkor is ha az Owl 'disabled'-nek hiszi */
+.owl-carousel .owl-nav.disabled,
+.owl-carousel .owl-dots.disabled {
+    display: block !important; 
+}
+
+/* 2. Alapbeállítások: kurzor és kijelölés */
+.owl-carousel .owl-nav .owl-prev,
+.owl-carousel .owl-nav .owl-next,
+.owl-carousel .owl-dot {
     cursor: pointer;
-    cursor: hand;
     -webkit-user-select: none;
-    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    user-select: none; }
-  .owl-carousel .owl-nav button.owl-prev,
-  .owl-carousel .owl-nav button.owl-next,
-  .owl-carousel button.owl-dot {
-    background: none;
-    color: inherit;
+    user-select: none; 
+    transition: all 0.3s ease;
+}
+
+/* 3. A NYILAK (GOMBOK) STÍLUSÁNAK JAVÍTÁSA */
+.owl-carousel .owl-nav button.owl-prev,
+.owl-carousel .owl-nav button.owl-next {
+    background: rgba(13, 110, 253, 0.9) !important; /* Erős kék háttér */
+    color: #ffffff !important;                     /* Fehér nyilak */
     border: none;
-    padding: 0 !important;
-    font: inherit; }
-  .owl-carousel.owl-loaded {
-    display: block; }
-  .owl-carousel.owl-loading {
-    opacity: 0;
-    display: block; }
-  .owl-carousel.owl-hidden {
-    opacity: 0; }
-  .owl-carousel.owl-refresh .owl-item {
-    visibility: hidden; }
-  .owl-carousel.owl-drag .owl-item {
-    -ms-touch-action: none;
-        touch-action: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none; }
-  .owl-carousel.owl-grab {
-    cursor: move;
-    cursor: grab; }
-  .owl-carousel.owl-rtl {
-    direction: rtl; }
-  .owl-carousel.owl-rtl .owl-item {
-    float: right; }
+    padding: 10px 15px !important;
+    font-size: 24px !important;
+    border-radius: 5px;
+    position: absolute;                             /* Kikerülnek a kép szélére */
+    top: 35%;                                       /* Középmagasság */
+    z-index: 999;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 45px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Bal és jobb nyíl pontos helye */
+/* 1. Alap konténer beállítás */
+.owl-carousel .owl-nav {
+    display: block !important;
+}
+
+/* 2. Nyilak formázása és ráhelyezése a kártyára */
+.owl-carousel .owl-nav button.owl-prev,
+.owl-carousel .owl-nav button.owl-next {
+    background: rgba(13, 110, 253, 0.7) !important; /* Átlátszó kék */
+    color: #fff !important;
+    border: none;
+    width: 40px;
+    height: 40px;
+    font-size: 20px !important;
+    position: absolute;
+    top: 30%; /* A kártya felső részére, a képre kerül */
+    z-index: 1000;
+    border-radius: 5px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+/* Bal nyíl - a kártya bal szélén belül */
+.owl-nav button.owl-prev { 
+    left: -15px !important;
+   
+}
+
+/* Jobb nyíl - a kártya jobb szélén belül */
+.owl-nav button.owl-next { 
+    right: -15px !important;
+}
+
+/* Hover effekt: sötétebb legyen, ha ráviszed az egeret */
+.owl-nav button:hover {
+    background: rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Mobilon TELJESEN tüntessük el a nyilakat, ott csak az ujjad használd */
+@media (max-width: 768px) {
+    .owl-nav {
+        display: none !important;
+    }
+}
+
+.owl-carousel.owl-loaded {
+  display: block; 
+}
+
+.owl-carousel.owl-loading {
+  opacity: 0;
+  display: block; 
+}
+
+.owl-carousel.owl-hidden {
+  opacity: 0; 
+}
+
+.owl-carousel.owl-refresh .owl-item {
+  visibility: hidden; 
+}
+
+/* JAVÍTÁS: Itt volt a legnagyobb tiltás, most pan-Y lett */
+.owl-carousel.owl-drag .owl-item {
+  -ms-touch-action: pan-y;
+  touch-action: pan-y;
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto; 
+}
+
+.owl-carousel.owl-grab {
+  cursor: move;
+  cursor: grab; 
+}
+
+.owl-carousel.owl-rtl {
+  direction: rtl; 
+}
+
+.owl-carousel.owl-rtl .owl-item {
+  float: right; 
+}
 
 /* No Js */
 .no-js .owl-carousel {
-  display: block; }
+  display: block; 
+}
 
-/*
- *  Owl Carousel - Animate Plugin
- */
+/* Animate Plugin */
 .owl-carousel .animated {
   animation-duration: 1000ms;
-  animation-fill-mode: both; }
+  animation-fill-mode: both; 
+}
 
 .owl-carousel .owl-animated-in {
-  z-index: 0; }
+  z-index: 0; 
+}
 
 .owl-carousel .owl-animated-out {
-  z-index: 1; }
+  z-index: 1; 
+}
 
 .owl-carousel .fadeOut {
-  animation-name: fadeOut; }
+  animation-name: fadeOut; 
+}
 
 @keyframes fadeOut {
-  0% {
-    opacity: 1; }
-  100% {
-    opacity: 0; } }
+  0% { opacity: 1; }
+  100% { opacity: 0; } 
+}
 
-/*
- * 	Owl Carousel - Auto Height Plugin
- */
+/* Auto Height Plugin */
 .owl-height {
-  transition: height 500ms ease-in-out; }
+  transition: height 500ms ease-in-out; 
+}
 
-/*
- * 	Owl Carousel - Lazy Load Plugin
- */
+/* Lazy Load Plugin */
 .owl-carousel .owl-item .owl-lazy {
   opacity: 0;
-  transition: opacity 400ms ease; }
+  transition: opacity 400ms ease; 
+}
 
 .owl-carousel .owl-item img.owl-lazy {
-  transform-style: preserve-3d; }
+  transform-style: preserve-3d; 
+}
 
-/*
- * 	Owl Carousel - Video Plugin
- */
+/* Video Plugin */
 .owl-carousel .owl-video-wrapper {
   position: relative;
   height: 100%;
-  background: #000; }
+  background: #000; 
+}
 
 .owl-carousel .owl-video-play-icon {
   position: absolute;
@@ -156,15 +253,17 @@
   cursor: pointer;
   z-index: 1;
   -webkit-backface-visibility: hidden;
-  transition: transform 100ms ease; }
+  transition: transform 100ms ease; 
+}
 
 .owl-carousel .owl-video-play-icon:hover {
-  -ms-transform: scale(1.3, 1.3);
-      transform: scale(1.3, 1.3); }
+  transform: scale(1.3, 1.3); 
+}
 
 .owl-carousel .owl-video-playing .owl-video-tn,
 .owl-carousel .owl-video-playing .owl-video-play-icon {
-  display: none; }
+  display: none; 
+}
 
 .owl-carousel .owl-video-tn {
   opacity: 0;
@@ -172,10 +271,12 @@
   background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
-  transition: opacity 400ms ease; }
+  transition: opacity 400ms ease; 
+}
 
 .owl-carousel .owl-video-frame {
   position: relative;
   z-index: 1;
   height: 100%;
-  width: 100%; }
+  width: 100%; 
+}

@@ -1,0 +1,165 @@
+/* --- 1. KÖZÖS ELEMEK (Minden nézetben látszódnak) --- */
+.humor-box {
+    background: rgba(35, 35, 35, 0.95) !important;
+    padding: 15px;
+    border-radius: 12px;
+    font-style: italic;
+    margin: 20px auto 30px auto !important;
+    font-size: 16px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    width: 95%;
+    display: block !important;
+}
+
+/* ALAP KÁRTYA DESIGN */
+.turizm-card {
+    background: #ffffff !important; /* Fix fehér háttér, hogy látszódjon a szöveg */
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    position: relative;
+}
+
+/* --- AUTOMATIKUS SZÍNEZÉS OSZTÁLYOK ALAPJÁN --- */
+
+/* GASZTRO - Sárga */
+.turizm-card.gasztro { border-left: 10px solid #fec107 !important; }
+.turizm-card.gasztro h4, .turizm-card.gasztro h5 { color: #fec107 !important; }
+
+/* TÚRA/SZÁLLÁS - Zöld */
+.turizm-card.tura, .turizm-card.szallas { border-left: 10px solid #28a745 !important; }
+.turizm-card.tura h4, .turizm-card.szallas h4 { color: #28a745 !important; }
+
+/* PRAKTIKA - Kék */
+.turizm-card.praktika { border-left: 10px solid #3f51b5 !important; }
+.turizm-card.praktika h4 { color: #3f51b5 !important; }
+
+/* LÁTNIVALÓ - Barna/Narancs */
+.turizm-card.latnivalo { border-left: 10px solid #cd7e0f !important; }
+.turizm-card.latnivalo h4 { color: #cd7e0f !important; }
+    
+/* LÁTNIVALÓ - Lila */
+.turizm-card.program { border-left: 10px solid #42068b !important; }
+.turizm-card.program h4 { color: #42068b !important; }
+
+/* SZÖVEGEK KÉNYSZERÍTÉSE (Hogy ne tűnjenek el) */
+.turizm-card p, .turizm-card li, .turizm-card span {
+    color: #1a1a1a !important; /* Mélyfekete szöveg a fehér kártyán */
+    font-weight: 500 !important;
+}
+
+/* --- 2. ALAPÁLLAPOT (Asztali nézetben rejtve van a mobil nav) --- */
+.responsive-nav { display: none; }
+
+/* --- 3. CSAK ÉS KIZÁRÓLAG 767px ALATT --- */
+@media (max-width: 767px) {
+    .sidebar-navigation { display: none !important; }
+
+    .page-content { 
+        margin-left: 0 !important; 
+        width: 100% !important;
+        padding-top: 80px !important; 
+    }
+
+    .responsive-nav { 
+        display: block !important;
+        position: fixed !important;
+        top: 0; 
+        left: 0; 
+        width: 100%;
+        background: #232323 !important; 
+        z-index: 9999 !important;
+        min-height: 60px;
+        border-bottom: 3px solid #28a745; 
+    }
+
+    .navbar-toggle {
+        display: block !important;
+        float: none !important;
+        margin: 10px auto !important;
+        background-color: #28a745 !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        padding: 10px 15px;
+    }
+
+    .navbar-toggle .icon-bar { background-color: #fff !important; height: 2px; }
+
+    #main-nav { 
+        background: #1a1a1a !important; 
+        display: none; 
+        width: 100%;
+        border-top: 1px solid #333;
+    }
+
+    #main-nav ul li a { 
+        color: #ffffff !important; 
+        display: block; 
+        padding: 12px; 
+        text-align: center;
+        text-decoration: none !important;
+    }
+}
+
+/* --- 4. PRÉMIUM FOOTER JAVÍTÁS (Kézírásos, Arany szegély) --- */
+footer {
+    padding: 20px !important;
+    text-align: center !important; /* Középen sokkal elegánsabb egy díszes elem */
+}
+
+/* --- 4. FINOMÍTOTT FOOTER (Lekerekített, szűkített háttér) --- */
+footer {
+    padding: 10px !important;
+    text-align: center !important;
+}
+
+footer p {
+    /* 1. Betűtípus marad az elegáns dőlt */
+    font-family: 'Georgia', serif !important;
+    font-style: italic !important;
+    color: #000000 !important;
+    font-size: 14px !important;
+    
+    /* 2. Szűkített háttér és kanyaros sarkok */
+    display: inline-block;
+    padding: 2px 15px !important; /* Csak 2px felül-alul, így épp csak körbeöleli a szöveget */
+    background: rgba(255, 255, 255, 0.9) !important;
+    
+    /* 3. Arany szegély és kerekítés */
+    border: 2px solid #d4af37 !important; /* Fix arany szín a kerekíthetőség miatt */
+    border-radius: 25px !important; /* Ettől lesz szép kanyaros/ovális a széle */
+    
+    /* 4. Finom árnyék */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) !important;
+    margin: 5px auto !important;
+    letter-spacing: 0.5px;
+}
+
+/* Hover effekt a biztonság kedvéért */
+footer p:hover {
+    background: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.5) !important;
+    transition: all 0.3s ease;
+}
+
+/* A sorokat flexibilissé tesszük, hogy a kártyák egyforma magasak legyenek */
+.row.equal-height {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* A kártya szülő div-je (col-md-6) legyen flex alapú */
+.row.equal-height > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Maga a kártya töltse ki a teljes magasságot */
+.turizm-card.latnivalo {
+    flex: 1; /* Ez a bűvös sor: kitölti az üres helyet */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* A címet és a tippet széthúzza az aljáig */
+    margin-bottom: 30px;
+}
