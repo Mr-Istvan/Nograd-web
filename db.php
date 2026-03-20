@@ -6,18 +6,21 @@ ini_set('display_errors', 1);
 // A Nethely központi címe a legbiztosabb
 $szerver     = "mysql.nethely.hu"; 
 $felhasznalo = "pnograd";
+$jelszo      = "0123456789";
 $adatbazis   = "pnograd";
-$jelszo      = "0123456789"; // Ide azt írd, amit a panelen elmentettél!
+ // Ide azt írd, amit a panelen elmentettél!
 //ez sosem enged be a weboldalra!
 // Kapcsolódás
-$conn = mysqli_connect($szerver, $felhasznalo, $jelszo, $adatbazis);
-
-/*if (!$conn) {
-    // Ha itt hibát kapsz, akkor a Nethely panelen nem sikerült a jelszómentés
-    die("Hiba: " . mysqli_connect_error());
+if (!function_exists('mysqli_connect')) {
+    die("A PHP 'mysqli' kiterjesztés nincs betöltve (XAMPP/php.ini).");
 }
 
-mysqli_set_charset($conn, "utf8mb4");*/
+$conn = mysqli_connect($szerver, $felhasznalo, $jelszo, $adatbazis);
 
-echo "✅ SIKERÜLT! Az adatbázis kapcsolat él.";
+if (!$conn) {
+    // Ne írd ki éles környezetben a részletes hibát, mert érzékeny infót szivárogtathat.
+    die("Adatbázis kapcsolódási hiba.");
+}
+
+mysqli_set_charset($conn, "utf8mb4");
 ?>
