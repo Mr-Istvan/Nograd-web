@@ -1,4 +1,4 @@
-/* LIGHT BOX */
+/* LIGHT BOX - Teljes, javított verzió */
 
 body:after {
   content: url(../img/close.png) url(../img/loading.gif) url(../img/prev.png) url(../img/next.png);
@@ -33,12 +33,14 @@ body.lb-disable-scrolling {
 
 .lightbox .lb-image {
   display: block;
-  height: auto;
-  max-width: inherit;
-  max-height: none;
+  /* Fix méretek, ha ezt szeretnéd kényszeríteni */
+  width: 780px !important;
+  height: 780px !important;
+  max-width: none !important;
+  max-height: none !important;
   border-radius: 5px;
 
-  /* Image border */
+  /* Fehér keret a kép körül */
   border: 10px solid white;
 }
 
@@ -48,14 +50,13 @@ body.lb-disable-scrolling {
 
 .lb-outerContainer {
   position: relative;
-  *zoom: 1;
+  zoom: 1;
   width: 250px;
   height: 250px;
   margin: 0 auto;
   border-radius: 4px;
 
-  /* Background color behind image.
-     This is visible during transitions. */
+  /* Áttűnés alatt látható háttérszín */
   background-color: white;
 }
 
@@ -146,7 +147,7 @@ body.lb-disable-scrolling {
 .lb-dataContainer {
   margin: 0 auto;
   padding-top: 5px;
-  *zoom: 1;
+  zoom: 1;
   width: 100%;
   -moz-border-radius-bottomleft: 4px;
   -webkit-border-bottom-left-radius: 4px;

@@ -62,9 +62,10 @@ session_start();
                 <li style="padding: 5px 20px;"><a href="#top" style="color: #fff; text-decoration: none;">Kezdőlap</a></li>
                 <li style="padding: 5px 20px;"><a href="#featured" style="color: #fff; text-decoration: none;">Kiemelt</a></li>
                 <li style="padding: 5px 20px;"><a href="#projects" style="color: #fff; text-decoration: none;">Galéria</a></li>
+                <li style="padding: 5px 20px;"><a href="blog.php" style="color: #fff; text-decoration: none;">Blog</a></li>
                 <li style="padding: 5px 20px;"><a href="#video" style="color: #fff; text-decoration: none;">Bemutató</a></li>
-                 <li style="padding: 5px 20px;"><a href="#contact" style="color: #fff; text-decoration: none;">Kapcsolat</a></li>
                 <li style="padding: 5px 20px;"><a href="#map" style="color: #fff; text-decoration: none;">Térképek</a></li>
+                 <li style="padding: 5px 20px;"><a href="#contact" style="color: #fff; text-decoration: none;">Kapcsolat</a></li>
             </ul>
         </nav>
     </div>
@@ -132,6 +133,13 @@ session_start();
                 </a>
             </li>
             <li>
+                <a href="blog.php">
+                    <span class="rect"></span>
+                    <span class="circle"></span>
+                    Blog
+                </a>
+            </li>
+            <li>
                 <a href="#video">
                     <span class="rect"></span>
                     <span class="circle"></span>
@@ -140,17 +148,17 @@ session_start();
             </li>
 
             <li>
-                <a href="#contact">
-                    <span class="rect"></span>
-                    <span class="circle"></span>
-                    Kapcsolat
-                </a>
-            </li>
-            <li>
                 <a href="#map">
                     <span class="rect"></span>
                     <span class="circle"></span>
                     Térképek
+                </a>
+            </li>
+            <li>
+                <a href="#contact">
+                    <span class="rect"></span>
+                    <span class="circle"></span>
+                    Kapcsolat
                 </a>
             </li>
         </ul>
@@ -321,86 +329,71 @@ session_start();
     <div class="section-heading">
         <h1>Élménydús<br><em>Nógrád</em></h1>
         <p>
-            <strong>Miért válaszd Nógrád vármegyét?</strong> Mert itt a természet és a történelem nem csak látvány, hanem kézzel fogható valóság. 
-            Hollókőn egy élő közösség őrzi a múltat, váraink pedig a Kárpát-medence legszebb panorámáit kínálják. 
-            Nógrád az a hely, ahol a reggeli köd Salgó vára körül, a frissen sült sztrapacska illata és a cserháti erdők csendje 
-            garantáltan kiszakít a hétköznapokból. Jöjj el, és éld át a palóc életérzést!
+            <strong>Miért válaszd Nógrád vármegyét?</strong>
+            Várak, panorámák, erdők és palóc hangulat – rövid kiruccanásra is tökéletes, élményekből pedig sosem fogy ki.
         </p>
     </div>
 
+    <?php
+    // Főoldali "Galéria" rész: 3 random kocka a blog_* és portfolio_* képekből (blog_back.jpg kizárva)
+    $galleryPool = [];
+
+    // blog_* képek (kizárjuk a blog_back.jpg-t)
+    $blogPool = glob(__DIR__ . '/img/blog_*.jpg') ?: [];
+    foreach ($blogPool as $p) {
+        if (basename($p) === 'blog_back.jpg') continue;
+        $galleryPool[] = 'img/' . basename($p);
+    }
+
+    // portfolio_* thumb képek
+    $portfolioPool = glob(__DIR__ . '/img/portfolio_*.jpg') ?: [];
+    foreach ($portfolioPool as $p) {
+        $galleryPool[] = 'img/' . basename($p);
+    }
+
+    // Biztonság: duplikációk kiszedése + keverés + 3 elem
+    $galleryPool = array_values(array_unique($galleryPool));
+    shuffle($galleryPool);
+    $random3 = array_slice($galleryPool, 0, 3);
+    ?>
+
     <div class="section-content">
-        <div class="masonry">
-            <div class="row">
-                <div class="item">
-                    <div class="col-md-8 col-sm-12">
-                        <a href="img/portfolio_big_1.jpg" data-lightbox="image" data-title="Panoráma a várainkból">
+        <div class="row">
+            <?php foreach ($random3 as $imgPath): ?>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="item">
+                        <a href="<?php echo htmlspecialchars($imgPath); ?>" data-lightbox="home-gallery">
                             <div class="hover-effect">
                                 <div class="hover-content">
-                                    <h4>Történelmi Várak</h4>
-                                    <p>Salgó és Somoskő büszke bástyái.</p>
+                                    
+                                    <p>Véletlenszerű válogatás</p>
                                 </div>
                             </div>
-                            <img src="img/portfolio_1.jpg" alt="Vár panoráma" class="img-responsive">
+                            <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Galéria kép" class="img-responsive">
                         </a>
                     </div>
                 </div>
+            <?php endforeach; ?>
+        </div>
 
-                <div class="item second-item">
-                    <div class="col-md-4 col-sm-6">
-                        <a href="img/portfolio_big_2.jpg" data-lightbox="image" data-title="Hollókő, az élő falu">
-                            <div class="hover-effect">
-                                <div class="hover-content">
-                                    <h4>Hollókő</h4>
-                                    <p>Ahol a múlt ma is él.</p>
-                                </div>
-                            </div>
-                            <img src="img/portfolio_2.jpg" alt="Hollókő" class="img-responsive">
-                        </a>
-                    </div>
-                </div>
+        <div style="margin-top: 18px;">
+            <div class="accent-button button">
+                <a href="galeria.php">Ugrás a teljes galériára</a>
+            </div>
+        </div>
 
-                <div class="item">
-                    <div class="col-md-4 col-sm-6">
-                        <a href="img/portfolio_big_3.jpg" data-lightbox="image" data-title="Különleges képződmények">
-                            <div class="hover-effect">
-                                <div class="hover-content">
-                                    <h4>Természeti Csodák</h4>
-                                    <p>Ipolytarnóc és a Riolittufa.</p>
-                                </div>
-                            </div>
-                            <img src="img/portfolio_3.jpg" alt="Természet" class="img-responsive">
-                        </a>
-                    </div>
-                </div>
-
-                <div class="item">
-                    <div class="col-md-4 col-sm-6">
-                        <a href="img/portfolio_big_4.jpg" data-lightbox="image" data-title="Palóc ízek">
-                            <div class="hover-effect">
-                                <div class="hover-content">
-                                    <h4>Gasztronómia</h4>
-                                    <p>Kóstolj bele a palóc vendégszeretetbe!</p>
-                                </div>
-                            </div>
-                            <img src="img/portfolio_4.jpg" alt="Ételek" class="img-responsive">
-                        </a>
-                    </div>
-                </div>
-
-                <div class="item">
-                    <div class="col-md-8 col-sm-12">
-                        <a href="img/portfolio_big_5.jpg" data-lightbox="image" data-title="A Bánki-tó nyugalma">
-                            <div class="hover-effect">
-                                <div class="hover-content">
-                                    <h4>Bánki-tó</h4>
-                                    <p>A tökéletes hely a kikapcsolódásra.</p>
-                                </div>
-                            </div>
-                            <img src="img/portfolio_5.jpg" alt="Bánki-tó" class="img-responsive">
-                        </a>
-                    </div>
-                </div>
-            </div> </div> </div> </section>
+        <div style="margin-top: 28px; padding: 18px; background: #f4f4f4; border-radius: 10px; text-align: left;">
+            <h3 style="margin-top: 0; color: #232323;">Blog – Üzenőfal</h3>
+            <p style="color: #4a4a4a; margin-bottom: 12px;">
+                Van kedved megosztani egy élményt, tippet vagy kedvenc kirándulóhelyet Nógrádból?
+                A Blog oldalon üzenhetsz, olvashatsz és csatlakozhatsz a beszélgetéshez.
+            </p>
+            <div class="accent-button button" style="margin-top: 10px;">
+                <a href="blog.php" style="font-size: 19.5px; height: 66px; line-height: 66px; padding: 0 38px;">Ugrás a Blogra</a>
+            </div>
+        </div>
+    </div>
+</section>
             <section id="video" class="content-section">
                 <div class="row">
                     <div class="col-md-12">
@@ -435,96 +428,27 @@ session_start();
                     </div>
                 </div>
             </section>
-                        <section id="blog" class="content-section">
-                <?php $isLoggedIn = isset($_SESSION['user_name']); ?>
-                <div class="section-heading">
-                    <h1>Blog<br><em>Üzenőfal</em></h1>
-                    <p>Nógrád csodái: olvasd a legfrissebb élménybejegyzéseket. Bejelentkezve írhatsz, lájkolhatsz és kommentelhetsz.</p>
-                </div>
-                <div class="section-content blog-wall-grid">
-                    <div class="blog-left-col">
-                        <div class="mini-card">
-                            <h4>Gyors linkek</h4>
-                            <ul class="menu-small">
-                                <li><a href="#top">Kezdőlap</a></li>
-                                <li><a href="#featured">Kiemelt</a></li>
-                                <li><a href="#projects">Galéria</a></li>
-                                <li><a href="#blog">Blog</a></li>
-                                <li><a href="#contact">Térkép</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="blog-mid-col">
-                        <div class="post-card"><div class="post-header"><div class="avatar">N</div> <strong>@Nándy</strong> <span>1 órája</span></div><p>Álomszép volt a Nógrádi vár naplementében. Mindenkinek ajánlom a kilátót!</p><div class="post-img"><img src="img/blog_1.jpg" alt=""></div><div class="post-actions"><span>👍 10</span> <span>👎 2</span></div></div>
-                        <div class="post-card"><div class="post-header"><div class="avatar">I</div> <strong>@IceCat</strong> <span>2 órája</span></div><p>Szuper hely a placc, tetszett a Felsőtoldi kilátó és a helyi kávézó.</p><div class="post-img"><img src="img/blog_2.jpg" alt=""></div><div class="post-actions"><span>👍 40</span> <span>👎 0</span></div></div>
-                        <?php if($isLoggedIn): ?>
-                            <div class="post-card new-post"><h4>Új bejegyzés</h4><textarea placeholder="Írd ide az élményed"></textarea><button class="btn">Közzététel</button></div>
-                        <?php else: ?>
-                            <div class="post-card new-post locked"><strong>Bejelentkezés szükséges a kommenteléshez és lájkoláshoz.</strong></div>
-                        <?php endif; ?>
-                    </div>
-                    <div class="blog-right-col">
-                        <div class="ads-title">Top ajánlatok</div>
-                        <div class="ads-list">
-                            <div class="ad-item">Látnivaló top 3</div>
-                            <div class="ad-item">Program top 3</div>
-                            <div class="ad-item">Szállás top 3</div>
-                            <div class="ad-item">Utazási tippek top 3</div>
-                            <div class="ad-item">Gasztro top 3</div>
-                            <div class="ad-item">Bakancslista top 3</div>
-                        </div>
-                    </div>
-                </div>
-            </section><section id="contact" class="content-section">
+                 
+               <section id="contact" class="content-section">
                 <div id="map">
                 
-                	<!-- How to change your own map point
-                           1. Go to Google Maps
-                           2. Click on your location point
-                           3. Click "Share" and choose "Embed map" tab
-                           4. Copy only URL and paste it within the src="" field below
-                    -->
+                	
                     <iframe src="https://maps.google.com/maps?q=N%C3%B3gr%C3%A1d+megye&t=&z=9&ie=UTF8&iwloc=&output=embed"
-                    width="100%" height="400px" frameborder="0" style="border:0" allowfullscreen></iframe>
+                    width="80%" height="400px" frameborder="0" style="border:0" allowfullscreen></iframe>
                 </div>
                 <div id="contact-content">
                     <div class="section-heading">
                         <h1>Hozzászólás<br><em>Vélemény</em></h1>
-                        <p>Ha valaki Nógrádban kirándult, és szeretné megosztani élményeit, tapasztalatait
-                        vagy tippjeit a legjobb kirándulóhelyekről, itt könnyedén megteheti.
-                        <br>Így mások is inspirációt meríthetnek a következő túráikhoz.</p>
-                        
+                        <p>
+                            A hozzászólásokat átköltöztettük a <strong>Blog</strong> oldalra.
+                            <br>
+                            Menj a <a href="blog.php">Blog</a> menüpontra, és írj egy üzenetet – kíváncsiak vagyunk a véleményedre!
+                        </p>
                     </div>
                     <div class="section-content">
-                        <form id="contact" action="#" method="post">
-                            <div class="row">
-                                <div class="col-md-4">
-                                  <fieldset>
-                                    <input name="name" type="text" class="form-control" id="name" placeholder="Név..." required="">
-                                  </fieldset>
-                                </div>
-                                <div class="col-md-4">
-                                  <fieldset>
-                                    <input name="email" type="email" class="form-control" id="email" placeholder="email..." required="">
-                                  </fieldset>
-                                </div>
-                                 <div class="col-md-4">
-                                  <fieldset>
-                                    <input name="subject" type="text" class="form-control" id="subject" placeholder="Téma..." required="">
-                                  </fieldset>
-                                </div>
-                                <div class="col-md-12">
-                                  <fieldset>
-                                    <textarea name="message" rows="6" class="form-control" id="message" placeholder="Üzenet..." required=""></textarea>
-                                  </fieldset>
-                                </div>
-                                <div class="col-md-12">
-                                  <fieldset>
-                                    <button type="submit" id="form-submit" class="btn">Üzenet küldése most</button>
-                                  </fieldset>
-                                </div>
-                            </div>
-                        </form>
+                        <div class="accent-button button">
+                            <a href="blog.php">Ugrás a Blogra</a>
+                        </div>
                     </div>
                 </div>
             </section>

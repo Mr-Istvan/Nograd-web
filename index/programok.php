@@ -270,7 +270,7 @@ session_start();
             </div> </div>
     </section>
 
-            <footer style="margin-top: 50px;">
+            <footer style="padding: 20px; text-align: center; color: #cd7e0f; clear: both; width: 100%; position: relative; margin-top: 50px;">
                 <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
             </footer>
         </div>

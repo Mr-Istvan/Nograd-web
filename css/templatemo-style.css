@@ -146,9 +146,12 @@ p {
 @media (max-width: 767px) {
   .sidebar-navigation { display: none !important; }
   .main-content { margin-left: 0 !important; padding-top: 105px; }
-  .nav-down.responsive-nav { position: fixed; top:0; left:0; width:100%; z-index: 999; display: block; }
-  #main-nav { display: none; }
-  #main-nav.active { display: block; }
+
+  /* FONTOS: az index/ aloldalak a mobile_menu.php + mobile_style.css rendszert használják.
+     Ezért a templatemo-style.css NE kényszerítse rá a saját mobil nav megjelenését az aloldalakra. */
+  body:not(.index-subpage) .nav-down.responsive-nav { position: fixed; top:0; left:0; width:100%; z-index: 999; display: block; }
+  body:not(.index-subpage) #main-nav { display: none; }
+  body:not(.index-subpage) #main-nav.active { display: block; }
 }
 .mini-card, .post-card, .ads-list {
   background: #f9f9f9;
@@ -734,6 +737,20 @@ header {
   width: 100%;
   overflow: hidden;
   margin-bottom: 30px;
+}
+
+/* Főoldal: 3 random kép (Galéria rács) - max 300x300 */
+#projects .section-content .item a {
+  display: block;
+}
+
+#projects .section-content .item a > img.img-responsive {
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto; /* középre igazítás a kártyán belül */
 }
 
 #projects .masonry .item img:hover {

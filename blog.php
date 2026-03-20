@@ -73,6 +73,7 @@ $userLoggedIn = ($userData !== null);
         <link rel="stylesheet" href="css/light-box.css">
         <link rel="stylesheet" href="css/owl-carousel.css">
         <link rel="stylesheet" href="css/templatemo-style.css">
+        <link rel="stylesheet" href="index/mobile_style.css">
 
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
 
@@ -103,6 +104,23 @@ $userLoggedIn = ($userData !== null);
                 display: inline-block;
                 padding: 12px 18px 12px 58px;
                 border-radius: 16px;
+
+                /* 2px fehér körvonal a felirat körül */
+                -webkit-text-stroke: 2px #ffffff;
+                paint-order: stroke fill;
+            }
+            /* Firefox fallback: text-shadow körvonallal */
+            @supports not (-webkit-text-stroke: 2px #fff){
+                body.blog-page .section-heading h1{
+                    text-shadow:
+                        -1px -1px 0 #fff,
+                        1px -1px 0 #fff,
+                        -1px  1px 0 #fff,
+                        1px  1px 0 #fff,
+                        0 10px 22px rgba(0,0,0,0.65);
+                }
+            }
+            body.blog-page .section-heading h1{
 
                 /* fehér-kék-fekete-világoskék-sötétkék hangulat */
                 background:
@@ -410,7 +428,7 @@ $userLoggedIn = ($userData !== null);
                     position: fixed;
                     left: 50%;
                     transform: translateX(-50%);
-                    bottom: calc(50px + 12px + env(safe-area-inset-bottom)); /* a 50px magas alsó reklámsáv fölé */
+                    bottom: calc(50px + 18px + env(safe-area-inset-bottom)); /* mindig a kék reklámsáv fölött */
                     z-index: 10000;
                     margin: 0;
                     width: max-content;
@@ -418,7 +436,7 @@ $userLoggedIn = ($userData !== null);
             }
             @media (max-width: 767px){
                 body.blog-page .site-footer-fixed{
-                    bottom: calc(50px + 18px + env(safe-area-inset-bottom)); /* mobilon egy kicsit még feljebb */
+                    bottom: calc(50px + 18px + env(safe-area-inset-bottom)); /* mobilon is ugyanúgy */
                 }
             }
             body.blog-page .site-footer-fixed__pill{
@@ -498,7 +516,7 @@ $userLoggedIn = ($userData !== null);
                 body.blog-page .page-content { padding-bottom: 110px; }
             }
 
-            /* MOBIL (<=767): csak itt tűnjön el a bal menü, és itt legyen mobil reklám */
+            /* MOBIL    (<=767): csak itt tűnjön el a bal menü, és itt legyen mobil reklám */
             @media (max-width: 767px) {
                 body.blog-page .ads-container {
                     display: none;
@@ -539,28 +557,110 @@ $userLoggedIn = ($userData !== null);
             }
         </style>
     </head>
-<body class="blog-page">
+<body class="blog-page index-subpage">
+<style>
+/* BLOG mobil hamburger menü - index.php mobil nav stílus (fehér header, középen gomb) */
+@media (max-width: 767px){
+  body.blog-page .blog-mobile-nav{
+    display:block !important;
+    position:fixed !important;
+    top:0; left:0; width:100%;
+    height: 80px;
+    background-color: rgba(250,250,250,.95);
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+    z-index: 20000 !important;
+  }
+  body.blog-page .blog-mobile-nav__brand{
+    position:absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    text-transform: uppercase;
+    font-weight: 800;
+    text-decoration: none;
+    color: #333;
+  }
+  body.blog-page .blog-mobile-nav__toggle{
+    position:absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    display:inline-block;
+    background: transparent;
+    border: none;
+    padding: 10px 12px;
+    z-index: 20001;
+  }
+  /* iconbar: kéK */
+  body.blog-page .blog-mobile-nav__toggle .icon-bar{
+    display:block;
+    width:22px;
+    height:2px;
+    background-color:#3498db;
+    margin:4px 0;
+  }
 
-    <header class="nav-down responsive-nav hidden-lg hidden-md">
-        <div class="logo" style="float: left; padding: 15px 20px;">
-            <a href="index.php" class="logo-text" style="font-size: 22px; text-transform: uppercase; font-weight: 800; text-decoration: none;">NÓG<span style="color: #d4a373;">RÁD</span></a>
-        </div>
+  body.blog-page #blog-mobile-menu{
+    display:none;
+    position: fixed;
+    z-index: 19999;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0,0,0,0.9);
+  }
+  body.blog-page #blog-mobile-menu a{
+    font-size: 15px;
+    text-transform: capitalize;
+    color: #fff !important;
+    box-shadow: none;
+    border: none;
+    display:block;
+    padding: 12px 0;
+    text-align:center;
+    text-decoration:none !important;
+  }
+  body.blog-page #blog-mobile-menu a:hover{ opacity: .85; background-color: transparent; }
 
-        <button type="button" id="nav-toggle" class="navbar-toggle" style="margin-top: 12px;">
+  /* kiemelések */
+  body.blog-page #blog-mobile-menu a.menu-profile{ color: #fec107 !important; font-weight: 800; }
+  body.blog-page #blog-mobile-menu a.menu-logout{ color: #ff4d4d !important; font-weight: 800; }
+
+  /* content ne csússzon a fix header alá */
+  body.blog-page .page-content{ padding-top: 105px !important; }
+}
+@media (min-width: 768px){
+  body.blog-page .blog-mobile-nav{ display:none !important; }
+  body.blog-page #blog-mobile-menu{ display:none !important; }
+}
+</style>
+
+    <!-- BLOG mobil hamburger menü (767px alatt) - index stílus: fehér header, középen gomb -->
+    <header class="blog-mobile-nav hidden-lg hidden-md" aria-label="Mobil navigáció">
+        <a class="blog-mobile-nav__brand" href="index.php">NÓG<span style="color:#d4a373;">RÁD</span></a>
+
+        <button type="button" id="blog-mobile-toggle" class="blog-mobile-nav__toggle" aria-controls="blog-mobile-menu" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-
-        <div id="main-nav" style="display: none; clear: both; background: rgba(0,0,0,0.95); width: 100%;">
-            <nav style="padding: 10px 0;">
-                <ul class="nav navbar-nav" style="margin: 0; list-style: none; padding: 0;">
-                    <?php include("index/mobile_menu.php"); ?>
-                </ul>
-            </nav>
-        </div>
     </header>
+
+    <nav id="blog-mobile-menu" aria-label="Mobil menü">
+        <?php if(isset($_SESSION['user_name'])): ?>
+            <a class="menu-profile" href="profile.php"><i class="fa fa-user"></i> Profil (<?php echo htmlspecialchars($_SESSION['user_name']); ?>)</a>
+            <a class="menu-logout" href="logout.php">Kilépés</a>
+        <?php else: ?>
+            <a href="login.php"><i class="fa fa-sign-in"></i> Belépés</a>
+            <a href="reg_id.php"><i class="fa fa-user-plus"></i> Regisztráció</a>
+        <?php endif; ?>
+
+        <a href="index.php">Kezdőlap</a>
+        <a href="blog.php">Blog</a>
+        <a href="index.php#featured">Kiemelt</a>
+    </nav>
 
     <div class="sidebar-navigation hidden-sm hidden-xs">
         <div class="logo">
@@ -682,11 +782,15 @@ $userLoggedIn = ($userData !== null);
             </div>
         </div>
 
-        <footer class="site-footer-fixed" aria-label="Oldal lábléc">
-            <p class="site-footer-fixed__pill">
-                Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István
-            </p>
-        </footer>
+        <footer style="padding: 20px; text-align: center; color: #cd7e0f; clear: both; width: 100%; position: relative; margin-top: 50px;">
+    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+</footer>
+
+        <style>
+            @media (max-width: 767px) {
+                footer[style*="color: #cd7e0f"] { margin-bottom: 45px !important; }
+            }
+        </style>
     </div>
 
     <div class="mobile-ad-bar">
@@ -703,30 +807,44 @@ $userLoggedIn = ($userData !== null);
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
-        // Mobil felső menü: ha a main.js nem fut / más JS hiba van, ettől még működjön
+        // Blog mobil menü: független a template main.js-től
         (function () {
             function ready(fn){ if(document.readyState!=='loading'){ fn(); } else { document.addEventListener('DOMContentLoaded', fn); } }
             ready(function(){
-                var btn = document.getElementById('nav-toggle');
-                var nav = document.getElementById('main-nav');
+                var btn = document.getElementById('blog-mobile-toggle');
+                var nav = document.getElementById('blog-mobile-menu');
                 if(!btn || !nav) return;
 
-                btn.addEventListener('click', function(e){
-                    e.preventDefault();
-                    if (nav.style.display === 'none' || nav.style.display === '') nav.style.display = 'block';
-                    else nav.style.display = 'none';
-                });
+                function closeMenu(){
+                    nav.style.display = 'none';
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+                function toggleMenu(){
+                    var open = (nav.style.display !== 'none' && nav.style.display !== '');
+                    if(open) closeMenu();
+                    else {
+                        nav.style.display = 'block';
+                        btn.setAttribute('aria-expanded', 'true');
+                    }
+                }
 
-                // linkre katt -> csukódjon (mobilon)
+                btn.addEventListener('click', function(e){ e.preventDefault(); toggleMenu(); });
+
+                // linkre katt -> csukódjon mobilon
                 nav.addEventListener('click', function(e){
                     var a = e.target && e.target.closest ? e.target.closest('a') : null;
                     if(!a) return;
-                    if (window.innerWidth < 768) nav.style.display = 'none';
+                    if (window.innerWidth < 768) closeMenu();
+                });
+
+                // resize -> csuk (ha átlépünk desktopra)
+                window.addEventListener('resize', function(){
+                    if(window.innerWidth >= 768) closeMenu();
                 });
             });
         })();
     </script>
-    <script src="js/vendor/bootstrap.min.js"></script>
+    
     <script src="js/main.js"></script>
 
 </body>
