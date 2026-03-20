@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once "../db.php";
+require_once __DIR__ . '/../init.php';
 
 // Lekérjük a szállásokat névsorrendben
 $sql = "SELECT * FROM szallasok ORDER BY szname ASC";

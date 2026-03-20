@@ -1,11 +1,5 @@
 <?php
-// 1. Biztonságos session indítás
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// 2. ADATBÁZIS KAPCSOLAT
-require_once "db.php"; 
+require_once __DIR__ . '/init.php';
 
 // 3. CSAK akkor fut le a logika, ha valóban küldtek adatot (POST)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['uusername'])) {

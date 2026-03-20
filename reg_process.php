@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once "db.php";
+require_once __DIR__ . '/init.php';
 
 // Ha nem a formon keresztül érkezett a kérés, visszaküldjük
 if ($_SERVER["REQUEST_METHOD"] != "POST" || !isset($_POST['uemail'])) {

@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$timeoutSeconds = 0; // 0 = kikapcsolva (nincs automatikus kijelentkeztetés inaktivitás miatt)
+$timeoutSeconds = 1800; // 0 = kikapcsolva (nincs automatikus kijelentkeztetés inaktivitás miatt)
 
 // Ha belépett felhasználó, frissítjük az aktivitás időpontját minden kérésnél
 if (isset($_SESSION['user_id'])) {

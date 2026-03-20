@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/init.php';
+
 // Csak akkor hívjuk meg az adatbázist, ha tényleg kell valamihez
 // include "db.php"; 
 ?>

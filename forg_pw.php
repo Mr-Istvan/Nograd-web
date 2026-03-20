@@ -1,6 +1,5 @@
 <?php
-session_start();
-include "db.php";
+require_once __DIR__ . '/init.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Adatok megtisztítása a biztonság kedvéért
