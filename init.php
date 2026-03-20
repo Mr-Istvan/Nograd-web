@@ -16,6 +16,27 @@
  * - PHP_SESSION_ACTIVE  => már fut a session, nem indítjuk újra (különben warning lehet)
  */
 if (session_status() === PHP_SESSION_NONE) {
+    // Biztonságosabb session beállítások (még session_start előtt)
+    ini_set('session.use_strict_mode', '1');
+    ini_set('session.use_only_cookies', '1');
+    ini_set('session.cookie_httponly', '1');
+
+    // HTTPS esetén secure cookie
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        ini_set('session.cookie_secure', '1');
+    }
+
+    // session_start() előtt érdemes a cookie paramétereket is egységesíteni
+    $cookieParams = session_get_cookie_params();
+    session_set_cookie_params([
+        'lifetime' => 0, // böngésző bezárásáig
+        'path'     => $cookieParams['path'] ?? '/',
+        'domain'   => $cookieParams['domain'] ?? '',
+        'secure'   => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+
     session_start();
 }
 

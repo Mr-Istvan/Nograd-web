@@ -43,16 +43,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['uusername'])) {
 
                         X = akik végleg kilptek /törölt profil ---*/
             
-            $uid = $row['uid'];
+            $uid = (int) $row['uid'];
             
             // Utolsó belépés frissítése
-            mysqli_query($conn, "UPDATE felhasznalok SET ulogindata = NOW() WHERE uid = '$uid'");
+            mysqli_query($conn, "UPDATE felhasznalok SET ulogindata = NOW() WHERE uid = $uid");
 
-            // Session adatok beállítása
-            $_SESSION['user_id']   = $row['uid'];
-            $_SESSION['user_name'] = $row['uusername'];
-            $_SESSION['full_name'] = $row['uname'];
-            $_SESSION['status']    = $status; // Itt tároljuk le az A, B vagy C értéket
+            // Session fixation védelem: belépés után új session ID
+            session_regenerate_id(true);
+
+            // Session adatok beállítása (egységes kulcsok)
+            $_SESSION['uid']           = (int) $row['uid'];
+            $_SESSION['user_name']     = $row['uusername'];
+            $_SESSION['full_name']     = $row['uname'];
+            $_SESSION['status']        = $status; // A / B / C / T / X
             $_SESSION['last_activity'] = time(); // inaktivitás figyelés kezdete
 
             // SIKER: Irány a főoldal
