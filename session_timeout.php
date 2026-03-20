@@ -3,10 +3,12 @@
 // 1 perc (60s) inaktivitás után automatikus kijelentkeztetés (szerver oldali)
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    // Ezt a fájlt az init.php hívja, az indítja a session-t.
+    // Ha ezt közvetlenül include-olnád init nélkül, inkább include-old az init.php-t.
+    return;
 }
 
-$timeoutSeconds = 0; // 0 = kikapcsolva (nincs automatikus kijelentkeztetés inaktivitás miatt)
+$timeoutSeconds = 60 * 30; // 30 perc inaktivitás után automatikus kijelentkeztetés
 
 // Ha belépett felhasználó, frissítjük az aktivitás időpontját minden kérésnél
 if (isset($_SESSION['uid'])) { // user_id helyett uid, mert ezt használod a profilnál

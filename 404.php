@@ -1,5 +1,5 @@
-<?php 
-session_start(); 
+<?php
+require_once __DIR__ . '/init.php';
 
 // MEGOLDÁS: Meghatározzuk a weboldal alapútvonalát. 
 // Localhoston a mappa neve kell, éles szerveren (nethely) pedig elég a / jel.
