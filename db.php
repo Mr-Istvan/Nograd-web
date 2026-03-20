@@ -8,7 +8,7 @@ $szerver     = "mysql.nethely.hu";
 $felhasznalo = "pnograd";
 $adatbazis   = "pnograd";
 $jelszo      = "0123456789"; // Ide azt írd, amit a panelen elmentettél!
-
+//ez sosem enged be a weboldalra!
 // Kapcsolódás
 $conn = mysqli_connect($szerver, $felhasznalo, $jelszo, $adatbazis);
 
