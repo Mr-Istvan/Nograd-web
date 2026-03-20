@@ -1,27 +1,23 @@
 <?php
-if ($_SERVER['SERVER_NAME'] == 'localhost') {
-    // XAMPP adatok (otthoni fejlesztéshez)
-    $szerver = "localhost";
-    $felhasznalo = "root";
-    $jelszo = "";
-    $adatbazis = "admins";
-} else {
-    // Nethely adatok (az éles szerverhez)
-    // A képeid alapján: pnograd felhasználó és mysql.nethely.hu szerver
-    $szerver = "mysql.nethely.hu";
-    $felhasznalo = "pnograd";
-    $jelszo = "KIM202605"; 
-    $adatbazis = "pnograd";
-}
+// db.php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Kapcsolat létrehozása
+// A Nethely központi címe a legbiztosabb
+$szerver     = "mysql.nethely.hu"; 
+$felhasznalo = "pnograd";
+$adatbazis   = "pnograd";
+$jelszo      = "0123456789"; // Ide azt írd, amit a panelen elmentettél!
+
+// Kapcsolódás
 $conn = mysqli_connect($szerver, $felhasznalo, $jelszo, $adatbazis);
 
-// Kapcsolat ellenőrzése
-if (!$conn) {
-    die("Hiba a csatlakozáskor: " . mysqli_connect_error());
+/*if (!$conn) {
+    // Ha itt hibát kapsz, akkor a Nethely panelen nem sikerült a jelszómentés
+    die("Hiba: " . mysqli_connect_error());
 }
 
-// Karakterkódolás beállítása (hogy az ékezetek szépek legyenek)
-mysqli_set_charset($conn, "utf8mb4");
+mysqli_set_charset($conn, "utf8mb4");*/
+
+echo "✅ SIKERÜLT! Az adatbázis kapcsolat él.";
 ?>

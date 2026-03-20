@@ -88,6 +88,16 @@ if (isset($_POST['save_pw'])) {
     exit();
 }
 
+if (isset($_POST['save_secret'])) {
+    $q = mysqli_real_escape_string($conn, $_POST['usecret_q']);
+    $a = mysqli_real_escape_string($conn, strtolower(trim($_POST['usecret_a'])));
+    
+    if (!empty($q) && !empty($a)) {
+        mysqli_query($conn, "UPDATE felhasznalok SET usecret_q = '$q', usecret_a = '$a' WHERE uid = $uid");
+        header("Location: profile.php?msg=secret_ok");
+        exit();
+    }
+}
 header("Location: profile.php");
 exit();
 ?>

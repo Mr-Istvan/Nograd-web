@@ -1,51 +1,62 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/init.php';
 
 // Ha nem a formon keresztül érkezett a kérés, visszaküldjük
 if ($_SERVER["REQUEST_METHOD"] != "POST" || !isset($_POST['uemail'])) {
-    header("Location: register.php");
+    header("Location: reg_id.php");
     exit();
 }
 
-// 1. ADATOK ÁTVÉTELE ÉS TISZTÍTÁSA
-$uname     = mysqli_real_escape_string($conn, $_POST['uname']);
-$uusername = mysqli_real_escape_string($conn, $_POST['uusername']);
-$uemail    = mysqli_real_escape_string($conn, $_POST['uemail']);
-$pass1     = $_POST['pass1'];
-$pass2     = $_POST['pass2'];
+// 1. ADATOK ÁTVÉTELE ÉS TISZTÍTÁSA (biztosan: ha nincs mező, ne dobjon notice-t)
+$uname_raw     = trim($_POST['uname'] ?? '');
+$uusername_raw = trim($_POST['uusername'] ?? '');
+$uemail_raw    = trim($_POST['uemail'] ?? '');
+$pass1         = (string)($_POST['pass1'] ?? '');
+$pass2         = (string)($_POST['pass2'] ?? '');
 
-// ÚJ: Biztonsági kérdés és válasz átvétele
-$usecret_q = mysqli_real_escape_string($conn, $_POST['usecret_q']);
-$usecret_a = mysqli_real_escape_string($conn, strtolower(trim($_POST['usecret_a']))); // Kisbetűvel a későbbi könnyű ellenőrzéshez
+// Biztonsági kérdés/válasz (opcionális – ha üresen hagyod, nem akad el a regisztráció)
+$usecret_q_raw = trim($_POST['usecret_q'] ?? '');
+$usecret_a_raw = trim($_POST['usecret_a'] ?? '');
+
+$uname     = mysqli_real_escape_string($conn, $uname_raw);
+$uusername = mysqli_real_escape_string($conn, $uusername_raw);
+$uemail    = mysqli_real_escape_string($conn, $uemail_raw);
+
+$usecret_q = mysqli_real_escape_string($conn, $usecret_q_raw);
+$usecret_a = mysqli_real_escape_string($conn, strtolower($usecret_a_raw)); // kisbetűsítve az összehasonlításhoz
 
 // 2. ELLENŐRZÉSEK
-// Üres mezők?
-if (empty($uname) || empty($uusername) || empty($uemail) || empty($pass1) || empty($usecret_q) || empty($usecret_a)) {
-    echo "<script>alert('Minden mezőt ki kell tölteni!'); window.location.href='register.php';</script>";
+// Kötelező mezők (secret mezők NEM kötelezők)
+if ($uname === '' || $uusername === '' || $uemail === '' || $pass1 === '') {
+    echo "<script>alert('Minden kötelező mezőt ki kell tölteni!'); window.location.href='reg_id.php';</script>";
     exit();
 }
 
 // Jelszavak egyeznek?
 if ($pass1 !== $pass2) {
-    echo "<script>alert('A két jelszó nem egyezik!'); window.location.href='register.php';</script>";
+    echo "<script>alert('A két jelszó nem egyezik!'); window.location.href='reg_id.php';</script>";
     exit();
 }
 
 // Jelszó hossza (min 6 karakter)
 if (strlen($pass1) < 6) {
-    echo "<script>alert('A jelszónak legalább 6 karakter hosszúnak kell lennie!'); window.location.href='register.php';</script>";
+    echo "<script>alert('A jelszónak legalább 6 karakter hosszúnak kell lennie!'); window.location.href='reg_id.php';</script>";
     exit();
 }
 
 // Létezik-e már az email vagy a becenév?
 $checkUser = mysqli_query($conn, "SELECT uid FROM felhasznalok WHERE uemail = '$uemail' OR uusername = '$uusername'");
 if (mysqli_num_rows($checkUser) > 0) {
-    echo "<script>alert('Ez az email cím vagy becenév már foglalt!'); window.location.href='register.php';</script>";
+    echo "<script>alert('Ez az email cím vagy becenév már foglalt!'); window.location.href='reg_id.php';</script>";
     exit();
 }
 
 if (strlen($pass1) > 36) {
-    echo "<script>alert('A jelszó maximum 36 karakter lehet!'); window.location.href='register.php';</script>";
+    echo "<script>alert('A jelszó maximum 36 karakter lehet!'); window.location.href='reg_id.php';</script>";
     exit();
 }
 
