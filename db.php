@@ -7,17 +7,16 @@ ini_set('display_errors', 1);
 $szerver     = "mysql.nethely.hu"; 
 $felhasznalo = "pnograd";
 $adatbazis   = "pnograd";
-$jelszo      = "0123456789"; // Ide azt írd, amit a panelen elmentettél!
+$jelszo      = "KIM202605"; // Ide azt írd, amit a panelen elmentettél!
 //ez sosem enged be a weboldalra!
 // Kapcsolódás
 $conn = mysqli_connect($szerver, $felhasznalo, $jelszo, $adatbazis);
 
-/*if (!$conn) {
-    // Ha itt hibát kapsz, akkor a Nethely panelen nem sikerült a jelszómentés
+if (!$conn) {
     die("Hiba: " . mysqli_connect_error());
 }
 
-mysqli_set_charset($conn, "utf8mb4");*/
+mysqli_set_charset($conn, "utf8mb4");
 
 echo "✅ SIKERÜLT! Az adatbázis kapcsolat él.";
 ?>
