@@ -441,7 +441,7 @@ require_once __DIR__ . '/init.php';
                     <div class="section-heading">
                         <h1>Hozzászólás<br><em>Vélemény</em></h1>
                         <p>
-                            A hozzászólásokat átköltöztettük a <strong>Blog</strong> oldalra.
+                            A hozzászólásokat átköltöztettük a ,mert lassan megnyílik a kapcsolat<strong>Blog</strong> oldalra.
                             <br>
                             Menj a <a href="blog.php">Blog</a> menüpontra, és írj egy üzenetet – kíváncsiak vagyunk a véleményedre!
                         </p>
