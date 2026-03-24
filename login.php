@@ -1,5 +1,7 @@
-<?php
-require_once __DIR__ . '/init.php';
+<?php 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Cache tiltása az adatmaradékok ellen
 header("Cache-Control: no-cache, no-store, must-revalidate");
@@ -7,7 +9,7 @@ header("Pragma: no-cache");
 header("Expires: 0");
 
 // A feldolgozó behívása (Mivel a process-ben nincs 'üres' átirányítás, nem lesz hurok)
-require_once __DIR__ . '/login_process.php';
+include "login_process.php"; 
 ?>
 <!DOCTYPE html>
 <html lang="hu">

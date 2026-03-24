@@ -167,6 +167,12 @@ $('#main-nav a').on('click', function() {
         forceClear();
         setTimeout(forceClear, 100);
     };
+    
+    if (window.history.replaceState) {
+    // Kicseréljük az aktuális URL-t az előzményekben ugyanerre, 
+    // így a böngésző "elfelejti" a sokadik újratöltést.
+    window.history.replaceState(null, null, window.location.href);
+    } 
 
 function updateMap(placeName, element) {
     // Ez a hivatalos Google Maps Embed URL formátum

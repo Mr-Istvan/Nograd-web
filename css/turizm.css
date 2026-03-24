@@ -71,3 +71,10 @@
     text-align: center;
     font-style: italic;
 }
+    /*03.24*/
+    .sidebar-navigation {
+    position: relative; /* EZ KELL AHHOZ, HOGY AZ ALJÁRA TUDJUK RÖGZÍTENI */
+    /* A többi meglévő stílusod (width, height, background, stb.) maradjon itt... */
+    }
+
+    /*03.24*/

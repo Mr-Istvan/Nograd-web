@@ -19,55 +19,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['uusername'])) {
 
             // --- STÁTUSZ ELLENŐRZÉSE ---
 
-            // 1. Tiltott (T)
             if ($status == 'T') {
-                echo "<script>alert('Ez a fiók fel van függesztve!'); window.location.href='login.php';</script>";
+                echo "<script>alert('Ez a fiók fel van függesztve!'); window.location.replace('login.php');</script>";
                 exit();
             }
 
-            // 2. Kilépett / Törölt profil (X)
             if ($status == 'X') {
-                echo "<script>alert('Ez a fiók korábban törlésre került és már nem aktív.'); window.location.href='login.php';</script>";
+                echo "<script>alert('Ez a fiók korábban törlésre került...'); window.location.replace('login.php');</script>";
                 exit();
             }
-
-            /* --- HA  A = alap felhasználó
-
-                        B = haladó felhasználó (tilthat ,törölhet képket videokat )
-
-                        C = mestre (lehet tanár és IT programozo)
-
-
-
-                        T = tiltva
-
-                        X = akik végleg kilptek /törölt profil ---*/
             
-            $uid = (int) $row['uid'];
+            $uid = $row['uid'];
             
             // Utolsó belépés frissítése
-            mysqli_query($conn, "UPDATE felhasznalok SET ulogindata = NOW() WHERE uid = $uid");
+            mysqli_query($conn, "UPDATE felhasznalok SET ulogindata = NOW() WHERE uid = '$uid'");
 
-            // Session fixation védelem: belépés után új session ID
-            session_regenerate_id(true);
-
-            // Session adatok beállítása (egységes kulcsok)
-            $_SESSION['uid']           = (int) $row['uid'];
-            $_SESSION['user_name']     = $row['uusername'];
-            $_SESSION['full_name']     = $row['uname'];
-            $_SESSION['status']        = $status; // A / B / C / T / X
-            $_SESSION['last_activity'] = time(); // inaktivitás figyelés kezdete
+            // Session adatok beállítása
+            $_SESSION['user_id']   = $row['uid'];
+            $_SESSION['user_name'] = $row['uusername'];
+            $_SESSION['full_name'] = $row['uname'];
+            $_SESSION['status']    = $status; 
+            $_SESSION['last_activity'] = time();
 
             // SIKER: Irány a főoldal
             header("Location: index.php");
             exit();
 
         } else {
-            echo "<script>alert('Hibás jelszó!'); window.location.href='login.php';</script>";
-            exit();
+            // JAVÍTVA: .replace-re cserélve a visszaléptetés miatt
+           echo "<script>alert('Hibás jelszó!'); window.location.replace('login.php');</script>";
+exit();
         }
     } else {
-        echo "<script>alert('Nincs ilyen felhasználó regisztrálva!'); window.location.href='login.php';</script>";
-        exit();
+        // JAVÍTVA: .replace-re cserélve a visszaléptetés miatt
+        echo "<script>alert('Nincs ilyen felhasználó regisztrálva!'); window.location.replace('login.php');</script>";
+exit();
     }
 }

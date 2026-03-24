@@ -29,7 +29,7 @@ require_once __DIR__ . '/../init.php';
         overflow-x: hidden;
     }
 
-    /* --- HUMOR BOX (Most már egységes a többivel) --- */
+    /* --- HUMOR BOX --- */
     .humor-box {
         background: rgba(0, 0, 0, 0.7) !important;
         color: #fec107 !important;
@@ -42,9 +42,9 @@ require_once __DIR__ . '/../init.php';
         box-shadow: 0 5px 15px rgba(0,0,0,0.4);
     }
 
-    /* --- PRAKTIKÁK KÁRTYA (Brutális kontraszt) --- */
+    /* --- PRAKTIKÁK KÁRTYA --- */
     .turizm-card {
-        background: #ffffff !important; /* Tiszta fehér háttér */
+        background: #ffffff !important;
         border-left: 10px solid var(--praktika-blue) !important;
         border-radius: 12px;
         padding: 25px;
@@ -54,7 +54,6 @@ require_once __DIR__ . '/../init.php';
         text-align: left;
     }
 
-    /* Címek javítása */
     .turizm-card h4 {
         color: var(--praktika-blue) !important;
         font-weight: 800 !important;
@@ -64,7 +63,6 @@ require_once __DIR__ . '/../init.php';
         display: block !important;
     }
 
-    /* Lista elemek - hogy mobilon is látszódjanak! */
     .turizm-list {
         list-style: none;
         padding: 0;
@@ -74,7 +72,7 @@ require_once __DIR__ . '/../init.php';
         margin-bottom: 15px;
         display: flex;
         align-items: flex-start;
-        color: #1a1a1a !important; /* Mélyfekete szöveg */
+        color: #1a1a1a !important;
         line-height: 1.6;
         font-weight: 500;
     }
@@ -87,44 +85,37 @@ require_once __DIR__ . '/../init.php';
         font-size: 18px;
     }
 
-    /* --- MOBIL NAVIGÁCIÓ FIXÁLÁSA --- */
+    /* --- MOBIL NAVIGÁCIÓ FIX --- */
     @media (max-width: 767px) {
-        .page-content { 
-            padding-top: 100px !important; 
-        }
-        
+        .page-content { padding-top: 100px !important; }
         .responsive-nav {
             background: #232323 !important;
             border-bottom: 3px solid var(--praktika-blue) !important;
         }
-
         .navbar-toggle {
             background: var(--praktika-blue) !important;
             border: none !important;
         }
-        
-        .navbar-toggle .icon-bar {
-            background-color: #fff !important;
-        }
+        .navbar-toggle .icon-bar { background-color: #fff !important; }
     }
 </style>
 </head>
 <body>
                 
     <header class="nav-down responsive-nav">
-    <button type="button" id="nav-toggle" class="navbar-toggle">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </button>
-    <div id="main-nav">
-        <nav style="padding: 20px;">
-            <ul class="nav navbar-nav">
-                <?php include 'mobile_menu.php'; ?>
-            </ul>
-        </nav>
-    </div>
-</header>
+        <button type="button" id="nav-toggle" class="navbar-toggle">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <div id="main-nav">
+            <nav style="padding: 20px;">
+                <ul class="nav navbar-nav">
+                    <?php include 'mobile_menu.php'; ?>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
     <div class="main-wrapper">
         <div class="sidebar-navigation">
@@ -150,6 +141,7 @@ require_once __DIR__ . '/../init.php';
                     <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
                 </ul>
             </nav>
+            <?php include "../weather.php"; ?>
         </div>
 
         <div class="page-content">
@@ -168,9 +160,9 @@ require_once __DIR__ . '/../init.php';
                                 <h4><i class="fa fa-car"></i> Közlekedés és Navigáció</h4>
                                 <ul class="turizm-list">
                                     <li><i class="fa fa-star"></i> <span><strong>21-es főút:</strong> Budapest felől a leggyorsabb elérés. 2x2 sávos, kiváló minőségű és teljesen ingyenes.</span></li>
-                                    <li><i class="fa fa-star"></i> <span><strong>Parkolás:</strong> Hollókőn a külső parkoló fizetős (kb. 1200 Ft/nap), a vár alatti részeken is hasonló díjakra kell számítani.</span></li>
-                                    <li><i class="fa fa-star"></i> <span><strong>MÁV:</strong> A Vác–Balassagyarmat vonal az ország egyik legszebb vasútvonala, érdemes kipróbálni a látvány miatt.</span></li>
-                                    <li><i class="fa fa-warning"></i> <span><strong>Térerő:</strong> A Karancs-Medves és a Cserhát mélyebb völgyeiben (pl. Bedepuszta környéke) a GPS eltévedhet, legyen offline térképed!</span></li>
+                                    <li><i class="fa fa-star"></i> <span><strong>Parkolás:</strong> Hollókőn a külső parkoló fizetős (kb. 1200 Ft/nap).</span></li>
+                                    <li><i class="fa fa-star"></i> <span><strong>MÁV:</strong> A Vác–Balassagyarmat vonal az ország egyik legszebb vasútvonala.</span></li>
+                                    <li><i class="fa fa-warning"></i> <span><strong>Térerő:</strong> A mélyebb völgyekben a GPS eltévedhet, legyen offline térképed!</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -179,30 +171,58 @@ require_once __DIR__ . '/../init.php';
                             <div class="turizm-card">
                                 <h4><i class="fa fa-money"></i> Pénzügyek és Belépők</h4>
                                 <ul class="turizm-list">
-                                    <li><i class="fa fa-star"></i> <span><strong>ATM pontok:</strong> Csak a városokban (Salgótarján, Balassagyarmat, Pásztó, Rétság, Bátonyterenye) találsz automatát.</span></li>
-                                    <li><i class="fa fa-star"></i> <span><strong>Kártyás fizetés:</strong> A nagyobb múzeumokban működik, de a falusi kisboltokban és erdei büfékben csak készpénzt fogadnak el.</span></li>
-                                    <li><i class="fa fa-star"></i> <span><strong>Árak:</strong> Hollókő falubelépő kb. 2500-3500 Ft, a várak (Salgó, Somoskő) 1000-2000 Ft között látogathatóak.</span></li>
-                                    <li><i class="fa fa-clock-o"></i> <span><strong>Boltok:</strong> A falusi "ABC"-k hétvégén gyakran csak délig vannak nyitva, érdemes előre készülni élelemmel.</span></li>
+                                    <li><i class="fa fa-star"></i> <span><strong>ATM pontok:</strong> Csak a városokban találsz automatát.</span></li>
+                                    <li><i class="fa fa-star"></i> <span><strong>Kártyás fizetés:</strong> A múzeumokban megy, de falun vigyél készpénzt!</span></li>
+                                    <li><i class="fa fa-star"></i> <span><strong>Árak:</strong> Hollókő belépő kb. 2500-3500 Ft, a várak 1000-2000 Ft.</span></li>
+                                    <li><i class="fa fa-clock-o"></i> <span><strong>Boltok:</strong> A falusi "ABC"-k hétvégén gyakran csak délig vannak nyitva.</span></li>
                                 </ul>
                             </div>
                         </div>
 
                         <div class="col-md-12">
+                            <div class="turizm-card praktika">
+                                <h4><i class="fa fa-tasks"></i> Digitális Pakolólista (Interaktív)</h4>
+                                <div class="np-checklist-container">
+                                    <label class="np-check-item">
+                                        <input type="checkbox">
+                                        <span class="np-checkmark"></span>
+                                        <span class="np-text">Kényelmes túrabakancs</span>
+                                    </label>
+                                    <label class="np-check-item">
+                                        <input type="checkbox">
+                                        <span class="np-checkmark"></span>
+                                        <span class="np-text">Esőkabát (zápor esetére)</span>
+                                    </label>
+                                    <label class="np-check-item">
+                                        <input type="checkbox">
+                                        <span class="np-checkmark"></span>
+                                        <span class="np-text">Powerbank (a GPS-nek)</span>
+                                    </label>
+                                    <label class="np-check-item">
+                                        <input type="checkbox">
+                                        <span class="np-checkmark"></span>
+                                        <span class="np-text">Készpénz az erdei büfékbe</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
                             <div class="turizm-card">
-                                <h4><i class="fa fa-leaf"></i> Bakancsos tippek és Túraútvonalak</h4>
+                                <h4><i class="fa fa-leaf"></i> Bakancsos tippek</h4>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <ul class="turizm-list">
-                                            <li><i class="fa fa-check"></i> <span><strong>Kéktúra:</strong> Az Országos Kéktúra Nógrádon halad át az egyik legszebb szakaszán (Cserhát).</span></li>
-                                            <li><i class="fa fa-check"></i> <span><strong>Vízvétel:</strong> Az erdőkben kevés a kiépített forrás, a várak meredek kaptatói előtt tankolj fel vízzel!</span></li>
-                                            <li><i class="fa fa-check"></i> <span><strong>Vadvilág:</strong> A megye erdőiben gyakori a gímszarvas és a vaddisznó, a túraösvényekről ne térj le!</span></li>
+                                            <li><i class="fa fa-check"></i> <span><strong>Kéktúra:</strong> Az Országos Kéktúra legszebb szakaszai Nógrádon haladnak.</span></li>
+                                            <li><i class="fa fa-check"></i> <span><strong>Vízvétel:</strong> Kevés a kiépített forrás, vigyél magaddal eleget!</span></li>
+                                            <li><i class="fa fa-check"></i> <span><strong>Vadvilág:</strong> Gyakori a szarvas és vaddisznó, ne térj le az ösvényről!</span></li>
                                         </ul>
                                     </div>
                                     <div class="col-md-6">
                                         <ul class="turizm-list">
-                                            <li><i class="fa fa-check"></i> <span><strong>Felszerelés:</strong> A bazaltömlések esőben rendkívül csúszósak, csak bordázott talpú túracipőben indulj el.</span></li>
-                                            <li><i class="fa fa-check"></i> <span><strong>Kullancsok:</strong> A Medves-fennsík magas füves részein fokozott a veszély, használj riasztót.</span></li>
-                                            <li><i class="fa fa-trash"></i> <span><strong>Környezetvédelem:</strong> Nógrád érintetlen természeti kincs, minden szemetet vigyél haza magaddal!</span></li>
+                                            <li><i class="fa fa-check"></i> <span><strong>Felszerelés:</strong> Esőben a bazaltömlések csúsznak, kell a túrabakancs.</span></li>
+                                            <li><i class="fa fa-check"></i> <span><strong>Kullancsok:</strong> Magas fűben fokozott veszély, használj riasztót.</span></li>
+                                            <li><i class="fa fa-trash"></i> <span><strong>Környezetvédelem:</strong> Amit bevittél az erdőbe, hozd is ki!</span></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -212,20 +232,22 @@ require_once __DIR__ . '/../init.php';
                 </div>
             </section>
 
-            <footer style="padding: 20px; text-align: center; color: #cd7e0f;">
-                <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+             <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
+                <a href="../Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
+                    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                </a>
             </footer>
         </div>
     </div>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                // Kattintás a hamburger ikonra
-                $('#nav-toggle').on('click', function (e) {
-                    e.preventDefault();
-                    $('#main-nav').slideToggle(300); // 300ms alatt gördül le/fel
-     });});
-</script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#nav-toggle').on('click', function (e) {
+                e.preventDefault();
+                $('#main-nav').slideToggle(300);
+            });
+        });
+    </script>
 </body>
 </html>

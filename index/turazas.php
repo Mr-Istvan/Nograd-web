@@ -53,6 +53,7 @@ require_once __DIR__ . '/../init.php';
         position: relative;
         box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         transition: all 0.3s ease;
+        padding-right: 120px;
     }
 
     /* Aktív kártya kiemelése */
@@ -74,6 +75,150 @@ require_once __DIR__ . '/../init.php';
         font-weight: 600 !important;
         margin-bottom: 5px !important;
         font-size: 14px !important;
+    }
+
+    .tour-note-btn {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        border: 1px solid #fec107;
+        background: rgba(255, 255, 255, 0.96);
+        color: #1a1a1a;
+        font-size: 13px;
+        line-height: 1.2;
+        padding: 10px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        transition: all 0.25s ease;
+        max-width: 110px;
+        white-space: nowrap;
+    }
+
+    .tour-note-btn:hover {
+        background: #fec107;
+        color: #000;
+        transform: translateY(-1px);
+    }
+
+    .tour-note-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        background: rgba(0, 0, 0, 0.55);
+        padding: 18px;
+    }
+
+    .tour-note-modal.open {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tour-note-modal__panel {
+        width: min(92vw, 420px);
+        background: #ffffff;
+        border-radius: 16px;
+        border-left: 8px solid #fec107;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+        padding: 18px 18px 16px 18px;
+        position: relative;
+    }
+
+    .tour-note-modal__close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        line-height: 1;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .tour-note-modal__number {
+        font-size: 34px;
+        font-weight: 900;
+        color: rgba(0,0,0,0.08);
+        position: absolute;
+        right: 16px;
+        top: 8px;
+    }
+
+    .tour-note-modal__title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin: 0 34px 10px 0;
+    }
+
+    .tour-note-modal__quote {
+        font-size: 15px;
+        line-height: 1.55;
+        color: #2a2a2a;
+        margin: 0 0 10px 0;
+        font-style: italic;
+    }
+
+    .tour-note-modal__desc {
+        font-size: 13px;
+        line-height: 1.55;
+        color: #555;
+        margin: 0;
+    }
+
+    @media (max-width: 767px) {
+        .tour-plan-card {
+            padding: 16px 16px 58px 16px;
+            padding-right: 110px;
+            border-radius: 14px;
+        }
+
+        .tour-plan-card h5 {
+            font-size: 17px !important;
+            padding-right: 10px;
+        }
+
+        .tour-plan-card p {
+            font-size: 12px !important;
+            padding-right: 10px;
+        }
+
+        .tour-number {
+            font-size: 30px;
+            right: 12px;
+        }
+
+        .tour-note-btn {
+            right: 10px;
+            bottom: 10px;
+            font-size: 11px;
+            padding: 7px 8px;
+            max-width: 96px;
+        }
+
+        .tour-note-modal {
+            padding: 12px;
+        }
+
+        .tour-note-modal__panel {
+            width: min(94vw, 380px);
+            padding: 16px 16px 14px 16px;
+        }
+
+        .tour-note-modal__title {
+            font-size: 17px;
+        }
+
+        .tour-note-modal__quote {
+            font-size: 13px;
+        }
+
+        .tour-note-modal__desc {
+            font-size: 12px;
+        }
     }
 
     /* Sorszám a háttérben (most már láthatóbb szürke) */
@@ -164,6 +309,7 @@ require_once __DIR__ . '/../init.php';
                     <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
                 </ul>
             </nav>
+            <?php include "../weather.php"; ?>
         </div>
 
         <div class="page-content">
@@ -185,6 +331,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Salgóbánya</p>
                                 <p><i class="fa fa-clock-o"></i> 1.5 óra | <i class="fa fa-arrows-h"></i> 4.2 km</p>
                                 <p><i class="fa fa-signal" style="color: #28a745;"></i> Nehézség: <strong>Könnyű</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(1)">Népi mondás</button>
                             </div>
 
                             <div class="tour-plan-card" onclick="updateMap('Kazár, Riolittufa', this)">
@@ -193,6 +340,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Kazár</p>
                                 <p><i class="fa fa-clock-o"></i> 2 óra | <i class="fa fa-arrows-h"></i> 6.0 km</p>
                                 <p><i class="fa fa-signal" style="color: #ffc107;"></i> Nehézség: <strong>Közepes</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(2)">Népi mondás</button>
                             </div>
 
                             <div class="tour-plan-card" onclick="updateMap('Nagyoroszi, Drégely vára', this)">
@@ -201,6 +349,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Nagyoroszi / Drégelypalánk</p>
                                 <p><i class="fa fa-clock-o"></i> 4 óra | <i class="fa fa-arrows-h"></i> 9.5 km</p>
                                 <p><i class="fa fa-signal" style="color: #dc3545;"></i> Nehézség: <strong>Nehéz (meredek)</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(3)">Népi mondás</button>
                             </div>
 
                             <div class="tour-plan-card" onclick="updateMap('Somoskő, Bazaltorgona', this)">
@@ -209,6 +358,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Somoskő</p>
                                 <p><i class="fa fa-clock-o"></i> 1 óra | <i class="fa fa-arrows-h"></i> 2.5 km</p>
                                 <p><i class="fa fa-signal" style="color: #28a745;"></i> Nehézség: <strong>Nagyon könnyű</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(4)">Népi mondás</button>
                             </div>
 
                             <div class="tour-plan-card" onclick="updateMap('Salgótarján, Karancs kilátó', this)">
@@ -217,6 +367,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Salgótarján</p>
                                 <p><i class="fa fa-clock-o"></i> 4.5 óra | <i class="fa fa-arrows-h"></i> 11.0 km</p>
                                 <p><i class="fa fa-signal" style="color: #dc3545;"></i> Nehézség: <strong>Kihívást jelentő</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(5)">Népi mondás</button>
                             </div>
 
                             <div class="tour-plan-card" onclick="updateMap('Hollókő, Vár', this)">
@@ -225,6 +376,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Hollókő</p>
                                 <p><i class="fa fa-clock-o"></i> 1.5 óra | <i class="fa fa-arrows-h"></i> 3.8 km</p>
                                 <p><i class="fa fa-signal" style="color: #28a745;"></i> Nehézség: <strong>Könnyű</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(6)">Népi mondás</button>
                             </div>
 
                             <div class="tour-plan-card" onclick="updateMap('Mátraverebély, Szentkút', this)">
@@ -233,6 +385,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Mátraverebély</p>
                                 <p><i class="fa fa-clock-o"></i> 2 óra | <i class="fa fa-arrows-h"></i> 5.2 km</p>
                                 <p><i class="fa fa-signal" style="color: #ffc107;"></i> Nehézség: <strong>Közepes</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(7)">Népi mondás</button>
                             </div>
 
                             <div class="tour-plan-card" onclick="updateMap('Ipolytarnóc, Ősmaradványok', this)">
@@ -241,6 +394,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Ipolytarnóc</p>
                                 <p><i class="fa fa-clock-o"></i> 3 óra | <i class="fa fa-arrows-h"></i> 4.0 km</p>
                                 <p><i class="fa fa-signal" style="color: #28a745;"></i> Nehézség: <strong>Könnyű (családi)</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(8)">Népi mondás</button>
                             </div>
 
                             <div class="tour-plan-card" onclick="updateMap('Alsópetény, Prónay-kilátó', this)">
@@ -249,6 +403,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Alsópetény / Romhány</p>
                                 <p><i class="fa fa-clock-o"></i> 3.5 óra | <i class="fa fa-arrows-h"></i> 8.5 km</p>
                                 <p><i class="fa fa-signal" style="color: #ffc107;"></i> Nehézség: <strong>Közepes</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(9)">Népi mondás</button>
                             </div>
 
                             <div class="tour-plan-card" onclick="updateMap('Bánk, Tópart', this)">
@@ -257,6 +412,7 @@ require_once __DIR__ . '/../init.php';
                                 <p><i class="fa fa-map-marker"></i> Bánk</p>
                                 <p><i class="fa fa-clock-o"></i> 0.5 óra | <i class="fa fa-arrows-h"></i> 2.1 km</p>
                                 <p><i class="fa fa-signal" style="color: #28a745;"></i> Nehézség: <strong>Séta (nagyon könnyű)</strong></p>
+                                <button type="button" class="tour-note-btn" onclick="event.stopPropagation(); openTourNote(10)">Népi mondás</button>
                             </div>
 
 
@@ -276,8 +432,10 @@ require_once __DIR__ . '/../init.php';
                 </div>
             </div>
 
-            <footer style="padding: 30px; text-align: center; color: #a12774;">
-                <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+            <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
+                <a href="../Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
+                    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                </a>
             </footer>
         </div>
     </div>
@@ -313,6 +471,100 @@ require_once __DIR__ . '/../init.php';
             });
 
             console.log("A JavaScript sikeresen betöltve és fut!");
+        });
+    </script>
+    <div id="tour-note-modal" class="tour-note-modal" aria-hidden="true">
+        <div class="tour-note-modal__panel" role="dialog" aria-modal="true" aria-labelledby="tour-note-title">
+            <button type="button" class="tour-note-modal__close" onclick="closeTourNote()" aria-label="Bezárás">&times;</button>
+            <div class="tour-note-modal__number" id="tour-note-number">01</div>
+            <h3 class="tour-note-modal__title" id="tour-note-title">Népi mondás</h3>
+            <p class="tour-note-modal__quote" id="tour-note-quote"></p>
+            <p class="tour-note-modal__desc" id="tour-note-desc"></p>
+        </div>
+    </div>
+
+    <script>
+        const tourNotes = {
+            1: {
+                number: "01",
+                title: "Salgó vára & Boszorkány-kő",
+                quote: "„Ahol a sziklából vár nőtt, és a szélben még ma is hallani a boszorkányok táncát.”",
+                desc: "(A legenda szerint a Boszorkány-kőnél az ördög és a boszorkányok mulattak, a szélvihar pedig az ő hahotázásuk.)"
+            },
+            2: {
+                number: "02",
+                title: "Kazári Riolittufa-mező",
+                quote: "„A holdbéli táj, amit az anyatermészet fehér csipkéből faragott a palócok földjén.”",
+                desc: ""
+            },
+            3: {
+                number: "03",
+                title: "Drégelyvár történelmi út",
+                quote: "„Szent hely ez: Szondi György vitézeinek hűsége még a kövekben is lüktet.”",
+                desc: "(Arany János balladája után: „Él-e még a vár?” – a válasz a hősök emlékezetében van.)"
+            },
+            4: {
+                number: "04",
+                title: "Somoskői Bazaltorgonák",
+                quote: "„Kővé vált vízesés, ahol a bazaltorgonák az ég felé zenélnek.”",
+                desc: ""
+            },
+            5: {
+                number: "05",
+                title: "Karancs, a palóc Olümposz",
+                quote: "„Aki felér a Karancs tetejére, az egész palóc világot a tenyerén hordozza.”",
+                desc: "(Régi mondás, hogy a Karancs kilátójából tiszta időben még a Tátra csúcsai is integetnek.)"
+            },
+            6: {
+                number: "06",
+                title: "Hollókői várkör",
+                quote: "„Vár, amit az ördögfiak építettek, és ahol megállt az idő a kövek között.”",
+                desc: "(A legenda szerint a vár urának elrabolt szép asszonyát holló képében segítettek kiszabadítani az ördögök, innen a név.)"
+            },
+            7: {
+                number: "07",
+                title: "Szentkúti Remetebarlangok",
+                quote: "„Szentkút vize gyógyít, remetéinek csendje pedig megnyugtatja a lelket.”",
+                desc: "(A nép szerint Szent László lovának patanyomából fakadt itt fel az első forrás.)"
+            },
+            8: {
+                number: "08",
+                title: "Ipolytarnóci Lombkorona-sétány",
+                quote: "„Ahol a múlt megkövült, és az ősidők óriásai hagyták ott lábuk nyomát.”",
+                desc: "(Gyakran nevezik a „magyar Pompejinek” is.)"
+            },
+            9: {
+                number: "09",
+                title: "Prónay-kilátó Panoráma túra",
+                quote: "„Ahol a horizont tágul, a gondok pedig eltörpülnek a Börzsöny és a Cserhát ölelésében.”",
+                desc: ""
+            },
+            10: {
+                number: "10",
+                title: "Bánki-tó kerülő séta",
+                quote: "„A tenger, ami a hegyek közé tévedt – a nyugalom kék szigete.”",
+                desc: "(Gyakran hívják a „tenger szemének” is a helyiek.)"
+            }
+        };
+
+        function openTourNote(id) {
+            const note = tourNotes[id];
+            if (!note) return;
+            document.getElementById("tour-note-number").textContent = note.number;
+            document.getElementById("tour-note-title").textContent = note.title;
+            document.getElementById("tour-note-quote").textContent = note.quote;
+            document.getElementById("tour-note-desc").textContent = note.desc;
+            document.getElementById("tour-note-modal").classList.add("open");
+            document.getElementById("tour-note-modal").setAttribute("aria-hidden", "false");
+        }
+
+        function closeTourNote() {
+            document.getElementById("tour-note-modal").classList.remove("open");
+            document.getElementById("tour-note-modal").setAttribute("aria-hidden", "true");
+        }
+
+        document.getElementById("tour-note-modal").addEventListener("click", function (e) {
+            if (e.target === this) closeTourNote();
         });
     </script>
 </body>

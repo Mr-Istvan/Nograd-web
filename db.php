@@ -9,9 +9,9 @@ if (($_SERVER['REMOTE_ADDR'] ?? '') === '127.0.0.1' || ($_SERVER['REMOTE_ADDR'] 
     $adatbazis = "nograd_db";
 } else {
     // ÉLES BEÁLLÍTÁSOK (Nethely szerver)
-    $szerver = "sql.nethely.hu";
+    $szerver = "idbp.omega.c-host.hu";
     $felhasznalo = "pnograd";
-    $jelszo = "KIM202605";
+    $jelszo = "KIM202603";
     $adatbazis = "pnograd";
 }
 

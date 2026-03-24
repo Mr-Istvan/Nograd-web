@@ -370,12 +370,12 @@ header {
 }
 
 .sidebar-navigation ul {
-  margin-left: 26px;
+  margin-left: 25px;
   list-style: none;
   padding: 0;
 }
 .sidebar-navigation li{
-  padding: 10px 0;
+  padding: 5px 0;
 }
 .sidebar-navigation span{
   display: inline-block;
@@ -604,7 +604,7 @@ header {
    ========================================================================== */
 
 #featured {
-    padding: 0 60px 80px 60px;
+    padding: 0 25px 70px 25px;
     border-bottom: 1px solid #eee;
     background-color: #fff;
 }
@@ -1218,3 +1218,24 @@ header.responsive-nav {
         border-bottom: 1px solid rgba(255,255,255,0.1);
     }
   }
+    /*2026.03.23*/
+    header {
+        transition: top 0.3s ease-in-out;
+        width: 100%;
+    }
+
+    .nav-up {
+        top: -100px !important; /* Elrejti a fejlécet felfelé görgetéskor */
+    }
+
+    .nav-down {
+        top: 0 !important; /* Visszahozza */
+    }
+    /*2026.03.23 vége*/
+    /*03.24*/
+    .sidebar-navigation {
+    position: relative; /* EZ KELL AHHOZ, HOGY AZ ALJÁRA TUDJUK RÖGZÍTENI */
+    /* A többi meglévő stílusod (width, height, background, stb.) maradjon itt... */
+    }
+
+    /*03.24*/

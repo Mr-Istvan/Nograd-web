@@ -81,6 +81,7 @@ require_once __DIR__ . '/../init.php';
                     <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
                 </ul>
             </nav>
+            <?php include "../weather.php"; ?>
         </div>
 
         <div class="page-content">
@@ -214,8 +215,10 @@ require_once __DIR__ . '/../init.php';
                 </div>
             </section>
 
-            <footer style="padding: 20px; text-align: center;">
-                <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+            <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
+                <a href="../Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
+                    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                </a>
             </footer>
         </div>
     </div>

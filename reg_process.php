@@ -5,20 +5,20 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/init.php';
 
-// Ha nem a formon keresztül érkezett a kérés, visszaküldjük
+// Ha nem a formon keresztül érkezett a kérés, visszaküldjük a regisztrációhoz
 if ($_SERVER["REQUEST_METHOD"] != "POST" || !isset($_POST['uemail'])) {
     header("Location: reg_id.php");
     exit();
 }
 
-// 1. ADATOK ÁTVÉTELE ÉS TISZTÍTÁSA (biztosan: ha nincs mező, ne dobjon notice-t)
+// 1. ADATOK ÁTVÉTELE ÉS TISZTÍTÁSA
 $uname_raw     = trim($_POST['uname'] ?? '');
 $uusername_raw = trim($_POST['uusername'] ?? '');
 $uemail_raw    = trim($_POST['uemail'] ?? '');
 $pass1         = (string)($_POST['pass1'] ?? '');
 $pass2         = (string)($_POST['pass2'] ?? '');
 
-// Biztonsági kérdés/válasz (opcionális – ha üresen hagyod, nem akad el a regisztráció)
+// Biztonsági kérdés/válasz
 $usecret_q_raw = trim($_POST['usecret_q'] ?? '');
 $usecret_a_raw = trim($_POST['usecret_a'] ?? '');
 
@@ -27,42 +27,44 @@ $uusername = mysqli_real_escape_string($conn, $uusername_raw);
 $uemail    = mysqli_real_escape_string($conn, $uemail_raw);
 
 $usecret_q = mysqli_real_escape_string($conn, $usecret_q_raw);
-$usecret_a = mysqli_real_escape_string($conn, strtolower($usecret_a_raw)); // kisbetűsítve az összehasonlításhoz
+$usecret_a = mysqli_real_escape_string($conn, strtolower($usecret_a_raw));
 
 // 2. ELLENŐRZÉSEK
-// Kötelező mezők (secret mezők NEM kötelezők)
+
+// Kötelező mezők ellenőrzése
 if ($uname === '' || $uusername === '' || $uemail === '' || $pass1 === '') {
-    echo "<script>alert('Minden kötelező mezőt ki kell tölteni!'); window.location.href='reg_id.php';</script>";
+    echo "<script>alert('Minden kötelező mezőt ki kell tölteni!'); window.location.replace('reg_id.php');</script>";
     exit();
 }
 
 // Jelszavak egyeznek?
 if ($pass1 !== $pass2) {
-    echo "<script>alert('A két jelszó nem egyezik!'); window.location.href='reg_id.php';</script>";
+    echo "<script>alert('A két jelszó nem egyezik!'); window.location.replace('reg_id.php');</script>";
     exit();
 }
 
 // Jelszó hossza (min 6 karakter)
 if (strlen($pass1) < 6) {
-    echo "<script>alert('A jelszónak legalább 6 karakter hosszúnak kell lennie!'); window.location.href='reg_id.php';</script>";
+    echo "<script>alert('A jelszónak legalább 6 karakter hosszúnak kell lennie!'); window.location.replace('reg_id.php');</script>";
+    exit();
+}
+
+// Jelszó hossza (max 36 karakter)
+if (strlen($pass1) > 36) {
+    echo "<script>alert('A jelszó maximum 36 karakter lehet!'); window.location.replace('reg_id.php');</script>";
     exit();
 }
 
 // Létezik-e már az email vagy a becenév?
 $checkUser = mysqli_query($conn, "SELECT uid FROM felhasznalok WHERE uemail = '$uemail' OR uusername = '$uusername'");
 if (mysqli_num_rows($checkUser) > 0) {
-    echo "<script>alert('Ez az email cím vagy becenév már foglalt!'); window.location.href='reg_id.php';</script>";
-    exit();
-}
-
-if (strlen($pass1) > 36) {
-    echo "<script>alert('A jelszó maximum 36 karakter lehet!'); window.location.href='reg_id.php';</script>";
+    echo "<script>alert('Ez az email cím vagy becenév már foglalt!'); window.location.replace('reg_id.php');</script>";
     exit();
 }
 
 // 3. JELSZÓ TITKOSÍTÁSA ÉS STÁTUSZ
 $upw = password_hash($pass1, PASSWORD_DEFAULT);
-$ustatus = 'A'; // Aktív
+$ustatus = 'A'; // Alapértelmezett: Aktív
 
 // 4. EGYEDI AZONOSÍTÓ (usess) GENERÁLÁSA
 $usess = "";
@@ -77,16 +79,19 @@ while ($talalt_mar_ilyet) {
 }
 
 // 5. BESZÚRÁS AZ ADATBÁZISBA
-// Figyelem: Ellenőrizd, hogy az usecret_q és usecret_a oszlopok már léteznek a tábládban!
 $sql = "INSERT INTO felhasznalok (uname, uusername, uemail, upw, usess, ustatus, usecret_q, usecret_a, uregdata) 
         VALUES ('$uname', '$uusername', '$uemail', '$upw', '$usess', '$ustatus', '$usecret_q', '$usecret_a', NOW())";
 
 if (mysqli_query($conn, $sql)) {
     echo "<script>
             alert('Sikeres regisztráció! Azonosítód: $usess'); 
-            window.location.href='login.php';
+            window.location.replace('login.php');
           </script>";
 } else {
-    echo "Hiba történt a mentés során: " . mysqli_error($conn);
+    // Adatbázis hiba kezelése
+    echo "<script>
+            alert('Hiba történt a mentés során: " . mysqli_real_escape_string($conn, mysqli_error($conn)) . "'); 
+            window.location.replace('reg_id.php');
+          </script>";
 }
 ?>

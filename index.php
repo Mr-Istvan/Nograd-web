@@ -21,6 +21,7 @@ require_once __DIR__ . '/init.php';
         <link rel="stylesheet" href="css/light-box.css">
         <link rel="stylesheet" href="css/owl-carousel.css">
         <link rel="stylesheet" href="css/templatemo-style.css">
+        <link rel="stylesheet" href="index/mobile_style.css">
 
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
 
@@ -34,7 +35,7 @@ require_once __DIR__ . '/init.php';
        <a href="index.php" class="logo-text" style="font-size: 22px; text-transform: uppercase; font-weight: 800; text-decoration: none;">NÓG<span style="color: #d4a373;">RÁD</span></a>
     </div>
 
-    <button type="button" id="nav-toggle" class="navbar-toggle" style="margin-top: 12px;">
+    <button type="button" id="nav-toggle" class="navbar-toggle" style="margin-top: 8px;">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -50,23 +51,23 @@ require_once __DIR__ . '/init.php';
                             <i class="fa fa-user"></i> <?php echo htmlspecialchars($_SESSION['user_name']); ?>
                         </a>
                     </li>
-                    <li style="padding: 0 20px 10px 20px;">
+                    <li style="padding: 0 15px 10px 15px;">
                         <a href="logout.php" style="color: #ff4d4d !important; font-size: 12px; text-decoration: none;">[ Kilépés ]</a>
                     </li>
                 <?php else: ?>
-                    <li style="padding: 5px 20px;"><a href="login.php" style="color: #fff; text-decoration: none;"><i class="fa fa-sign-in"></i> Bejelentkezés</a></li>
-                    <li style="padding: 5px 20px;"><a href="reg_id.php" style="color: #fff; text-decoration: none;"><i class="fa fa-user-plus"></i> Regisztráció</a></li>
+                    <li style="padding: 5px 15px;"><a href="login.php" style="color: #fff; text-decoration: none;"><i class="fa fa-sign-in"></i> Bejelentkezés</a></li>
+                    <li style="padding: 5px 15px;"><a href="reg_id.php" style="color: #fff; text-decoration: none;"><i class="fa fa-user-plus"></i> Regisztráció</a></li>
                 <?php endif; ?>
 
-                <li style="height: 1px; background: rgba(255,255,255,0.2); margin: 5px 20px;"></li>
+                <li style="height: 1px; background: rgba(255,255,255,0.2); margin: 1px 1px;"></li>
 
-                <li style="padding: 5px 20px;"><a href="#top" style="color: #fff; text-decoration: none;">Kezdőlap</a></li>
-                <li style="padding: 5px 20px;"><a href="#featured" style="color: #fff; text-decoration: none;">Kiemelt</a></li>
-                <li style="padding: 5px 20px;"><a href="#projects" style="color: #fff; text-decoration: none;">Galéria</a></li>
-                <li style="padding: 5px 20px;"><a href="blog.php" style="color: #fff; text-decoration: none;">Blog</a></li>
-                <li style="padding: 5px 20px;"><a href="#video" style="color: #fff; text-decoration: none;">Bemutató</a></li>
-                <li style="padding: 5px 20px;"><a href="#map" style="color: #fff; text-decoration: none;">Térképek</a></li>
-                 <li style="padding: 5px 20px;"><a href="#contact" style="color: #fff; text-decoration: none;">Kapcsolat</a></li>
+                <li style="padding: 5px 10px;"><a href="#top" style="color: #fff; text-decoration: none;">Kezdőlap</a></li>
+                <li style="padding: 5px 10px;"><a href="#featured" style="color: #fff; text-decoration: none;">Kiemelt</a></li>
+                <li style="padding: 5px 10px;"><a href="#projects" style="color: #fff; text-decoration: none;">Galéria</a></li>
+                <li style="padding: 5px 10px;"><a href="blog.php" style="color: #fff; text-decoration: none;">Blog</a></li>
+                <li style="padding: 5px 10px;"><a href="#video" style="color: #fff; text-decoration: none;">Bemutató</a></li>
+                <li style="padding: 5px 10px;"><a href="#map" style="color: #fff; text-decoration: none;">Térképek</a></li>
+                 <li style="padding: 5px 10px;"><a href="#contact" style="color: #fff; text-decoration: none;">Kapcsolat</a></li>
             </ul>
         </nav>
     </div>
@@ -110,7 +111,7 @@ require_once __DIR__ . '/init.php';
                 </li>
             <?php endif; ?>
 
-            <li style="height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0;"></li>
+            <li style="height: 1px; background: rgba(255,255,255,0.1); margin: 1px 1px;"></li>
 
             <li>
                 <a href="#top">
@@ -164,6 +165,7 @@ require_once __DIR__ . '/init.php';
             </li>
         </ul>
     </nav>
+    <?php include "weather.php"; ?> 
     <ul class="social-icons">
         <li><a href="#"><i class="fa fa-facebook"></i></a></li>
         <li><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -394,14 +396,14 @@ require_once __DIR__ . '/init.php';
             </div>
         </div>
     </div>
-</section>
+            </section>
             <section id="video" class="content-section">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="section-heading">
+            <div class="row">
+                        <div class="col-md-12">
+                            <div class="section-heading">
                             <h1>Nógrád <em>bemutatkozó</em> kisfilmje.</h1>
                             <p>Engedd, hogy elvarázsoljon Nógrád megye szépsége!</p>
-                        </div>
+                            </div>
                         <div class="text-content">
                             <p>Nógrád lankáin szellő szalad,
                             erdők ölén bújik a vad.
@@ -413,35 +415,35 @@ require_once __DIR__ . '/init.php';
                             Nógrád megye, szíved dalol,
                             mert itt a természet maga szól!</p>
                         </div>
-                        <div class="accent-button button">
-                            <a href="blog.php">Ugrás a hozzászólásokra</a>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="box-video">
-                            <div class="video-container">
-                                <video width="100%" height="520" controls>
-                                    <source src="img/video.mp4" type="video/mp4">
-                                    A böngésződ nem támogatja a videó lejátszását.
-                                </video>
+                                 <div class="accent-button button">
+                                     <a href="blog.php">Ugrás a hozzászólásokra</a>
+                                </div>
+                         </div>
+                        <div class="col-md-12">
+                            <div class="box-video">
+                                <div class="video-container">
+                                    <video width="100%" height="520" controls>
+                                        <source src="img/video.mp4" type="video/mp4">
+                                        A böngésződ nem támogatja a videó lejátszását.
+                                    </video>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </div>
-            </section>
+                </section>
                  
                <section id="contact" class="content-section">
                 <div id="map">
-                
-                	
                     <iframe src="https://maps.google.com/maps?q=N%C3%B3gr%C3%A1d+megye&t=&z=9&ie=UTF8&iwloc=&output=embed"
-                    width="80%" height="400px" frameborder="0" style="border:0" allowfullscreen></iframe>
+                            width="80%" height="400px" frameborder="0" style="border:0" allowfullscreen>
+                    </iframe>
                 </div>
+
                 <div id="contact-content">
                     <div class="section-heading">
                         <h1>Hozzászólás<br><em>Vélemény</em></h1>
                         <p>
-                            A hozzászólásokat átköltöztettük a ,mert lassan megnyílik a kapcsolat<strong>Blog</strong> oldalra.
+                            A hozzászólásokat átköltöztettük a <strong>Blog</strong> oldalra.
                             <br>
                             Menj a <a href="blog.php">Blog</a> menüpontra, és írj egy üzenetet – kíváncsiak vagyunk a véleményedre!
                         </p>
@@ -451,19 +453,15 @@ require_once __DIR__ . '/init.php';
                             <a href="blog.php">Ugrás a Blogra</a>
                         </div>
                     </div>
-                </div>
+                </div> 
             </section>
-            <section class="footer">
-                <p>Nógrádi csodák &copy; Vizsgaremek
-                
-                . 2026  //Készítette : #F.Melinda és #M.István</p>
-            </section>
-        </div>
+            <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
+                <a href="Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
+                    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                </a>
+            </footer>
 
-   
-   
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        </div> <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
     <script src="js/vendor/bootstrap.min.js"></script>
@@ -472,9 +470,6 @@ require_once __DIR__ . '/init.php';
 
     <script>
         $(document).ready(function() {
-            // A mobil menü toggle-t és a kattintást TÖRÖLTÜK innen, 
-            // mert a main.js már kezeli őket a helyes (767px) mérettel.
-
             // FEJLÉC ELREJTÉSE GÖRDÍTÉSKOR
             var didScroll;
             var lastScrollTop = 0;
@@ -497,17 +492,15 @@ require_once __DIR__ . '/init.php';
                 if(Math.abs(lastScrollTop - st) <= delta) return;
                 
                 if (st > lastScrollTop && st > navbarHeight){
-                    // Lefelé görgetésnél elrejti
                     $('header').removeClass('nav-down').addClass('nav-up');
                 } else {
-                    // Felfelé görgetésnél megjeleníti
                     if(st + $(window).height() < $(document).height()) {
                         $('header').removeClass('nav-up').addClass('nav-down');
                     }
                 }
                 lastScrollTop = st;
             }
-        }); // Itt zárul a document.ready
+        });
     </script>
 </body>
 </html>

@@ -682,6 +682,7 @@ $userLoggedIn = ($userData !== null);
                 <li><a href="contact.php"><span class="circle"></span>Kapcsolat</a></li>
             </ul>
         </nav>
+        <?php include "weather.php"; ?>
     </div>
 
     <div class="page-content">
@@ -781,9 +782,11 @@ $userLoggedIn = ($userData !== null);
             </div>
         </div>
 
-        <footer style="padding: 20px; text-align: center; color: #cd7e0f; clear: both; width: 100%; position: relative; margin-top: 50px;">
-    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
-</footer>
+        <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
+                <a href="Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
+                    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                </a>
+            </footer>
 
         <style>
             @media (max-width: 767px) {
