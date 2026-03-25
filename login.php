@@ -1,15 +1,7 @@
 <?php 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Cache tiltása az adatmaradékok ellen
+require_once __DIR__ . '/init.php';
+// Megakadályozzuk, hogy a böngésző cache-elje az oldalt
 header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
-header("Expires: 0");
-
-// A feldolgozó behívása (Mivel a process-ben nincs 'üres' átirányítás, nem lesz hurok)
-include "login_process.php"; 
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -17,51 +9,79 @@ include "login_process.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bejelentkezés - Nógrád</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body { background: #121212; font-family: 'Open Sans', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .login-box { width: calc(100% - 30px); max-width: 400px; margin: 20px auto; padding: clamp(20px, 5vw, 40px); background: rgba(255, 255, 255, 0.05); border-radius: 15px; border: 1px solid rgba(250, 250, 250, 0.1); box-shadow: 0 15px 35px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
-        .login-box h2 { color: #fff; text-align: center; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: clamp(20px, 6vw, 32px) !important; margin-bottom: clamp(15px, 4vw, 30px) !important; }
-        .login-box h2 em { font-style: normal; color: #45489a; }
-        .form-control { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; height: clamp(40px, 10vw, 50px) !important; font-size: clamp(14px, 4vw, 16px) !important; margin-bottom: 15px; }
-        .form-control:focus { background: rgba(255,255,255,0.2); border-color: #45489a; color: #fff; box-shadow: none; }
-        .btn-sentra { background-color: #45489a; color: #fff; border: none; width: 100% !important; height: clamp(45px, 10vw, 55px) !important; font-weight: 600; text-transform: uppercase; transition: 0.3s; }
-        .btn-sentra:hover { background-color: #fff; color: #45489a; }
-        hr { border-top: 1px solid rgba(255,255,255,0.1); }
-        p { color: #aaa; font-size: 13px; }
-        a { color: #45489a; text-decoration: none; }
-        a:hover { color: #fff; }
-        @media screen and (max-width: 767px) { body { height: auto; min-height: 100vh; padding: 20px 0; } }
+        .login-box { width: 400px; padding: 30px; background: rgba(255, 255, 255, 0.05); border-radius: 15px; border: 1px solid rgba(250, 250, 250, 0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .form-control { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; margin-bottom: 15px; height: 45px; }
+        .form-control:focus { background: rgba(255,255,255,0.15); color: #fff; border-color: #45489a; box-shadow: none; }
+        
+        /* Gombok stílusa */
+        .btn-sentra { background-color: #45489a; color: #fff; border: none; width: 100%; height: 50px; font-weight: 600; border-radius: 8px; transition: 0.3s; margin-bottom: 10px; }
+        .btn-sentra:hover { background-color: #5659b1; }
+
+        /* VISSZA GOMB - Ugyanaz a piros, mint a linknél (#ff4d4d) */
+        .btn-back-red { background-color: #ff4d4d; color: #fff; border: none; width: 100%; height: 45px; font-weight: 600; border-radius: 8px; transition: 0.3s; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+        .btn-back-red:hover { background-color: #ff3333; color: #fff; }
+
+        /* Állapot üzenetek */
+        .status-msg { padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 20px; font-weight: 600; font-size: 14px; transition: opacity 0.5s ease; }
+        .msg-success { background: rgba(25, 135, 84, 0.2); border: 1px solid #198754; color: #2ecc71; }
+        .msg-error { background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ff4d4d; }
+        
+        /* Alsó linkek */
+        .link-forgot { color: #ff4d4d !important; text-decoration: none; transition: 0.3s; }
+        .link-forgot:hover { color: #ff8080 !important; text-decoration: underline; }
+        
+        .link-reg { color: #2ecc71 !important; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .link-reg:hover { color: #5efc9d !important; text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="login-box">
-        <h2>Nóg<em>rád</em></h2>
-        <form action="login.php" method="POST" id="loginForm">
-            <input type="text" name="uusername" placeholder="Becenév vagy Email" class="form-control" required autocomplete="off">
-            <input type="password" name="upw" placeholder="Jelszó" class="form-control" required autocomplete="new-password">
-            <button type="submit" class="btn btn-sentra">Belépés</button>
-</form>
-
-        <hr>
-
-        <p class="text-center">
-            <a href="forgot_password.php" style="color: #ff4d4d; font-weight: 600; text-decoration: none;">
-                Elfelejtetted a jelszavad?
-            </a>
-        </p>
-
-        <p class="text-center">
-            Nincs még fiókod? <a href="reg_id.php">Regisztrálj itt!</a>
-        </p>
+        <h2 class="text-center text-white mb-4">NÓG<em>RÁD</em></h2>
         
-        <p class="text-center">
-            <small>
-                <a href="#" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='index.php'; } return false;">
-                    Vissza
-                </a>
-            </small>
-        </p>
+        <div id="info-box">
+            <?php if (isset($_GET['msg'])): ?>
+                <div id="fade-msg" class="status-msg msg-success">
+                    <?php 
+                        if($_GET['msg'] == 'reg_kesz') echo "✅ Sikeres regisztráció!";
+                        if($_GET['msg'] == 'pw_updated') echo "✅ Jelszó sikeresen frissítve!";
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_GET['error'])): ?>
+                <div class="status-msg msg-error">❌ Hibás felhasználónév vagy jelszó!</div>
+            <?php endif; ?>
+        </div>
+
+        <form action="login_process.php" method="POST">
+            <input type="text" name="uusername" placeholder="Becenév vagy Email" class="form-control" required>
+            <input type="password" name="upw" placeholder="Jelszó" class="form-control" required>
+            
+            <button type="submit" class="btn btn-sentra">BELÉPÉS</button>
+            <a href="index.php" class="btn-back-red">VISSZA</a>
+        </form>
+
+        <div class="text-center mt-3">
+            <p class="small mb-1">
+                <a href="forgot_password.php" class="link-forgot">Elfelejtett jelszó?</a>
+            </p>
+            <p class="small text-white-50">
+                Nincs még fiókod? <a href="reg_id.php" class="link-reg">Regisztráció</a>
+            </p>
+        </div>
     </div>
+
+    <script>
+        const msg = document.getElementById('fade-msg');
+        if (msg) {
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                setTimeout(() => { msg.style.display = 'none'; }, 500);
+            }, 3000);
+        }
+    </script>
 </body>
+</html>

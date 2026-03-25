@@ -1,244 +1,182 @@
-<?php
-require_once __DIR__ . '/init.php';
-
-$postsFile = 'data/posts.json';
-
-// USER ADATOK BETÖLTÉSE
-$userData = null;
-if (isset($_SESSION['user_name'])) {
-    $stmt = mysqli_prepare($conn, "SELECT uusername, uname, uavatar FROM felhasznalok WHERE uusername = ?");
-    mysqli_stmt_bind_param($stmt, "s", $_SESSION['user_name']);
-    mysqli_stmt_execute($stmt);
-    $userData = mysqli_stmt_get_result($stmt)->fetch_assoc();
-}
-
-// POSZT MENTÉS
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userData) {
-
-    $posts = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
-
-    // KÉP FELTÖLTÉS
-    $img = "";
-    if (!empty($_FILES['image']['name'])) {
-        $img = time() . "_" . basename($_FILES['image']['name']);
-        move_uploaded_file($_FILES['image']['tmp_name'], "img/posts/" . $img);
-    }
-
-    $posts[] = [
-        "user" => $userData['uusername'],
-        "name" => $userData['uname'],
-        "avatar" => $userData['uavatar'] ?? "default.png",
-        "text" => $_POST['text'],
-        "image" => $img,
-        "time" => date("H:i"),
-        "likes" => 0
-    ];
-
-    file_put_contents($postsFile, json_encode($posts, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    header("Location: blog.php");
-    exit();
-}
-
-// LIKE
-if (isset($_GET['like'])) {
-    $id = $_GET['like'];
-    $posts = json_decode(file_get_contents($postsFile), true);
-    if (isset($posts[$id])) {
-        $posts[$id]['likes']++;
-        file_put_contents($postsFile, json_encode($posts, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    }
-    header("Location: blog.php");
-    exit();
-}
-
-$posts = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
-?>
-
-<!DOCTYPE html>
-<html lang="hu">
-<head>
-<meta charset="UTF-8">
-<title>Messenger Blog</title>
-
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    height: 100vh;
-    overflow: hidden;
-    background: #e5ddd5;
-}
+        /* 1. ALAPBEÁLLÍTÁSOK */
+        body { 
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('img/blog_back.jpg') no-repeat center center fixed; 
+            background-size: cover;
+        }
 
-/* KERET */
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    max-width: 500px;
-    margin: auto;
-    background: #fff;
-}
+        body.blog-page .page-content { 
+            padding: 40px; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* HEADER */
-.header {
-    padding: 10px;
-    background: #0084ff;
-    color: white;
-    font-size: 18px;
-}
+        body.blog-page .content-section { 
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+            min-height: 0;
+            padding-top: 20px !important; 
+        }
 
-/* CHAT */
-.chat {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-}
+        body.blog-page .section-heading { margin-bottom: 30px; }
 
-/* ÜZENET */
-.msg {
-    display: flex;
-    margin: 8px 0;
-}
+        /* 2. CÍM DIZÁJN (Üzenőfal Diamond) */
+        body.blog-page .section-heading h1 {
+            font-size: clamp(34px, 4vw, 50px);
+            font-weight: 900;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            padding: 12px 18px 12px 58px;
+            border-radius: 16px;
+            -webkit-text-stroke: 2px #ffffff;
+            paint-order: stroke fill;
+            background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(180,220,255,0.14) 35%, rgba(0,0,0,0.12)),
+                        radial-gradient(120% 140% at 0% 0%, rgba(90,160,255,0.22) 0%, rgba(0,0,0,0) 60%);
+            border: 1px solid rgba(120,190,255,0.55);
+            box-shadow: 0 14px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+            text-shadow: 0 10px 22px rgba(0,0,0,0.65);
+            font-family: "Trebuchet MS","Segoe UI",sans-serif;
+        }
 
-.left { justify-content: flex-start; }
-.right { justify-content: flex-end; }
+        body.blog-page .section-heading h1::before {
+            content: "◆";
+            position: absolute;
+            left: 20px; top: 50%;
+            transform: translateY(-50%);
+            color: #7fd0ff;
+            font-size: 28px;
+        }
 
-.bubble {
-    max-width: 70%;
-    padding: 10px;
-    border-radius: 15px;
-    position: relative;
-    font-size: 16px;
-}
+        body.blog-page .section-heading h1 em { color: #7fd0ff; font-style: normal; }
 
-.left .bubble {
-    background: #f1f0f0;
-}
+        body.blog-page .section-heading p {
+            font-size: clamp(18px, 2.2vw, 24px);
+            color: rgba(235,245,255,0.96) !important;
+            text-shadow: 0 8px 18px rgba(0,0,0,0.65);
+            margin-top: 16px;
+        }
 
-.right .bubble {
-    background: #0084ff;
-    color: white;
-}
+        /* 3. POSZTOK ÉS ÜZENETEK */
+        body.blog-page .feed {
+            flex: none !important;
+            height: auto !important;
+            overflow-y: visible !important;
+            padding-bottom: 60px;
+        }
 
-.name {
-    font-size: 12px;
-    opacity: 0.6;
-}
+        body.blog-page .post-card {
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            border-radius: 14px;
+            width: 92%;
+            max-width: 720px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+            border: 1px solid rgba(0,0,0,0.15) !important;
+        }
 
-/* AVATAR */
-.avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    margin: 0 5px;
-}
+        body.blog-page .other-post { background: #e6e6e6 !important; color: #000 !important; margin-left: 0; }
+        body.blog-page .my-post { background: #45489a !important; color: #fff !important; margin-left: auto; margin-right: 25px; }
 
-/* KÉP */
-.msg img.postimg {
-    max-width: 100%;
-    border-radius: 10px;
-    margin-top: 5px;
-}
+        body.blog-page .post-text {
+            font-size: calc(1.25em + 1.5px);
+            line-height: 1.5;
+        }
 
-/* LIKE */
-.like {
-    font-size: 12px;
-    margin-top: 5px;
-    cursor: pointer;
-}
+        /* 4. BEVITELI MEZŐ (COMPOSER) */
+        body.blog-page .composer {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #45489a;
+        }
 
-/* FOOTER */
-.footer {
-    padding: 8px;
-    background: #f0f0f0;
-}
+        textarea.form-control {
+            font-size: 18px !important;
+            line-height: 1.5;
+            padding: 12px;
+            background: #fff !important;
+            color: #000 !important;
+            min-height: 100px;
+        }
 
-form {
-    display: flex;
-    gap: 5px;
-}
+        textarea.form-control:focus {
+            border: 3px solid #2d5a27;
+            box-shadow: 0 0 10px rgba(45, 90, 39, 0.2);
+        }
 
-input[type=text] {
-    flex: 1;
-    padding: 8px;
-}
+        /* 5. REKLÁMOK - A HIBA JAVÍTÁSA ITT VAN */
+        body.blog-page .ads-container {
+            width: 125px; height: 600px; position: fixed; right: 20px; top: 100px;
+            background: rgba(0,0,0,0.5); border: 1px solid #45489a; z-index: 10;
+        }
 
-button {
-    padding: 8px;
-    background: #0084ff;
-    color: white;
-    border: none;
-}
+        body.blog-page .mobile-ad-bar {
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #45489a; color: white; z-index: 20005; height: 50px; overflow: hidden;
+        }
 
-/* MOBIL */
-@media(max-width:600px){
-    .bubble { font-size: 16px; }
-}
-</style>
+        body.blog-page .mobile-ad-train { display: flex; align-items: center; height: 50px; animation: adRunSide 15s linear infinite; }
+        @keyframes adRunSide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-</head>
-<body>
+        /* 6. LÁBJEGYZET (PILL) */
+        body.blog-page .site-footer-fixed {
+            position: static;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
 
-<div class="container">
+        body.blog-page .site-footer-fixed__pill {
+            background: #fff; color: #000; padding: 6px 20px;
+            border: 2px solid #d4af37; border-radius: 25px;
+            font-family: 'Georgia', serif; font-style: italic;
+        }
 
-<div class="header">💬 Messenger Blog</div>
+        /* 7. MÉDIA LEKÉRDEZÉSEK (RESPONSIVE) */
+        @media (max-width: 1001px) {
+            body.blog-page .ads-container { display: none !important; }
+            body.blog-page .mobile-ad-bar { display: block !important; } /* Itt kényszerítjük ki 1000px alatt */
+            
+            body.blog-page .page-content { 
+                display: block !important;
+                padding-top: 105px !important;
+                padding-bottom: 160px !important; 
+            }
 
-<div class="chat" id="chat">
+            body.blog-page .site-footer-fixed {
+                position: fixed;
+                left: 50%; transform: translateX(-50%);
+                bottom: 65px;
+                z-index: 20000;
+            }
+        }
 
-<?php foreach ($posts as $i => $p):
-    $mine = ($userData && $p['user'] === $userData['uusername']);
-?>
+        @media (max-width: 767px) {
+            body.blog-page .blog-mobile-nav {
+                display: block !important;
+                position: fixed !important;
+                top: 0; left: 0; width: 100%; height: 80px;
+                background: rgba(250,250,250,.95);
+                z-index: 21000 !important;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
 
-<div class="msg <?php echo $mine ? 'right' : 'left'; ?>">
+            body.blog-page #blog-mobile-menu {
+                display: none; position: fixed; top: 80px; left: 0; width: 100%;
+                background: rgba(0,0,0,0.95); z-index: 20500;
+            }
+            
+            body.blog-page #blog-mobile-menu a {
+                display: block; padding: 12px 0; text-align: center; color: #fff !important; text-decoration: none;
+            }
 
-<?php if(!$mine): ?>
-    <img src="img/profiles/<?php echo $p['avatar']; ?>" class="avatar">
-<?php endif; ?>
-
-<div class="bubble">
-
-<?php if(!$mine): ?>
-<div class="name"><?php echo htmlspecialchars($p['name']); ?></div>
-<?php endif; ?>
-
-<?php echo htmlspecialchars($p['text']); ?>
-
-<?php if(!empty($p['image'])): ?>
-<img src="img/posts/<?php echo $p['image']; ?>" class="postimg">
-<?php endif; ?>
-
-<div class="like">
-❤️ <?php echo $p['likes']; ?>
-<a href="?like=<?php echo $i; ?>">Like</a>
-</div>
-
-</div>
-
-<?php if($mine): ?>
-    <img src="img/profiles/<?php echo $p['avatar']; ?>" class="avatar">
-<?php endif; ?>
-
-</div>
-
-<?php endforeach; ?>
-
-</div>
-
-<div class="footer">
-<form method="POST" enctype="multipart/form-data">
-<input type="text" name="text" placeholder="Írj üzenetet..." required>
-<input type="file" name="image">
-<button>Küld</button>
-</form>
-</div>
-
-</div>
-
-<script>
-// AUTO SCROLL ALJÁRA
-let chat = document.getElementById("chat");
-chat.scrollTop = chat.scrollHeight;
-</script>
-
-</body>
-</html>
+            body.blog-page .blog-mobile-nav__toggle .icon-bar {
+                display: block; width: 22px; height: 2px; background-color: #3498db; margin: 4px 0;
+            }
+        }
+    </style>

@@ -30,6 +30,7 @@ p {
   .page-content {
     min-width: 0 !important;
     max-width: 100% !important;
+    padding: -13px !important;
   }
 }
 
@@ -717,150 +718,6 @@ header {
     bottom: 0 !important;
     background-color: #31347a;
 }
-
-
-/* Projects Style */
-
-#projects {
-  padding-left: 60px;
-  padding-right: 60px;
-  padding-bottom: 50px;
-}
-
-#projects .masonry {
-  position: relative;
-  width: 100%;
-}
-
-#projects .masonry .item img {
-  transition: all 1s;
-  width: 100%;
-  overflow: hidden;
-  margin-bottom: 30px;
-}
-
-/* Főoldal: 3 random kép (Galéria rács) - max 300x300 */
-#projects .section-content .item a {
-  display: block;
-}
-
-#projects .section-content .item a > img.img-responsive {
-  width: 100%;
-  max-width: 300px;
-  height: 300px;
-  object-fit: cover;
-  display: block;
-  margin: 0 auto; /* középre igazítás a kártyán belül */
-}
-
-#projects .masonry .item img:hover {
-  opacity: 0.5;
-}
-
-
-
-/* Video Presentation Style */
-
-#video {
-  text-align: center;
-  background-color: #f4f4f4;
-  padding: 100px 60px;
-}
-
-#video .section-heading {
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-#video .section-heading h1 {
-  display: block;
-  margin: 0px;
-}
-
-#video .section-heading p {
-  position: relative;
-  margin: 0px;
-}
-
-#video .accent-button {
-  margin-top: 30px;
-}
-
-.box-video{
-  width: 100%;
-  position: relative;
-  margin-top: 30px;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.box-video .bg-video{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  z-index: 2;
-}
-
-.box-video .video-container{
-  position: relative;
-  margin: 0;
-  z-index: 1;
-}
-
-.box-video .bt-play {
-  position: absolute;
-  top:50%;
-  left:50%;
-  margin:-30px 0 0 -30px;
-  display: inline-block;
-  width: 60px;
-  height: 60px;
-  background:#fff;
-  border-radius: 50%;
-  text-indent: -999em;
-  cursor: pointer;
-  z-index:2;
-  -webkit-transition: all .3s ease-out;
-  transition: all .3s ease-out;
-}
-.box-video .bt-play:after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 0;
-  width: 0;
-  margin: -12px 0 0 -6px;
-  border: solid transparent;
-  border-left-color: #000;
-  border-width: 12px 20px;
-  -webkit-transition: all .3s ease-out;
-  transition: all .3s ease-out;
-}
-.box-video:hover .bt-play {
-  transform: scale(1.1);
-}
-
-.box-video.open .bg-video{
-  visibility: hidden;
-  opacity: 0;
-  -webkit-transition: all .6s .8s;
-  transition: all .6s .8s;  
-}
-.box-video.open .video-container{
-  opacity: 1;
-  -webkit-transition: all .6s .8s;
-  transition: all .6s .8s;
-}
-
-
-
-
 /* Blog Style */
 
 #blog {
@@ -1218,24 +1075,218 @@ header.responsive-nav {
         border-bottom: 1px solid rgba(255,255,255,0.1);
     }
   }
-    /*2026.03.23*/
-    header {
-        transition: top 0.3s ease-in-out;
-        width: 100%;
+/* 2026.03.25 - CÍM ÉS SZEGÉLYEK JAVÍTÁSA */
+ /* ==========================================================================
+   NÓGRÁD JAVÍTÁS - ALCÍM ÉS TÉRKÉP FIXÁLÁSA
+   ========================================================================== */
+
+header { transition: top 0.3s ease-in-out; width: 100%; }
+.nav-up { top: -100px !important; }
+.nav-down { top: 0 !important; }
+.sidebar-navigation { position: relative; }
+
+/* CÍM ÉS ALCÍM: Fix pozíció, hogy ne ússzon el semmi */
+#video .section-heading {
+    text-align: left !important;
+    border-left: 5px solid #45489a !important;
+    padding-left: 20px !important;
+    margin: 0 auto 20px auto !important; /* 20px távolság a lenti doboztól */
+    width: 85% !important;
+    position: relative !important;
+    display: block !important;
+}
+
+#video .section-heading h1 {
+    color: #1a1a1a !important;
+    font-size: 32px;
+    margin: 0 0 5px 0 !important;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+/* AZ ALCÍM FIXÁLÁSA: Kényszerítjük, hogy maradjon a cím alatt */
+#video .section-heading p {
+    position: static !important; /* Megszünteti az elcsúszást */
+    display: block !important;
+    color: #555 !important;
+    font-size: 16px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+
+/* BEMUTATÓ BOX (Papír effekt) */
+.fix-mobil-box {
+    background: #fdfaf1 !important; 
+    background-image: radial-gradient(#dcd7c5 0.5px, transparent 0.5px) !important;
+    background-size: 20px 20px;
+    border: 1px solid #e3dec9 !important;
+    padding: 40px !important;
+    margin: 0 auto 40px auto !important;
+    width: 85% !important;
+    display: block !important;
+    float: none !important;
+    box-shadow: 10px 10px 30px rgba(0,0,0,0.1);
+    font-style: italic; 
+    line-height: 1.8;
+    color: #2c2c2c !important;
+}
+
+.fix-mobil-box * { color: #2c2c2c !important; }
+
+/* VIDEO & TÉRKÉP - DINAMIKUS MÉRETEZÉS */
+.box-video-fix {
+    width: 50% !important; 
+    max-width: 900px;
+    margin: 0 auto 50px auto !important;
+}
+
+/* TÉRKÉP: Alacsonyabb asztali nézetben, hogy ne legyen batár nagy */
+.map-fix-container {
+    width: 60% !important;
+    max-width: 1000px;
+    height: 350px !important; /* Itt állítjuk be, hogy alacsonyabb legyen */
+    margin: 0 auto 40px auto !important;
+    display: block !important;
+}
+
+.box-video-fix video, .map-fix-container iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: 5px solid #fff !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    border-radius: 8px;
+}
+
+/* MOBIL NÉZET (767px alatt) - 10px MARGÓK MINDENRE */
+@media (max-width: 767px) {
+    #video .section-heading,
+    .fix-mobil-box, 
+    .box-video-fix, 
+    .map-fix-container {
+        width: calc(100% - 20px) !important; 
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+        padding: 20px 15px !important;
+        float: none !important;
     }
 
-    .nav-up {
-        top: -100px !important; /* Elrejti a fejlécet felfelé görgetéskor */
+    .map-fix-container {
+        height: 300px !important; /* Mobilon még kicsit alacsonyabb */
     }
 
-    .nav-down {
-        top: 0 !important; /* Visszahozza */
+    #video .section-heading p {
+        font-size: 14px !important;
     }
-    /*2026.03.23 vége*/
-    /*03.24*/
-    .sidebar-navigation {
-    position: relative; /* EZ KELL AHHOZ, HOGY AZ ALJÁRA TUDJUK RÖGZÍTENI */
-    /* A többi meglévő stílusod (width, height, background, stb.) maradjon itt... */
-    }
+}
 
-    /*03.24*/
+footer { width: 100% !important; margin-left: 0 !important; }
+
+/* ==========================================================================
+   FŐOLDALI GALÉRIA KÉPEK (3 RANDOM KOCKA)
+   ========================================================================== */
+
+/* Asztali nézet: Fix 150x150px */
+.galeria-random-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.galeria-random-img {
+    width: 150px !important;
+    height: 150px !important;
+    object-fit: cover; /* Biztosítja, hogy ne torzuljon a kép a vágásnál */
+    border-radius: 8px;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.galeria-random-img:hover {
+    transform: scale(1.05);
+}
+
+/* Mobil nézet (767px alatt): Automata szélesség */
+@media (max-width: 767px) {
+    .galeria-random-img {
+        width: calc(50% - 20px) !important; /* Mobilon egymás mellett kettő, vagy... */
+        height: auto !important;           /* ...ha egyet akarsz soronként, legyen 100% */
+        aspect-ratio: 1 / 1;               /* Megtartja a kocka formát mobilon is */
+        margin: 5px;
+    }
+    
+    .galeria-random-wrapper {
+        gap: 10px;
+        padding: 0 10px;
+    }
+    /* ==========================================================================
+   KAPCSOLAT ŰRLAP FIXEK
+   ========================================================================== */
+
+#contact-content {
+    width: 85% !important;
+    margin: 0 auto !important;
+    text-align: left;
+}
+
+/* Egyedi input stílus */
+.form-control-custom {
+    width: 100%;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e3dec9;
+    border-radius: 4px;
+    padding: 0 15px;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* Nagy üzenetbox - Térkép magasságú (kb 350px) */
+.textarea-custom {
+    width: 100%;
+    height: 350px; /* Itt állítjuk be, hogy akkora legyen, mint a térkép */
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e3dec9;
+    border-radius: 4px;
+    padding: 15px;
+    font-size: 16px;
+    resize: none; /* Ne lehessen össze-vissza húzgálni */
+}
+
+/* Szép kék gomb */
+.btn-sentra-blue {
+    background-color: #45489a !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 12px 35px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.btn-sentra-blue:hover {
+    background-color: #5659b1 !important;
+    box-shadow: 0 5px 15px rgba(69, 72, 154, 0.4);
+}
+
+/* Mobil nézet korrekció */
+@media (max-width: 767px) {
+    #contact-content {
+        width: calc(100% - 20px) !important;
+        margin-left: 10px !important;
+        padding: 0 10px;
+    }
+    
+    .textarea-custom {
+        height: 250px; /* Mobilon kicsit alacsonyabb, hogy kényelmesebb legyen */    
+      }
+  }
+}

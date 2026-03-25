@@ -216,14 +216,12 @@ $userLoggedIn = ($userData !== null);
                 min-height: 0; /* fontos: különben a flex-gyerek (feed) nem tud rendesen összemenni */
             }
 
-            /* A feed a "rugalmas közép": kitölti a maradék helyet és görgethető */
-            body.blog-page .feed{
-                flex: 1 1 auto;
-                min-height: 0; /* fontos a scrollhoz flex környezetben */
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                padding-right: 6px; /* hogy a scrollbar ne takarjon */
-            }
+                body.blog-page .feed {
+                    flex: none !important;      /* Kikapcsoljuk a rugalmas méretezést */
+                    height: auto !important;    /* Hagyjuk, hogy olyan hosszú legyen, amilyen az üzenetek listája */
+                    overflow-y: visible !important; /* Ne legyen belső görgetősáv */
+                    padding-right: 0;           /* Mobilon nincs szükség a scrollbar eltolásra */
+                }
 
             /* Mobilon a fix footer + mobil reklámsáv miatt a FEED aljára kell hely,
                különben az utolsó üzenet alá/fölé belóg. */
@@ -494,12 +492,14 @@ $userLoggedIn = ($userData !== null);
                 body.blog-page .page-content { padding-right: 40px; } /* vissza az alap paddingre */
             }
 
-            /* 1001px alatt: a mobil alsó reklám sáv legyen 50px magas */
+            /* 1001px alatt: Stabilizálás és a reklámsáv javítása */
             @media (max-width: 1001px) {
-                body.blog-page .mobile-ad-bar {
-                    display: block;
-                    height: 50px;
-                    padding: 0;
+                /* 1. Megszüntetjük a rángatást: az oldal magassága legyen rugalmas */
+                body.blog-page .page-content {
+                    display: block !important;
+                    height: auto !important;
+                    min-height: 100vh;
+                    padding-bottom: 180px !important; /* Elég hely a reklámnak és a footernek */
                 }
                 body.blog-page .mobile-ad-train {
                     height: 50px;
@@ -632,7 +632,34 @@ $userLoggedIn = ($userData !== null);
 @media (min-width: 768px){
   body.blog-page .blog-mobile-nav{ display:none !important; }
   body.blog-page #blog-mobile-menu{ display:none !important; }
+ 
 }
+ textarea.form-control:focus {
+    border: 3px solid #2d5a27; /* A te zölded */
+    box-shadow: 0 0 10px rgba(45, 90, 39, 0.2);
+    outline: none;
+}
+textarea.form-control {
+    font-size: 18px !important; /* Itt állítod a betűméretet */
+    line-height: 1.5;           /* A sorköz, hogy ne érjenek össze a betűk */
+    padding: 12px;              /* Hogy legyen hely a szöveg körül */
+}
+
+@media (max-width: 1001px) {
+    body.blog-page .mobile-ad-bar {
+        display: block !important;
+        position: fixed !important;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        background: #45489a;
+        z-index: 99999;
+    }
+
+    body.blog-page .page-content {
+        padding-bottom: 120px !important;
+    }
 </style>
 
     <!-- BLOG mobil hamburger menü (767px alatt) - index stílus: fehér header, középen gomb -->
@@ -697,7 +724,10 @@ $userLoggedIn = ($userData !== null);
                     <?php if($userLoggedIn): ?>
                     <div class="composer">
                         <form action="blog.php" method="POST" enctype="multipart/form-data">
-                            <textarea name="text" class="form-control" rows="3" placeholder="Írj valamit a falra..." required style="background: #fff; color: #000;"></textarea>
+                            <textarea name="text" class="form-control" rows="5" 
+          placeholder="Írj valamit a falra..." 
+          required="" 
+          style="background: #fff; color: #000; font-size: 18px; min-height: 66px;"></textarea>
                             <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                                 <input type="file" name="image" class="form-control" style="max-width: 320px; background:#fff;">
                                 <button type="submit" class="btn btn-primary" style="background:#45489a; border:none; padding:10px 30px;">Küldés</button>

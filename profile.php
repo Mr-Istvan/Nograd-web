@@ -1,11 +1,8 @@
 <?php
 require_once __DIR__ . '/init.php';
 
-// 1. Gyorsítótár (cache) teljes tiltása
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
-
 
 if (!isset($_SESSION['user_name'])) { 
     header("Location: login.php"); 
@@ -17,10 +14,6 @@ $stmt = mysqli_prepare($conn, "SELECT * FROM felhasznalok WHERE uusername = ?");
 mysqli_stmt_bind_param($stmt, "s", $session_user);
 mysqli_stmt_execute($stmt);
 $user = mysqli_stmt_get_result($stmt)->fetch_assoc();
-
-if ($user && !isset($_SESSION['uid'])) {
-    $_SESSION['uid'] = $user['uid'];
-}
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -36,18 +29,16 @@ if ($user && !isset($_SESSION['uid'])) {
         .glass-card { background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .profile-img-wrap { width: 100px; height: 100px; margin: 0 auto 15px; border: 3px solid #0dcaf0; border-radius: 18px; overflow: hidden; background: #222; }
         .profile-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .form-control { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.2); color: white !important; border-radius: 10px; font-size: 14px; padding: 10px 15px; }
-        .form-control:focus { background: rgba(255,255,255,0.12); border-color: #0dcaf0; box-shadow: none; }
-        .form-control[readonly] { background: rgba(0,0,0,0.3); color: #6c757d !important; cursor: not-allowed; }
+        .form-control { background: rgba(255,255,255,0.07) !important; border: 1px solid rgba(255,255,255,0.2) !important; color: white !important; border-radius: 10px; font-size: 14px; padding: 10px 15px; }
+        .form-control:focus { background: rgba(255,255,255,0.12) !important; border-color: #0dcaf0 !important; box-shadow: none !important; }
+        .form-control[readonly] { background: rgba(0,0,0,0.3) !important; color: #6c757d !important; cursor: not-allowed; }
         .btn-update { background: #0dcaf0; color: black; font-weight: 700; border: none; border-radius: 0 10px 10px 0; padding: 0 15px; font-size: 11px; text-transform: uppercase; transition: 0.3s; }
-        .btn-update:hover { background: #0bb5d9; transform: scale(1.02); }
         .btn-pw { background: #0dcaf0; color: black; font-weight: 700; border: none; width: 100%; border-radius: 10px; height: 45px; font-size: 13px; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
-        .btn-pw:hover { background: #0bb5d9; box-shadow: 0 0 15px rgba(13, 202, 240, 0.4); }
+        .status-msg { padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 20px; font-weight: 600; font-size: 14px; }
+        .msg-success { background: rgba(25, 135, 84, 0.2); border: 1px solid #198754; color: #2ecc71; }
+        .msg-error { background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ff4d4d; }
         h2 em { font-style: normal; color: #0dcaf0; }
-        hr { opacity: 0.1; margin: 25px 0; }
-        label { margin-bottom: 5px; font-weight: 600; }
-        /* Rejtett csapda a böngészőnek */
-        .hidden-trap { position: absolute; visibility: hidden; width: 0; height: 0; overflow: hidden; }
+        label { margin-bottom: 5px; font-weight: 600; display: block; }
     </style>
 </head>
 <body>
@@ -63,52 +54,63 @@ if ($user && !isset($_SESSION['uid'])) {
 
     <div class="glass-card">
         <h5 class="mb-4 text-center">Beállí<em>tások</em></h5>
-        
-        <div class="mb-4 position-relative">
-            <div class="hidden-trap">
-                <input type="text" name="fake_user_name_to_avoid_autofill">
-            </div>
+
+        <div id="msg-box">
+            <?php if (isset($_GET['msg'])): ?>
+                <div class="status-msg msg-success">
+                    <?php 
+                        if($_GET['msg'] == 'email_kesz') echo "✅ Email cím frissítve!";
+                        if($_GET['msg'] == 'kep_kesz') echo "✅ Profilkép frissítve!";
+                        if($_GET['msg'] == 'pw_kesz') echo "✅ Jelszó módosítva!";
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_GET['error'])): ?>
+                <div class="status-msg msg-error">
+                    <?php 
+                        if($_GET['error'] == 'wrong_pw') echo "❌ Hibás jelenlegi jelszó!";
+                        if($_GET['error'] == 'match_or_empty') echo "❌ A jelszavak nem egyeznek!";
+                        else echo "❌ Hiba történt!";
+                    ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="mb-4">
             <label class="small text-warning">Becenév</label>
             <input type="text" class="form-control" value="<?php echo htmlspecialchars($user['uusername']); ?>" readonly tabindex="-1">
         </div>
 
-        <form action="update_profile.php" method="POST" class="mb-4" autocomplete="off">
-            <div class="hidden-trap">
-                <input type="email" name="fake_email_to_avoid_autofill">
-            </div>
-            <label class="small text-secondary">Email cím frissítése</label>
+        <form action="update_profile.php" method="POST" class="mb-4">
+            <label class="small text-secondary">Email cím</label>
             <div class="input-group">
-                <input type="email" name="uemail_new" class="form-control" 
-                       value="<?php echo htmlspecialchars($user['uemail'] ?? ''); ?>" 
-                       autocomplete="one-time-code" required> 
+                <input type="email" name="uemail_new" class="form-control" value="<?php echo htmlspecialchars($user['uemail'] ?? ''); ?>" required> 
                 <button type="submit" name="save_email" class="btn btn-update">Mentés</button>
             </div>
         </form>
 
         <form action="update_profile.php" method="POST" enctype="multipart/form-data" class="mb-4">
-            <label class="small text-secondary">Új profilkép feltöltése</label>
+            <label class="small text-secondary">Új profilkép</label>
             <div class="input-group">
                 <input type="file" name="uavatar" class="form-control" style="border-radius: 10px 0 0 10px;" required>
                 <button type="submit" name="save_avatar" class="btn btn-update">OK</button>
             </div>
         </form>
 
-        <hr>
+        <hr style="opacity:0.1">
 
-        <form action="update_profile.php" method="POST" id="pwForm" autocomplete="off">
-            <div class="hidden-trap">
-                <input type="password" name="fake_password_to_avoid_autofill">
-            </div>
-            <label class="small text-secondary">Biztonságos jelszóváltás</label>
-            <input type="password" name="old_pw" class="form-control mb-2" placeholder="Jelenlegi jelszó" autocomplete="new-password" required>
-            <input type="password" name="new_pw" id="p1" class="form-control mb-2" placeholder="Új jelszó" autocomplete="new-password" required>
-            <input type="password" name="new_confirm" id="p2" class="form-control mb-3" placeholder="Új jelszó újra" autocomplete="new-password" required>
+        <form action="update_profile.php" method="POST" id="pwForm">
+            <label class="small text-secondary">Jelszóváltás</label>
+            <input type="password" name="old_pw" class="form-control mb-2" placeholder="Jelenlegi jelszó" required>
+            <input type="password" name="new_pw" id="p1" class="form-control mb-2" placeholder="Új jelszó" required>
+            <input type="password" name="new_confirm" id="p2" class="form-control mb-3" placeholder="Új jelszó újra" required>
             <button type="submit" name="save_pw" class="btn btn-pw shadow">Módosítás mentése</button>
         </form>
     </div>
 
     <div class="text-center small">
-        <a href="#" class="text-info text-decoration-none" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='index.php'; } return false;">← Vissza</a>
+        <a href="index.php" class="text-info text-decoration-none" style="font-weight: 700;">← VISSZA</a>
         <span class="mx-2 text-muted">|</span>
         <a href="logout.php" class="text-danger text-decoration-none">Kijelentkezés</a>
     </div>
@@ -116,21 +118,12 @@ if ($user && !isset($_SESSION['uid'])) {
 
 <script>
     document.getElementById('pwForm').onsubmit = function(e) {
-        const p1 = document.getElementById('p1').value;
-        const p2 = document.getElementById('p2').value;
-        if(p1 !== p2) {
+        if(document.getElementById('p1').value !== document.getElementById('p2').value) {
             e.preventDefault();
-            alert("A két új jelszó nem egyezik meg!");
+            document.getElementById('msg-box').innerHTML = '<div class="status-msg msg-error">❌ A jelszavak nem egyeznek!</div>';
         }
     };
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const msg = urlParams.get('msg');
-    if (msg === 'email_kesz') alert("Sikeres email frissítés!");
-    if (msg === 'kep_kesz') alert("Profilkép frissítve!");
-    if (msg === 'pw_kesz') alert("Jelszó sikeresen módosítva!");
-    if (urlParams.has('error')) alert("Hiba történt!");
+    setTimeout(() => { document.querySelectorAll('.status-msg').forEach(el => el.remove()); }, 4000);
 </script>
-
 </body>
 </html>

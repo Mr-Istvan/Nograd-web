@@ -125,6 +125,8 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
                     <li><a href="szallasok.php"><span class="rect"></span><span class="circle"></span>Szállások</a></li>
                     <li><a href="gasztronomia.php"><span class="rect"></span><span class="circle"></span>Gasztro</a></li>
                     <li><a href="turazas.php"><span class="rect"></span><span class="circle"></span>Túrázás</a></li>
+                    <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
+                </ul>
                 </ul>
             </nav>
             <?php include "../weather.php"; ?>

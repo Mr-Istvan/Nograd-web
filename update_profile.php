@@ -1,61 +1,55 @@
 <?php
 require_once __DIR__ . '/init.php';
 
-// Felhasználó azonosítása
-if (isset($_SESSION['uid'])) {
-    $uid = $_SESSION['uid'];
-} elseif (isset($_SESSION['user_name'])) {
+// Felhasználó azonosítása (Session alapján)
+$uid = $_SESSION['uid'] ?? null;
+if (!$uid && isset($_SESSION['user_name'])) {
     $uname = $_SESSION['user_name'];
     $res = mysqli_query($conn, "SELECT uid FROM felhasznalok WHERE uusername = '$uname'");
-    $row = mysqli_fetch_assoc($res);
-    $uid = $row['uid'] ?? null;
+    $uid = mysqli_fetch_assoc($res)['uid'] ?? null;
     if($uid) $_SESSION['uid'] = $uid;
 }
-
 if (!$uid) { header("Location: login.php"); exit(); }
 
-$user_res = mysqli_query($conn, "SELECT uavatar, upw, uemail FROM felhasznalok WHERE uid = $uid");
-$user_data = mysqli_fetch_assoc($user_res);
+$user_data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT uavatar, upw, uemail FROM felhasznalok WHERE uid = $uid"));
 
-// --- [ A ] EMAIL MENTÉSE (JAVÍTVA) ---
-if (isset($_POST['save_email'])) {
-    // Itt a trükk: uemail_new-t nézzük, mert a formban ezt adtuk meg!
-    $email_field = isset($_POST['uemail_new']) ? $_POST['uemail_new'] : (isset($_POST['uemail']) ? $_POST['uemail'] : '');
-    $new_email = trim(mysqli_real_escape_string($conn, $email_field));
-    
-    if (!empty($new_email)) {
-        mysqli_query($conn, "UPDATE felhasznalok SET uemail = '$new_email' WHERE uid = $uid");
-        
-        // Cache-Control fejlécek a biztonság kedvéért
-        header("Cache-Control: no-cache, must-revalidate");
-        // A v=time() paraméter garantálja, hogy a böngésző új kérést küldjön, ne a régit mutassa
-        header("Location: profile.php?msg=email_kesz&v=" . time());
-    } else {
-        header("Location: profile.php?error=ures_email");
-    }
+// A "MÁGIA": Ez a függvény kicseréli az aktuális oldalt az előzményekben
+function redirect($url) {
+    echo "<script>window.location.replace('$url');</script>";
     exit();
 }
 
-// --- [ B ] PROFILKÉP (Változatlan) ---
+// --- [ A ] EMAIL MENTÉSE ---
+if (isset($_POST['save_email'])) {
+    $new_email = trim(mysqli_real_escape_string($conn, $_POST['uemail_new'] ?? $_POST['uemail'] ?? ''));
+    if (!empty($new_email)) {
+        mysqli_query($conn, "UPDATE felhasznalok SET uemail = '$new_email' WHERE uid = $uid");
+        redirect("profile.php?msg=email_kesz&v=".time());
+    }
+    redirect("profile.php?error=ures_email");
+}
+
+// --- [ B ] PROFILKÉP (Átméretezéssel és konvertálással) ---
 if (isset($_POST['save_avatar']) && isset($_FILES['uavatar']) && $_FILES['uavatar']['error'] === 0) {
     $target_dir = "img/profiles/";
-    if (!is_dir($target_dir)) { mkdir($target_dir, 0777, true); }
     $img_name = time() . "_" . $uid . ".jpg";
-    $target_path = $target_dir . $img_name;
     $source_path = $_FILES['uavatar']['tmp_name'];
     $info = getimagesize($source_path);
+
     if ($info) {
-        $src = null;
-        if ($info[2] == IMAGETYPE_JPEG) $src = imagecreatefromjpeg($source_path);
-        elseif ($info[2] == IMAGETYPE_PNG) $src = imagecreatefrompng($source_path);
-        elseif ($info[2] == IMAGETYPE_GIF) $src = imagecreatefromgif($source_path);
+        // Kép betöltése típus szerint (rövidített forma)
+        $src = ($info[2] == IMAGETYPE_JPEG) ? imagecreatefromjpeg($source_path) : 
+               (($info[2] == IMAGETYPE_PNG) ? imagecreatefrompng($source_path) : 
+               (($info[2] == IMAGETYPE_GIF) ? imagecreatefromgif($source_path) : null));
+
         if ($src) {
             $new_img = imagecreatetruecolor(100, 100);
-            imagealphablending($new_img, false);
-            imagesavealpha($new_img, true);
+            imagealphablending($new_img, false); imagesavealpha($new_img, true);
             imagecopyresampled($new_img, $src, 0, 0, 0, 0, 100, 100, $info[0], $info[1]);
-            if (imagejpeg($new_img, $target_path, 85)) {
+            
+            if (imagejpeg($new_img, $target_dir . $img_name, 85)) {
                 mysqli_query($conn, "UPDATE felhasznalok SET uavatar = '$img_name' WHERE uid = $uid");
+                // Régi kép törlése, ha nem az alapértelmezett
                 if (!empty($user_data['uavatar']) && $user_data['uavatar'] != 'default.png' && file_exists($target_dir . $user_data['uavatar'])) {
                     @unlink($target_dir . $user_data['uavatar']);
                 }
@@ -63,41 +57,34 @@ if (isset($_POST['save_avatar']) && isset($_FILES['uavatar']) && $_FILES['uavata
             imagedestroy($new_img); imagedestroy($src);
         }
     }
-    header("Location: profile.php?msg=kep_kesz&v=" . time());
-    exit();
+    redirect("profile.php?msg=kep_kesz&v=".time());
 }
 
-// --- [ C ] JELSZÓ (Változatlan) ---
+// --- [ C ] JELSZÓ MÓDOSÍTÁSA ---
 if (isset($_POST['save_pw'])) {
-    $old_pw = $_POST['old_pw'];
-    $new_pw = $_POST['new_pw'];
-    $confirm = $_POST['new_confirm'];
-    if (!empty($old_pw) && !empty($new_pw) && $new_pw === $confirm) {
+    $old_pw = $_POST['old_pw'] ?? '';
+    $p1 = $_POST['new_pw'] ?? '';
+    $p2 = $_POST['new_confirm'] ?? '';
+
+    if (!empty($old_pw) && $p1 === $p2 && !empty($p1)) {
         if (password_verify($old_pw, $user_data['upw'])) {
-            $hashed = password_hash($new_pw, PASSWORD_DEFAULT);
-            $stmt = mysqli_prepare($conn, "UPDATE felhasznalok SET upw = ? WHERE uid = ?");
-            mysqli_stmt_bind_param($stmt, "si", $hashed, $uid);
-            mysqli_stmt_execute($stmt);
-            header("Location: profile.php?msg=pw_kesz");
-        } else {
-            header("Location: profile.php?error=wrong_pw");
+            $hashed = password_hash($p1, PASSWORD_DEFAULT);
+            mysqli_query($conn, "UPDATE felhasznalok SET upw = '$hashed' WHERE uid = $uid");
+            redirect("profile.php?msg=pw_kesz");
         }
-    } else {
-        header("Location: profile.php?error=match_or_empty");
+        redirect("profile.php?error=wrong_pw");
     }
-    exit();
+    redirect("profile.php?error=match_or_empty");
 }
 
+// --- [ D ] TITKOS KÉRDÉS MENTÉSE ---
 if (isset($_POST['save_secret'])) {
-    $q = mysqli_real_escape_string($conn, $_POST['usecret_q']);
-    $a = mysqli_real_escape_string($conn, strtolower(trim($_POST['usecret_a'])));
-    
+    $q = mysqli_real_escape_string($conn, $_POST['usecret_q'] ?? '');
+    $a = mysqli_real_escape_string($conn, strtolower(trim($_POST['usecret_a'] ?? '')));
     if (!empty($q) && !empty($a)) {
         mysqli_query($conn, "UPDATE felhasznalok SET usecret_q = '$q', usecret_a = '$a' WHERE uid = $uid");
-        header("Location: profile.php?msg=secret_ok");
-        exit();
+        redirect("profile.php?msg=secret_ok");
     }
 }
-header("Location: profile.php");
-exit();
-?>
+
+redirect("profile.php");

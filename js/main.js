@@ -113,8 +113,8 @@ $('#main-nav a').on('click', function() {
         contentSection.each(function() {
             var sectionName = $(this).attr('id');
             var navigationMatch = $('nav a[href="#' + sectionName + '"]');
-            if (($(this).offset().top - $(window).height() / 2 < $(window).scrollTop()) &&
-                ($(this).offset().top + $(this).height() - $(window).height() / 2 > $(window).scrollTop())) {
+        if (($(this).offset().top - $(window).height() / 2 <= $(window).scrollTop()) &&
+            ($(this).offset().top + $(this).height() - $(window).height() / 2 > $(window).scrollTop())) {
                 navigationMatch.addClass('active-section');
             } else {
                 navigationMatch.removeClass('active-section');

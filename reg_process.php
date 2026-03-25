@@ -1,97 +1,67 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once __DIR__ . '/init.php';
 
-// Ha nem a formon keresztül érkezett a kérés, visszaküldjük a regisztrációhoz
-if ($_SERVER["REQUEST_METHOD"] != "POST" || !isset($_POST['uemail'])) {
-    header("Location: reg_id.php");
+// Csak POST kérést fogadunk a biztonság érdekében
+if ($_SERVER["REQUEST_METHOD"] != "POST") { 
+    header("Location: reg_id.php"); 
+    exit(); 
+}
+
+// Függvény a hibaüzenetek stabil átadásához
+function backWithError($err) {
+    echo "<script>window.location.replace('reg_id.php?error=$err');</script>";
     exit();
 }
 
-// 1. ADATOK ÁTVÉTELE ÉS TISZTÍTÁSA
-$uname_raw     = trim($_POST['uname'] ?? '');
-$uusername_raw = trim($_POST['uusername'] ?? '');
-$uemail_raw    = trim($_POST['uemail'] ?? '');
-$pass1         = (string)($_POST['pass1'] ?? '');
-$pass2         = (string)($_POST['pass2'] ?? '');
+// Adatok tisztítása
+$uname     = mysqli_real_escape_string($conn, trim($_POST['uname'] ?? ''));
+$uusername = mysqli_real_escape_string($conn, trim($_POST['uusername'] ?? ''));
+$uemail    = mysqli_real_escape_string($conn, trim($_POST['uemail'] ?? ''));
+$pass1     = $_POST['pass1'] ?? '';
+$pass2     = $_POST['pass2'] ?? '';
+$usecret_q = mysqli_real_escape_string($conn, $_POST['usecret_q'] ?? '');
+$usecret_a = mysqli_real_escape_string($conn, strtolower(trim($_POST['usecret_a'] ?? '')));
 
-// Biztonsági kérdés/válasz
-$usecret_q_raw = trim($_POST['usecret_q'] ?? '');
-$usecret_a_raw = trim($_POST['usecret_a'] ?? '');
-
-$uname     = mysqli_real_escape_string($conn, $uname_raw);
-$uusername = mysqli_real_escape_string($conn, $uusername_raw);
-$uemail    = mysqli_real_escape_string($conn, $uemail_raw);
-
-$usecret_q = mysqli_real_escape_string($conn, $usecret_q_raw);
-$usecret_a = mysqli_real_escape_string($conn, strtolower($usecret_a_raw));
-
-// 2. ELLENŐRZÉSEK
-
-// Kötelező mezők ellenőrzése
-if ($uname === '' || $uusername === '' || $uemail === '' || $pass1 === '') {
-    echo "<script>alert('Minden kötelező mezőt ki kell tölteni!'); window.location.replace('reg_id.php');</script>";
-    exit();
+// 1. Üres mezők ellenőrzése
+if (empty($uname) || empty($uusername) || empty($uemail) || empty($pass1)) {
+    backWithError('empty');
 }
 
-// Jelszavak egyeznek?
+// 2. Jelszó ellenőrzések
 if ($pass1 !== $pass2) {
-    echo "<script>alert('A két jelszó nem egyezik!'); window.location.replace('reg_id.php');</script>";
-    exit();
+    backWithError('match');
 }
-
-// Jelszó hossza (min 6 karakter)
 if (strlen($pass1) < 6) {
-    echo "<script>alert('A jelszónak legalább 6 karakter hosszúnak kell lennie!'); window.location.replace('reg_id.php');</script>";
-    exit();
+    backWithError('short');
 }
 
-// Jelszó hossza (max 36 karakter)
-if (strlen($pass1) > 36) {
-    echo "<script>alert('A jelszó maximum 36 karakter lehet!'); window.location.replace('reg_id.php');</script>";
-    exit();
+// 3. Foglaltság ellenőrzése
+$check = mysqli_query($conn, "SELECT uid FROM felhasznalok WHERE uemail = '$uemail' OR uusername = '$uusername'");
+if (mysqli_num_rows($check) > 0) {
+    backWithError('taken');
 }
 
-// Létezik-e már az email vagy a becenév?
-$checkUser = mysqli_query($conn, "SELECT uid FROM felhasznalok WHERE uemail = '$uemail' OR uusername = '$uusername'");
-if (mysqli_num_rows($checkUser) > 0) {
-    echo "<script>alert('Ez az email cím vagy becenév már foglalt!'); window.location.replace('reg_id.php');</script>";
-    exit();
-}
-
-// 3. JELSZÓ TITKOSÍTÁSA ÉS STÁTUSZ
-$upw = password_hash($pass1, PASSWORD_DEFAULT);
-$ustatus = 'A'; // Alapértelmezett: Aktív
-
-// 4. EGYEDI AZONOSÍTÓ (usess) GENERÁLÁSA
+// 4. Egyedi usess azonosító generálása
 $usess = "";
-$talalt_mar_ilyet = true;
-while ($talalt_mar_ilyet) {
-    $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-    $usess = substr(str_shuffle(str_repeat($chars, 5)), 0, 7);
-    $ellenorzes = mysqli_query($conn, "SELECT uid FROM felhasznalok WHERE usess = '$usess'");
-    if (mysqli_num_rows($ellenorzes) == 0) {
-        $talalt_mar_ilyet = false;
+$talalt = true;
+while ($talalt) {
+    $usess = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 7);
+    $check_ss = mysqli_query($conn, "SELECT uid FROM felhasznalok WHERE usess = '$usess'");
+    if (mysqli_num_rows($check_ss) == 0) {
+        $talalt = false;
     }
 }
 
-// 5. BESZÚRÁS AZ ADATBÁZISBA
+// 5. Mentés az adatbázisba
+$upw = password_hash($pass1, PASSWORD_DEFAULT);
 $sql = "INSERT INTO felhasznalok (uname, uusername, uemail, upw, usess, ustatus, usecret_q, usecret_a, uregdata) 
-        VALUES ('$uname', '$uusername', '$uemail', '$upw', '$usess', '$ustatus', '$usecret_q', '$usecret_a', NOW())";
+        VALUES ('$uname', '$uusername', '$uemail', '$upw', '$usess', 'A', '$usecret_q', '$usecret_a', NOW())";
 
 if (mysqli_query($conn, $sql)) {
-    echo "<script>
-            alert('Sikeres regisztráció! Azonosítód: $usess'); 
-            window.location.replace('login.php');
-          </script>";
+    // SIKER: Átirányítás a loginra a sikerüzenet kódjával
+    echo "<script>window.location.replace('login.php?msg=reg_kesz');</script>";
+    exit();
 } else {
-    // Adatbázis hiba kezelése
-    echo "<script>
-            alert('Hiba történt a mentés során: " . mysqli_real_escape_string($conn, mysqli_error($conn)) . "'); 
-            window.location.replace('reg_id.php');
-          </script>";
+    backWithError('db_error');
 }
 ?>
