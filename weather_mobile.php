@@ -162,21 +162,16 @@ $m_data = json_decode($m_res, true);
     });
     function updateDateTime() {
     const now = new Date();
-    const days = ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"];
-    const months = ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"];
-    
-    const dayName = days[now.getDay()];
-    const monthName = months[now.getMonth()];
-    const dateStr = `${now.getFullYear()}. ${monthName} ${now.getDate()}. ${dayName}`;
     const timeStr = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}. ${timeStr}`;
 
     // Kis widget frissítése
     const sDate = document.getElementById('s-date');
-    if(sDate) sDate.innerText = `${dateStr} | ${timeStr}`;
+    if(sDate) sDate.innerText = dateStr;
 
     // Nagy modal frissítése
     const mDate = document.getElementById('m-date');
-    if(mDate) mDate.innerText = `${dateStr} | ${timeStr}`;
+    if(mDate) mDate.innerText = dateStr;
 }
 
     // Azonnali futtatás és percenkénti frissítés
