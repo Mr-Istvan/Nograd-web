@@ -878,6 +878,6 @@ textarea.form-control {
     </script>
     
     <script src="js/main.js"></script>
-
+    <?php include "weather_mobile.php"; ?>
 </body>
 </html>

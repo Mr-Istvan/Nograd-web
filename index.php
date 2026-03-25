@@ -29,18 +29,22 @@ require_once __DIR__ . '/init.php';
     </head>
 
 <body>
-
+   
     <header class="nav-down responsive-nav">
-        <div class="logo" style="float: left; padding: 15px 20px;">
-           <a href="index.php" class="logo-text" style="font-size: 22px; text-transform: uppercase; font-weight: 800; text-decoration: none;">NÓG<span style="color: #d4a373;">RÁD</span></a>
-        </div>
+    
 
-        <button type="button" id="nav-toggle" class="navbar-toggle" style="margin-top: 8px;">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
+    <div class="logo" style="float: left; padding: 15px 20px;">
+       <a href="index.php" class="logo-text" style="font-size: 22px; text-transform: uppercase; font-weight: 800; text-decoration: none;">NÓG<span style="color: #d4a373;">RÁD</span></a>
+    </div>
+
+    <button type="button" id="nav-toggle" class="navbar-toggle" style="margin-top: 8px;">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    
+    
         
         <div id="main-nav" style="display: none; clear: both; background: rgba(0,0,0,0.95); width: 100%;">
             <nav style="padding: 10px 0;"> 
@@ -72,7 +76,7 @@ require_once __DIR__ . '/init.php';
             </nav>
         </div>
     </header>
-
+    
     <div class="sidebar-navigation">
         <div class="logo">
             <a href="index.php">Nóg<em>rád</em></a>
@@ -478,68 +482,49 @@ require_once __DIR__ . '/init.php';
                     </iframe>
                 </div>
             </div>
-        </div>
+            </div>
 
-                  <div id="contact-content">
-    <div class="section-heading">
-        <h1>Kap<em>csol</em>at</h1>
-        <p>Kérdésed van vagy információt gyűjtenél? Írj nekünk közvetlenül!</p>
-    </div>
-    
-    <?php if (isset($_GET['status'])): ?>
-        <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 25px;">
+             <div id="contact-content">
+            <div class="section-heading">
+                <h1>Kap<em>csol</em>at</h1>
+                <p>Kérdésed van vagy információt gyűjtenél? Írj nekünk közvetlenül!</p>
+            </div>
             
-            <?php if ($_GET['status'] == 'success'): ?>
-                <div style="
-                    width: 85%; 
-                    background-color: rgba(25, 135, 84, 0.2); 
-                    color: #2ecc71; 
-                    padding: 15px; 
-                    border-radius: 12px; 
-                    text-align: center; 
-                    border: 1px solid #198754;
-                    font-weight: 600;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                ">
-                    <i class="fa fa-check-circle"></i> ✅ Email elküldve!
-                </div>
-
-            <?php elseif ($_GET['status'] == 'error'): ?>
-                <div style="
-                    width: 85%; 
-                    background-color: rgba(220, 53, 69, 0.2); 
-                    color: #ff4d4d; 
-                    padding: 12px; 
-                    border-radius: 12px; 
-                    text-align: center; 
-                    border: 1px solid #dc3545;
-                    font-size: 0.95em;
-                    font-weight: 600;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                ">
-                    <i class="fa fa-exclamation-triangle"></i> ❌ Email elküldése sikertelen, próbálja meg később!
+            <?php if (isset($_GET['status'])): ?>
+                <div class="status-wrapper">
+                    <?php if ($_GET['status'] == 'success'): ?>
+                        <div class="status-box msg-success">
+                            <i class="fa fa-check-circle"></i> ✅ Email elküldve!
+                        </div>
+                    <?php elseif ($_GET['status'] == 'error'): ?>
+                        <div class="status-box msg-error">
+                            <i class="fa fa-exclamation-triangle"></i> ❌ Sikertelen küldés, próbáld újra!
+                        </div>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
 
+            <div class="section-content">
+                <form action="contact_process.php" method="POST" class="contact-form-fix">
+                    
+                    <div class="form-input-container">
+                        <label for="visitor_email">Email:</label>
+                        <input type="email" id="visitor_email" name="visitor_email" placeholder="pelda@email.hu" class="form-control-custom" required>
+                    </div>
+
+                    <div class="form-input-container">
+                        <label for="message">Üzenet:</label>
+                        <textarea id="message" name="message" placeholder="Írd le az üzenetedet..." class="textarea-custom" required></textarea>
+                    </div>
+
+                    <div class="button-container">
+                        <button type="submit" class="btn btn-sentra">KÜLDÉS</button>
+                    </div>
+                    
+                </form>
+            
+            </div>
         </div>
-    <?php endif; ?>
-
-    <div class="section-content">
-        <form action="contact_process.php" method="POST" class="contact-form-fix">
-            <div class="form-group mb-3">
-                <input type="email" name="visitor_email" placeholder="Az Te email címed, amire a választ várod..." class="form-control-custom" required>
-            </div>
-
-            <div class="form-group mb-3">
-                <textarea name="message" placeholder="Írd le az üzenetedet vagy kérdésedet..." class="textarea-custom" required></textarea>
-            </div>
-
-            <div class="accent-button button">
-                <button type="submit" class="btn-sentra-blue">Küldés</button>
-            </div>
-        </form>
-    </div>
-    </div>
 
     </section>
 
@@ -601,5 +586,7 @@ require_once __DIR__ . '/init.php';
         }
     }, 5000);
     </script>
+      <?php include "weather_mobile.php"; ?>
+
 </body>
 </html>

@@ -244,5 +244,6 @@ require_once __DIR__ . '/../init.php';
             background: #fec107 !important; 
         }
     </style>
+     <?php include "../weather.php"; ?>
 </body>
 </html>

@@ -1289,4 +1289,158 @@ footer { width: 100% !important; margin-left: 0 !important; }
         height: 250px; /* Mobilon kicsit alacsonyabb, hogy kényelmesebb legyen */    
       }
   }
+/* ==========================================================================
+   KAPCSOLAT FORM - VÉGLEGES 3 LÉPCSŐS RESZPONZÍV JAVÍTÁS
+   ========================================================================== */
+
+/* 1. Alapbeállítások: Minden méretnél érvényes */
+.contact-form-fix {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+.form-input-container, .status-wrapper {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
+    text-align: left !important; /* A label és az input maradjon balra zárt */
+    margin-bottom: 25px !important;
+}
+
+.form-control-custom, 
+.textarea-custom {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border: 3px solid #45489a !important;
+    padding: 12px !important;
+    border-radius: 4px !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. LÉPCSŐ: 768px FELETT (ASZTALI)
+   Szélesség: 550px | Magasság: 350px
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+    #contact-content .section-content {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .form-input-container, .status-wrapper, .button-container {
+        width: 500px !important;
+        padding: 20px 20px !important  ;
+        margin: 10px auto !important;
+    }
+
+    .textarea-custom {
+        height: 350px !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+/* AUTOMATIKUS FIX: Minden eszközre (Mobil, Tablet, Desktop) */
+
+.form-input-container, 
+.status-wrapper, 
+.button-container {
+    /* Mobilon 95%-ot tölt ki, de asztalon sosem lesz szélesebb 550px-nél */
+    width: 95% !important;
+    max-width: 550px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block;
+}
+
+.textarea-custom {
+    width: 100% !important;
+    min-height: 250px; /* Mobilon ennyi */
+    height: 30vh !important; /* Asztalon a képernyőmagasság 30%-a */
+    max-height: 480px;
+}
+
+.btn-sentra-blue {
+    width: 100% !important; /* A konténerén belül (max 550px) teljes szélesség */
+    background-color: #45489a !important;
+    color: #ffffff !important;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-sentra-blue:hover {
+    background-color: #34377a !important;
+    transform: translateY(-2px);
+}
+
+/* Egyetlen apró finomítás a nagyon kicsi telefonokhoz */
+@media (max-width: 400px) {
+    .form-input-container {
+        width: 100% !important;
+        padding: 0 10px;
+    }
+}/* ============================================================
+   ASZTALI FIXEK (768px felett)
+   ============================================================ */
+@media (min-width: 768px) {
+    /* Biztosítjuk, hogy a szekció ne csússzon a sidebar alá */
+    #map.content-section, 
+    #contact-content {
+        margin-left: 0 !important; /* A page-content már eltolja 250px-el, ide nem kell plusz */
+        width: 100% !important;
+        display: block;
+        clear: both;
+    }
+
+    /* A szöveges tartalom és az űrlap középre igazítása asztalon */
+    #contact-content {
+        padding: 80px 10%; /* Adunk neki egy kis belső margót */
+        max-width: 1200px;
+        margin: 0 auto !important;
+    }
+
+    /* Az űrlap konténerének szélessége */
+    .contact-form-fix {
+        max-width: 800px; /* Ne legyen túl széles az input mező asztalon */
+        margin: 0 auto !important;
+    }
+
+    /* Az inputok és a textarea méretezése */
+    .form-input-container {
+        width: 100% !important;
+        max-width: 100% !important; /* Felülírjuk a korábbi 550px-es korlátot, ha szükséges */
+        margin-bottom: 20px;
+    }
+
+    /* A textarea magassága asztalon legyen arányos a térképpel */
+    .textarea-custom {
+        height: 350px !important;
+        min-height: 300px;
+    }
+}
+
+/* ============================================================
+   GOMB STÍLUS JAVÍTÁS (Hogy mindenhol egyforma legyen)
+   ============================================================ */
+.btn-sentra {
+    background-color: #45489a !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 15px 40px !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    width: auto !important; /* Asztalon ne legyen full széles, csak ha akarod */
+    min-width: 200px;
+}
+
+.btn-sentra:hover {
+    background-color: #31347a !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
 }

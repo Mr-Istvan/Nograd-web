@@ -81,7 +81,7 @@ require_once __DIR__ . '/../init.php';
                     <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
                 </ul>
             </nav>
-            <?php include "../weather.php"; ?>
+           <?php include "../weather.php"; ?>
         </div>
 
         <div class="page-content">
@@ -233,5 +233,6 @@ require_once __DIR__ . '/../init.php';
         });
     });
     </script>
+     <?php include "../weather.php"; ?>
 </body>
 </html>

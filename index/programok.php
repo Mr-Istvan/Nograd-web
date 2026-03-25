@@ -286,5 +286,6 @@ require_once __DIR__ . '/../init.php';
         });
     });
     </script>
+    <?php include "../weather_mobile.php"; ?>
 </body>
 </html>

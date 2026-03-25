@@ -241,6 +241,7 @@ require_once __DIR__ . '/../init.php';
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <script>
         $(document).ready(function() {
             $('#nav-toggle').on('click', function (e) {
@@ -249,5 +250,6 @@ require_once __DIR__ . '/../init.php';
             });
         });
     </script>
+    <?php include "../weather_mobile.php"; ?>
 </body>
 </html>

@@ -300,5 +300,6 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
         });
     });
     </script>
+    <?php include "../weather_mobile.php"; ?>
 </body>
 </html>
