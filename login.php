@@ -11,9 +11,40 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
     <title>Bejelentkezés - Nógrád</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body { background: #121212; font-family: 'Open Sans', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .login-box { width: 400px; padding: 30px; background: rgba(255, 255, 255, 0.05); border-radius: 15px; border: 1px solid rgba(250, 250, 250, 0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .form-control { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; margin-bottom: 15px; height: 45px; }
+       /* 1. MÓDOSÍTÁS: Alapbeállítások */
+            body { 
+                background: #000; 
+                color: white; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                height: 100vh; 
+                font-family: 'Open Sans', sans-serif; 
+                margin: 0; 
+                overflow: hidden; 
+            }
+            /* 2. ÚJ: dizájn */
+            #matrix {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1; 
+            }
+            /* 3. MÓDOSÍTÁS: A doboz (az űrlap) */
+            .login-box { 
+                position: relative; 
+                z-index: 10; 
+                width: 400px; 
+                padding: 30px; 
+                background: rgba(0, 0, 0, 0.8); 
+                border-radius: 15px; 
+                border: 1px solid rgba(0, 255, 255, 0.3); 
+                backdrop-filter: blur(5px); 
+                -webkit-backdrop-filter: blur(5px); 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+            }.form-control { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; margin-bottom: 15px; height: 45px; }
         .form-control:focus { background: rgba(255,255,255,0.15); color: #fff; border-color: #45489a; box-shadow: none; }
         
         /* Gombok stílusa */
@@ -38,6 +69,7 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
     </style>
 </head>
 <body>
+    <?php include 'matrix_bg.php'; ?>
     <div class="login-box">
         <h2 class="text-center text-white mb-4">NÓG<em>RÁD</em></h2>
         

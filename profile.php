@@ -24,14 +24,75 @@ $user = mysqli_stmt_get_result($stmt)->fetch_assoc();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
     <style>
-        body { background: #121212; font-family: 'Open Sans'; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px 10px; min-height: 100vh; }
+        /* 1. MÓDOSÍTÁS: Alapbeállítások a <style> részben */
+        body { 
+            background: #000; 
+            font-family: 'Open Sans', sans-serif; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px 10px; 
+            min-height: 100vh; 
+            margin: 0;
+            overflow-x: hidden; /* A mátrix miatt ne legyen vízszintes görgetés */
+        }
+
+        /* 2. ÚJ: A Mátrix háttér fixálása a <style> részben */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; 
+        }
+
+        /* 3. MÓDOSÍTÁS: A kártyák (Glassmorphism) a <style> részben */
+        .glass-card { 
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8) !important; /* Sötétebb alap az olvashatóságért */
+            padding: 25px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(0, 255, 255, 0.3) !important; /* Neon kék keret */
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px); 
+            margin-bottom: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
+        }
+
         .profile-container { width: 100%; max-width: 420px; }
-        .glass-card { background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .profile-img-wrap { width: 100px; height: 100px; margin: 0 auto 15px; border: 3px solid #0dcaf0; border-radius: 18px; overflow: hidden; background: #222; }
         .profile-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .form-control { background: rgba(255,255,255,0.07) !important; border: 1px solid rgba(255,255,255,0.2) !important; color: white !important; border-radius: 10px; font-size: 14px; padding: 10px 15px; }
-        .form-control:focus { background: rgba(255,255,255,0.12) !important; border-color: #0dcaf0 !important; box-shadow: none !important; }
-        .form-control[readonly] { background: rgba(0,0,0,0.3) !important; color: #6c757d !important; cursor: not-allowed; }
+        .form-control { 
+                background: rgba(255, 255, 255, 0.1) !important; 
+                border: 1px solid rgba(0, 255, 255, 0.3) !important; /* Halvány neon kék keret */
+                color: white !important; 
+                border-radius: 10px; 
+                font-size: 14px; 
+                padding: 10px 15px; 
+        }
+
+            /* EGY EXTRA TRÜKK: A "Jelenlegi jelszó" stb. szövegek (placeholder) színe */
+        .form-control::placeholder {
+                color: rgba(255, 255, 255, 0.5) !important; 
+        }
+
+            /* 2. FÓKUSZ: Amikor beleklikkelsz a mezőbe */
+        .form-control:focus { 
+                background: rgba(255, 255, 255, 0.15) !important; 
+                border-color: #00ffff !important; /* Erős neon kék keret */
+                box-shadow: 0 0 10px rgba(0, 255, 255, 0.2) !important; /* Finom ragyogás */
+        }
+
+            /* 3. CSAK OLVASHATÓ: A becenév mező, amit nem tudsz átírni */
+        .form-control[readonly] { 
+                background: rgba(0, 0, 0, 0.5) !important; 
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                color: #888 !important; /* Szürkébb szöveg, hogy látsszon: ez zárolva van */
+                cursor: not-allowed; 
+        }
         .btn-update { background: #0dcaf0; color: black; font-weight: 700; border: none; border-radius: 0 10px 10px 0; padding: 0 15px; font-size: 11px; text-transform: uppercase; transition: 0.3s; }
         .btn-pw { background: #0dcaf0; color: black; font-weight: 700; border: none; width: 100%; border-radius: 10px; height: 45px; font-size: 13px; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
         .status-msg { padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 20px; font-weight: 600; font-size: 14px; }
@@ -42,6 +103,7 @@ $user = mysqli_stmt_get_result($stmt)->fetch_assoc();
     </style>
 </head>
 <body>
+    <?php include 'matrix_bg.php'; ?>
 
 <div class="profile-container">
     <div class="glass-card text-center">

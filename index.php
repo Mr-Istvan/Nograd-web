@@ -17,12 +17,11 @@ require_once __DIR__ . '/init.php';
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/fontAwesome.css">
         <link rel="stylesheet" href="css/light-box.css">
         <link rel="stylesheet" href="css/owl-carousel.css">
         <link rel="stylesheet" href="css/templatemo-style.css">
         <link rel="stylesheet" href="index/mobile_style.css">
-
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
 
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
@@ -170,13 +169,13 @@ require_once __DIR__ . '/init.php';
             </ul>
         </nav>
         <?php include "weather.php"; ?> 
-        <ul class="social-icons">
-            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-            <li><a href="#"><i class="fa fa-rss"></i></a></li>
-            <li><a href="#"><i class="fa fa-behance"></i></a></li>
-        </ul>
+        <ul class="social-icons" style="display: flex !important; list-style: none; padding: 0; gap: 15px; justify-content: center;">
+    <li><a href="https://www.facebook.com/" target="_blank"><i class="fa fa-facebook-official"></i></a></li>
+    <li><a href="https://twitter.com/" target="_blank"><i class="fa fa-twitter"></i></a></li>
+    <li><a href="https://mail.google.com/" target="_blank"><i class="fa fa-envelope"></i></a></li>
+    <li><a href="https://www.youtube.com/" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
+    <li><a href="https://wm-iskola.hu/" target="_blank"><i class="fa fa-graduation-cap"></i></a></li>
+</ul>
     </div>
 
     <div class="slider">
@@ -362,21 +361,21 @@ require_once __DIR__ . '/init.php';
         <div class="section-content">
             <div class="row">
                 <?php foreach ($random3 as $imgPath): ?>
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"> <!-- col-sm-4-re írtam, hogy tableten is 3 legyen -->
                         <div class="item">
                             <a href="<?php echo htmlspecialchars($imgPath); ?>" data-lightbox="home-gallery">
                                 <div class="hover-effect">
                                     <div class="hover-content">
-                                        
                                         <p>Véletlenszerű válogatás</p>
                                     </div>
                                 </div>
-                                <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Galéria kép" class="img-responsive">
+                                <!-- Itt az új class: fixed-gallery-img -->
+                                <img src="<?php echo htmlspecialchars($imgPath); ?>" alt="Galéria kép" class="img-responsive fixed-gallery-img">
                             </a>
                         </div>
                     </div>
                 <?php endforeach; ?>
-            </div>
+</div>
 
             <div style="margin-top: 18px;">
                 <div class="accent-button button">

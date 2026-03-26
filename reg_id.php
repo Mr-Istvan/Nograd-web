@@ -13,9 +13,46 @@ header("Expires: 0");
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
     <style>
-        body { background: #121212; font-family: 'Open Sans', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px 0; }
-        .login-box { width: calc(100% - 30px); max-width: 400px; padding: 30px; background: rgba(255, 255, 255, 0.05); border-radius: 15px; backdrop-filter: blur(10px); box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid rgba(250, 250, 250, 0.1); }
-        .login-box h2 { color: #fff; text-align: center; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
+            /* 1. MÓDOSÍTÁS: Alapbeállítások a Mátrixhoz */
+        body { 
+            background: #000; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            font-family: 'Open Sans', sans-serif; 
+            margin: 0; 
+            padding: 20px 0;
+            overflow-x: hidden; /* Itt engedünk függőleges görgetést, mert a form hosszú */
+        }
+
+        /* 2. ÚJ: A Mátrix háttér fixálása */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; 
+        }
+
+        /* 3. MÓDOSÍTÁS: A regisztrációs doboz (Glassmorphism effekt) */
+        .login-box { 
+            position: relative; 
+            z-index: 10; 
+            width: calc(100% - 30px); 
+            max-width: 400px; 
+            padding: 30px; 
+            background: rgba(0, 0, 0, 0.8); /* Sötét háttér az olvashatóságért */
+            border-radius: 15px; 
+            border: 1px solid rgba(0, 255, 255, 0.3); 
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
+        }
+
+/* A gombok és mezők maradnak a régiek, de a doboz háttérszíne miatt jobban fognak mutatni */.login-box h2 { color: #fff; text-align: center; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
         .login-box h2 em { font-style: normal; color: #45489a; }
 
         .form-control { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #ffffff !important; height: 45px; margin-bottom: 12px; }
@@ -43,6 +80,7 @@ header("Expires: 0");
     </style>
 </head>
 <body>
+    <?php include 'matrix_bg.php'; ?>
     <div class="login-box">
         <h2>Regiszt<em>ráció</em></h2>
 
