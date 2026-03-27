@@ -557,6 +557,10 @@ $userLoggedIn = ($userData !== null);
         </style>
     </head>
 <body class="blog-page index-subpage">
+     <div class="logo" style="float: left; padding: 15px 20px;">
+       
+    </div>
+
 <style>
 /* BLOG mobil hamburger menü - index.php mobil nav stílus (fehér header, középen gomb) */
 @media (max-width: 767px){

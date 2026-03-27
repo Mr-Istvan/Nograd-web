@@ -48,7 +48,7 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
         body { background: url('../img/szallasok_back.jpg') no-repeat center center fixed !important; background-size: cover !important; }
 
         .page-content { width: 100%; padding: 0; }
-        .content-section { padding: 20px 10px; }
+        .content-section { padding: 16px 10px; }
         .container-fluid { padding-left: 0; padding-right: 0; }
 
         .turizm-card {
@@ -97,7 +97,12 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
 </head>
 
 <body>
+
+    
     <header class="nav-down responsive-nav">
+        <div class="logo-mobile-left">
+       <a href="../index.php">NÓG<span>RÁD</span></a>
+    </div>
         <button type="button" id="nav-toggle" class="navbar-toggle">
             <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
         </button>
@@ -259,7 +264,7 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
                     </div>
                 </div>
             </section>
-           <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
+           <footer class="premium-footer" style="padding: 18px; text-align: center; color: #0a1f98;">
                 <a href="../Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
                     <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
                 </a>

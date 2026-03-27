@@ -65,6 +65,14 @@ $m_data = json_decode($m_res, true);
         }
         .card-details i { color: #facc15; width: 18px; }
     }
+
+    /* Mobil mini widget tuning */
+.weather-mobile-mini {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    /* Adunk neki egy pulzáló keretet, hogy vonzza a szemet */
+    animation: pulse-border 3s infinite;
+
 </style>
 
 <div class="weather-mobile-mini" onclick="window.openWeatherList()">

@@ -30,7 +30,7 @@ require_once __DIR__ . '/../init.php';
         .humor-box {
             background: rgba(0, 0, 0, 0.7) !important;
             color: #9c27b0 !important;
-            padding: 15px 25px;
+            padding: 13px 15px;
             border-radius: 50px;
             border: 2px dashed #9c27b0;
             display: inline-block;
@@ -46,7 +46,7 @@ require_once __DIR__ . '/../init.php';
                 flex-wrap: wrap;
                 justify-content: flex-start; /* Balról tölti fel a sort */
                 gap: 20px;
-                padding: 20px;
+                padding: 16px;
             }
 
             .program-item {
@@ -68,13 +68,17 @@ require_once __DIR__ . '/../init.php';
 </head>
 <body>
     <header class="nav-down responsive-nav">
+
+    <div class="logo-mobile-left">
+       <a href="../index.php">NÓG<span>RÁD</span></a>
+    </div>
     <button type="button" id="nav-toggle" class="navbar-toggle">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
     </button>
     <div id="main-nav">
-        <nav style="padding: 20px;">
+        <nav style="padding: 12px;">
             <ul class="nav navbar-nav">
                 <?php include 'mobile_menu.php'; ?>
             </ul>
@@ -84,11 +88,9 @@ require_once __DIR__ . '/../init.php';
 
     <div class="main-wrapper">
         <div class="sidebar-navigation">
-            <div class="logo">
-                <a href="../index.php">NÓG<em>RÁD</em></a>
-            </div>
+        
             <nav>
-                <div class="user-info" style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px;">
+                <div class="user-info" style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px;">
                     <?php if(isset($_SESSION['user_name'])): ?>
                         <span style="display: block; color: #fff; margin-bottom: 5px;">Üdv, <strong><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong>!</span>
                         <a href="../logout.php" style="color: #45489a; text-decoration: none; font-weight: bold; font-size: 13px;">[ Kilépés ]</a>
@@ -268,7 +270,7 @@ require_once __DIR__ . '/../init.php';
                 </div>
             </section>
 
-            <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
+            <footer class="premium-footer" style="padding: 10px; text-align: center; color: #0a1f98;">
                 <a href="../Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
                     <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
                 </a>
