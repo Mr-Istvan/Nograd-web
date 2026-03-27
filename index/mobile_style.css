@@ -1,0 +1,246 @@
+/* ==========================================================
+   NÓGRÁD TURIZMUS - TELJES MOBIL ÉS DESIGN OPTIMALIZÁLÁS
+   Tartalmazza: Kártyák, Színek, LightBox, Menü és Checklist
+   ========================================================== */
+
+/* --- 1. KÖZÖS ELEMEK (Minden nézetben) --- */
+.humor-box {
+    background: rgba(35, 35, 35, 0.95) !important;
+    padding: 15px;
+    border-radius: 12px;
+    font-style: italic;
+    margin: 20px auto 30px auto !important;
+    font-size: 16px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    width: 95%;
+    display: block !important;
+    color: #ffffff !important;
+}
+
+/* ALAP KÁRTYA DESIGN */
+.turizm-card {
+    background: #ffffff !important;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.turizm-card:hover {
+    transform: translateY(-5px);
+}
+
+/* --- 2. KATEGÓRIA SPECIFIKUS SZÍNEZÉS --- */
+
+/* GASZTRO - Sárga */
+.turizm-card.gasztro { border-left: 10px solid #fec107 !important; }
+.turizm-card.gasztro h4 { color: #fec107 !important; font-weight: bold; }
+.turizm-card.gasztro i { color: #fec107 !important; }
+.turizm-card.gasztro .btn-turizm { background-color: #fec107 !important; color: #fff; }
+
+/* TÚRA & SZÁLLÁS - Zöld */
+.turizm-card.tura, .turizm-card.szallas { border-left: 10px solid #28a745 !important; }
+.turizm-card.tura h4, .turizm-card.szallas h4 { color: #28a745 !important; font-weight: bold; }
+.turizm-card.tura i, .turizm-card.szallas i { color: #28a745 !important; }
+
+/* PRAKTIKA - Kék */
+.turizm-card.praktika { border-left: 10px solid #3f51b5 !important; }
+.turizm-card.praktika h4 { color: #3f51b5 !important; font-weight: bold; }
+.turizm-card.praktika i { color: #3f51b5 !important; }
+
+/* LÁTNIVALÓ - Narancs/Barna */
+.turizm-card.latnivalo { border-left: 10px solid #cd7e0f !important; }
+.turizm-card.latnivalo h4 { color: #cd7e0f !important; font-weight: bold; }
+.turizm-card.latnivalo i { color: #cd7e0f !important; }
+
+/* PROGRAM - Lila */
+.turizm-card.program { border-left: 10px solid #42068b !important; }
+.turizm-card.program h4 { color: #42068b !important; font-weight: bold; }
+
+/* SZÖVEGEK KÉNYSZERÍTÉSE A KÁRTYÁKON BELÜL */
+.turizm-card p, .turizm-card li, .turizm-card span, .turizm-card strong {
+    color: #1a1a1a !important;
+    font-weight: 500 !important;
+}
+
+/* --- 3. CHECKBOX / CHECKLIST FIX --- */
+.np-checklist-container { padding: 10px 0; }
+
+.np-check-item {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    user-select: none;
+    color: #1a1a1a !important;
+    text-align: left;
+}
+
+.np-check-item input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+
+.np-checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 22px;
+    width: 22px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.np-check-item input:checked ~ .np-checkmark { background-color: #3f51b5 !important; }
+
+.np-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.np-check-item input:checked ~ .np-checkmark:after { display: block; }
+
+.np-check-item .np-checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+.np-check-item input:checked ~ .np-text {
+    text-decoration: line-through;
+    color: #888 !important;
+}
+
+/* --- 4. LIGHTBOX MOBIL FIXEK --- */
+.lightbox .lb-image {
+    max-width: 90vw !important;
+    max-height: 80vh !important;
+    width: auto !important;
+    height: auto !important;
+    border: 4px solid white;
+}
+
+.lb-dataContainer { width: 90% !important; }
+.lb-close { background-color: rgba(0,0,0,0.5); border-radius: 50%; }
+
+/* --- 5. CSAK MOBIL (767px ALATT) --- */
+@media (max-width: 767px) {
+    .sidebar-navigation { display: none !important; }
+
+    .page-content { 
+        margin-left: 0 !important; 
+        width: 100% !important;
+        padding: 80px 12px 20px 12px !important; 
+        box-sizing: border-box;
+    }
+
+    .responsive-nav { 
+        display: block !important;
+        position: fixed !important;
+        top: 0; 
+        left: 0; 
+        width: 100%;
+        background: #232323 !important; 
+        z-index: 9999 !important;
+        min-height: 60px;
+        border-bottom: 3px solid #3f51b5; 
+    }
+
+    .navbar-toggle {
+        display: block !important;
+        float: none !important;
+        margin: 10px auto !important;
+        background-color: #3f51b5 !important;
+        padding: 10px 15px;
+    }
+
+    #main-nav { 
+        background: rgba(26, 26, 26, 0.98) !important; 
+        display: none; 
+        width: 100%;
+        border-top: 1px solid #333;
+    }
+
+    #main-nav ul { padding: 20px 0 !important; }
+
+    #main-nav ul li a { 
+        color: #ffffff !important; 
+        display: block; 
+        padding: 15px; 
+        text-align: center;
+        font-size: 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Profil linkek a menüben */
+    .profile-link a { color: #3498db !important; font-weight: bold !important; }
+
+    .turizm-card { padding: 16px !important; margin-bottom: 20px; }
+    
+    /* Címek méretezése mobilon */
+    .section-heading h4 { font-size: 20px !important; }
+}
+
+/* --- 6. PRÉMIUM FOOTER --- */
+footer {
+    padding: 30px !important;
+    text-align: center !important;
+    clear: both;
+}
+
+footer p {
+    font-family: 'Georgia', serif !important;
+    font-style: italic !important;
+    color: #000000 !important;
+    font-size: 14px !important;
+    display: inline-block;
+    padding: 5px 20px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid #d4af37 !important;
+    border-radius: 25px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s ease;
+}
+
+footer p:hover {
+    background: #ffffff !important;
+    box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4) !important;
+    transform: scale(1.02);
+}
+
+/* --- 6. PRÉMIUM FOOTER --- */
+footer.premium-footer {
+    padding: 30px !important;
+    text-align: center !important;
+    clear: both;
+    margin-top: 50px !important;
+    background: none !important; /* Eltünteti az alap template szürkeségét */
+}
+
+footer.premium-footer p {
+    font-family: 'Georgia', serif !important;
+    font-style: italic !important;
+    color: #000000 !important;
+    font-size: 14px !important;
+    display: inline-block;
+    padding: 10px 25px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid #d4af37 !important; /* Ez az arany keret */
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* --- 7. MAGASSÁG KIEGYENLÍTÉS (Asztali nézethez) --- */
+@media (min-width: 992px) {
+    .row.equal-height { display: flex; flex-wrap: wrap; }
+    .row.equal-height > [class*='col-'] { display: flex; flex-direction: column; }
+    .turizm-card { flex: 1; display: flex; flex-direction: column; }
+}
