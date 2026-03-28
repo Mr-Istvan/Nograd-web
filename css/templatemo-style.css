@@ -1007,29 +1007,61 @@ sidebar-navigation .social-icons li a:hover {
   .ads-list { height: 220px; animation: none; overflow-y:auto; }
 }
 
-/* Footer Style */
-.footer {
-  background-color: rgba(12,12,12,0.9);
-  height: 80px;
-  line-height: 80px;
-  display: inline-block;
-  text-align: center;
-  width: 100%;
+/* --- VÉGLEGES LÁBLÉC FIX --- */
+.premium-footer {
+    width: 100%;
+    background-color: rgba(12, 12, 12, 0.95);
+    padding: 40px 0; /* Fix magasság helyett padding, hogy beleférjen a gombod is */
+    text-align: center;
+    border-top: 2px solid #345af2;
+    clear: both; /* Megállítja a galéria elemek rácsúszását */
+    position: relative;
+    z-index: 10;
+    margin-top: 50px;
 }
 
-.footer p {
-  margin-bottom: 0px;
-  font-size: 13px;
-  line-height: 80px;
-  color: #b7a312;
-  letter-spacing: 0.5px;
-  font-weight: 300;
+/* Értékelő rész stílusa a footerben */
+.rating-link-container {
+    margin-bottom: 25px;
+    padding: 10px;
 }
 
-.footer p a {
-  text-decoration: none;
-  color: #fff;
-  font-weight: 600;
+.rating-link-container p {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+/* Készítők sávja */
+.credits-container {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+.premium-footer p {
+    margin-bottom: 0px;
+    font-size: 13px;
+    color: #b7a312; /* A kért nógrádi arany szín */
+    letter-spacing: 0.5px;
+    font-weight: 300;
+}
+
+.premium-footer a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.premium-footer a:hover {
+    color: #345af2;
+}
+
+/* Mobilos eltolás a sidebar miatt */
+@media (max-width: 767px) {
+    .premium-footer {
+        padding-bottom: 110px; /* Hely a fix kék mobil reklámsávnak */
+    }
 }
 
 /* ============================================================
@@ -1240,10 +1272,7 @@ header {
   }
 }
 
-footer {
-  width: 100% !important;
-  margin-left: 0 !important;
-}
+
 
 .galeria-random-wrapper {
   display: flex;

@@ -79,7 +79,47 @@ $userLoggedIn = ($userData !== null);
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
     
 
-        <style>
+        <style> 
+        
+        /* BLOG MOBIL MENÜGOMB: HAJSZÁLPONTOSAN KÖZÉPEN */
+@media (max-width: 767px) {
+    #blog-mobile-toggle {
+        display: block !important;
+        position: absolute !important;
+        left: 50% !important;   /* Vízszintesen középre tolja */
+        top: 50% !important;    /* Függőlegesen középre tolja */
+        transform: translate(-50%, -50%) !important; /* Mértani középpont korrekció */
+        margin: 0 !important;
+        
+        /* Megjelenés: kényelmes, nagyobb gomb */
+        padding: 12px 20px !important; 
+        border-radius: 12px !important;
+        border: none !important;
+        z-index: 20001 !important; /* Fontos, hogy a header felett legyen */
+        transition: all 0.3s ease;
+    }
+
+    /* A gomb színe a blog oldal stílusához igazodva (prémium sötét) */
+    body.blog-page #blog-mobile-toggle { 
+        background-color: #444 !important; 
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important; 
+    }
+
+    /* A hamburger csíkok fehér színe */
+    #blog-mobile-toggle .icon-bar {
+        background-color: #ffffff !important;
+        width: 22px !important;
+        height: 2px !important;
+        display: block !important;
+        margin: 4px auto !important;
+    }
+}
+                        /* BLOG - PRÉMIUM SÖTÉT/SZÜRKE */
+            body.page-blog header.blog-mobile-nav { border-bottom-color: #444 !important; }
+            body.page-blog #blog-mobile-toggle { 
+                background-color: #444 !important; 
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important; 
+            }
             body { 
                 background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('img/blog_back.jpg') no-repeat center center fixed; 
                 background-size: cover;
@@ -165,6 +205,75 @@ $userLoggedIn = ($userData !== null);
 
             @media (max-width: 767px) {
                 body.blog-page .content-section { padding-top: 105px !important; }
+            }
+            
+            @media (max-width: 767px) {
+                /* --- 1. A FEJLÉCEK (Eltűnnek görgetéskor) --- */
+                header.responsive-nav, 
+                header.blog-mobile-nav { 
+                    display: flex !important;
+                    align-items: center !important;
+                    position: absolute !important; 
+                    top: 0; 
+                    left: 0; 
+                    width: 100%;
+                    height: 90px !important;
+                    background: #ffffff !important; 
+                    z-index: 9999 !important;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    border-bottom: 3px solid #333; /* Alap szín */
+                }
+
+                /* --- 2. A GOMBOK (Hajszálpontosan középen, modern forma) --- */
+                .navbar-toggle, 
+                #blog-mobile-toggle {
+                    display: block !important;
+                    position: absolute !important;
+                    left: 50% !important;
+                    top: 50% !important;
+                    transform: translate(-50%, -50%) !important;
+                    margin: 0 !important;
+                    padding: 12px 20px !important;
+                    border-radius: 12px !important;
+                    border: none !important;
+                    z-index: 1001 !important;
+                    transition: all 0.3s ease;
+                }
+
+                /* --- 3. A HAMBURGER CSÍKOK (Hogy a blogon is ugyanaz legyen) --- */
+                /* Ez kezeli a .icon-bar-t és a blog span-jeit is */
+                .navbar-toggle .icon-bar, 
+                #blog-mobile-toggle span {
+                    background-color: #ffffff !important;
+                    width: 26px !important; /* Megnövelt szélesség */
+                    height: 2px !important;
+                    display: block !important;
+                    margin: 3px 0 !important; /* Egyforma távolság a csíkok között */
+                    border-radius: 1px !important;
+                    transition: all 0.3s ease;
+                }
+
+                /* --- 4. SZŐNYEG MENÜK --- */
+                #main-nav, #blog-mobile-menu { 
+                    background: rgba(26, 26, 26, 0.98) !important; 
+                    display: none; 
+                    position: absolute !important;
+                    top: 90px !important; 
+                    left: 0 !important;
+                    width: 100% !important;
+                    z-index: 9998 !important;
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+                }
+
+                #main-nav ul li a, #blog-mobile-menu a { 
+                    color: #ffffff !important; 
+                    display: block !important;
+                    padding: 12px 0 !important; /* Szép szellős sorköz */
+                    text-align: center !important;
+                    font-size: 16px !important;
+                    text-decoration: none !important;
+                    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+                }
             }
             
             /* ===========================
@@ -664,6 +773,46 @@ textarea.form-control {
     body.blog-page .page-content {
         padding-bottom: 120px !important;
     }
+
+    /* FOOTER FIXÁLÁSA MINDEN ESZKÖZRE */
+.footer-wrapper {
+    clear: both;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+body.blog-page .premium-footer {
+    background: transparent !important;
+    padding: 20px 0 !important;
+    margin: 0 auto !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: center;
+}
+
+/* Asztali gépen a sidebar és a reklám között középre igazítjuk */
+@media (min-width: 1002px) {
+    .footer-wrapper {
+        padding-right: 145px; /* A jobb oldali reklámsáv (125px + gap) kompenzálása */
+    }
+}
+
+/* Mobilon a fix reklámsáv fölé emeljük, hogy ne takarja ki */
+@media (max-width: 1001px) {
+    .footer-wrapper {
+        margin-bottom: 80px !important; /* Hely a kék mozgó reklámnak */
+    }
+    
+    .credits-link p {
+        font-size: 11px !important;
+        padding: 8px 15px !important;
+    }
+}
 </style>
 
     <!-- BLOG mobil hamburger menü (767px alatt) - index stílus: fehér header, középen gomb -->
@@ -712,6 +861,7 @@ textarea.form-control {
                 <li><a href="blog.php"><span class="circle"></span>Blog-fal</a></li>
                 <li><a href="contact.php"><span class="circle"></span>Kapcsolat</a></li>
             </ul>
+                    
         </nav>
         <?php include "weather.php"; ?>
     </div>
@@ -774,35 +924,74 @@ textarea.form-control {
                 </div>
             </div>
         </section>
-
+                                    
         <?php
             // Reklám-rotátor elemek (név + ikon + "nem egyforma" szín)
             // Ezeket a nevek/helyek listáit az index aloldalak tartalmából szedtem össze.
             $adItems = [
-                ["icon" => "fa-home", "color" => "#1dcdd0", "text" => "Hollókő Ófalu"],
-                ["icon" => "fa-flag", "color" => "#d2dde1", "text" => "Salgó vára"],
-                ["icon" => "fa-university", "color" => "#9bb7ff", "text" => "Somoskői Vár"],
-                ["icon" => "fa-life-ring", "color" => "#4dd0e1", "text" => "Bánki-tó"],
-                ["icon" => "fa-globe", "color" => "#a7c7ff", "text" => "Kazári Riolittufa"],
-                ["icon" => "fa-paw", "color" => "#042931", "text" => "Ipolytarnóci Ősmaradványok"],
-                ["icon" => "fa-shield", "color" => "#129fca", "text" => "Drégely vára"],
-                ["icon" => "fa-map-marker", "color" => "#70cfff", "text" => "Balassagyarmat Óváros"],
-                ["icon" => "fa-sun-o", "color" => "#b3e5ff", "text" => "Tari Buddhista Központ"],
-                ["icon" => "fa-tint", "color" => "#2e0c92", "text" => "Páris-patak (Palóc Grand Canyon)"],
-                ["icon" => "fa-building", "color" => "#9fdcff", "text" => "Szécsényi Forgách-kastély"],
-                ["icon" => "fa-cutlery", "color" => "#dee1e7", "text" => "Juhtúrós Sztrapacska"],
-                ["icon" => "fa-cutlery", "color" => "#5cc8ff", "text" => "Palócleves"],
-                ["icon" => "fa-cutlery", "color" => "#000000", "text" => "Vargánya Étterem (Mátraszentimre)"],
-                ["icon" => "fa-cutlery", "color" => "#72b8ff", "text" => "Bársony Vendéglő (Szécsény)"],
-                ["icon" => "fa-cutlery", "color" => "#6fd6ff", "text" => "Svejk Vendéglő (Balassagyarmat)"],
-                ["icon" => "fa-cutlery", "color" => "#9ac9ff", "text" => "Tóparti Vendéglő (Bánk)"],
-                ["icon" => "fa-cutlery", "color" => "#3b4244", "text" => "Castellum Étterem (Hollókő)"],
-                ["icon" => "fa-music", "color" => "#7fd0ff", "text" => "Honti Kulturális Napok"],
-                ["icon" => "fa-road", "color" => "#0dabe9", "text" => "Karancs-Medves Teljesítménytúra"],
-                ["icon" => "fa-moon-o", "color" => "#0242b1", "text" => "Holdfény Túra"],
-                ["icon" => "fa-train", "color" => "#8be9ff", "text" => "Mikulás-járatok (Kemence)"],
-                ["icon" => "fa-book", "color" => "#082774", "text" => "Irodalmi Emléknapok"],
-                ["icon" => "fa-wrench", "color" => "#b3c0ff", "text" => "Kézműves Alkotónap"],
+              ["icon" => "fa-star", "color" => "#ffcc00", "text" => "Castellum Hotel Hollókő"],
+                ["icon" => "fa-tint", "color" => "#00d2ff", "text" => "Tó Wellness Hotel Bánk"],
+                ["icon" => "fa-leaf", "color" => "#a2d043", "text" => "Főnix Wellness Resort"],
+                ["icon" => "fa-bed", "color" => "#90a4ae", "text" => "Cédrus Club Hotel"],
+                ["icon" => "fa-building-o", "color" => "#78909c", "text" => "Salgó Hotel"],
+                ["icon" => "fa-fort-awesome", "color" => "#e1bee7", "text" => "Kastélyhotel Sasvár"],
+                ["icon" => "fa-home", "color" => "#8d6e63", "text" => "Boróka Vendégház"],
+                ["icon" => "fa-water", "color" => "#4fc3f7", "text" => "Bánki-tó Vendégház"],
+                ["icon" => "fa-university", "color" => "#cfd8dc", "text" => "Prónay-kastély"],
+                ["icon" => "fa-diamond", "color" => "#b3e5ff", "text" => "Mátra Mona Luxury"],
+                ["icon" => "fa-coffee", "color" => "#a1887f", "text" => "Nádas fogadó Teresztenye"],
+                ["icon" => "fa-header", "color" => "#546e7a", "text" => "Teleki-Degenfeld Kastély"],
+                ["icon" => "fa-home", "color" => "#ffab91", "text" => "Piros Csizma Vendégház"],
+                ["icon" => "fa-map", "color" => "#81c784", "text" => "Galagonya Vendégház"],
+                ["icon" => "fa-lightbulb-o", "color" => "#fff176", "text" => "Hétlámpás Vendégház"],
+                ["icon" => "fa-cutlery", "color" => "#ff8a65", "text" => "Felső Fogadó Felsőtold"],
+                ["icon" => "fa-building", "color" => "#ce93d8", "text" => "FeteKert Apartmanok"],
+                ["icon" => "fa-sun-o", "color" => "#ffd54f", "text" => "Napfénydomb Vendégház"],
+                ["icon" => "fa-tent", "color" => "#4db6ac", "text" => "Nádas Camping Bánk"],
+                ["icon" => "fa-tree", "color" => "#66bb6a", "text" => "Bárna Vadász- és Pihenőház"],
+                ["icon" => "fa-fire", "color" => "#ff7043", "text" => "Somoskői Kirándulóközpont"],
+                ["icon" => "fa-tag", "color" => "#ba68c8", "text" => "Kaláris Vendégház"],
+                ["icon" => "fa-university", "color" => "#90caf9", "text" => "Templomvölgy Resort"],
+                ["icon" => "fa-compass", "color" => "#4caf50", "text" => "Mátra Kemping Sástó"],
+                ["icon" => "fa-home", "color" => "#9575cd", "text" => "Tóparti Apartman"],
+                ["icon" => "fa-bed", "color" => "#4fc3f7", "text" => "Zagyva-völgyi Vendégház"],
+                ["icon" => "fa-fort-awesome", "color" => "#8d6e63", "text" => "Várhegy Panzió Nógrád"],
+                ["icon" => "fa-key", "color" => "#f48fb1", "text" => "Cserhát Kapuja Nézsa"],
+                ["icon" => "fa-home", "color" => "#a5d6a7", "text" => "Hollóköves Vendégház"],
+                ["icon" => "fa-university", "color" => "#b0bec5", "text" => "Eresztvényi Turistaház"],
+                ["icon" => "fa-building-o", "color" => "#90a4ae", "text" => "Rétsági Panzió"],
+                ["icon" => "fa-bed", "color" => "#81c784", "text" => "Tereskei Vendégház"],
+                ["icon" => "fa-header", "color" => "#5c6bc0", "text" => "Berceli Kastély"],
+                ["icon" => "fa-home", "color" => "#ffcc80", "text" => "Kutasó Apartman"],
+                ["icon" => "fa-tint", "color" => "#81d4fa", "text" => "Palotási Tóparti Ház"],
+                ["icon" => "fa-users", "color" => "#ce93d8", "text" => "Mátraverebélyi Zarándokház"],
+                ["icon" => "fa-university", "color" => "#d1c4e9", "text" => "Szentkúti Kegyhely Szálló"],
+                ["icon" => "fa-bed", "color" => "#aed581", "text" => "Legéndi Vendégház"],
+                ["icon" => "fa-money", "color" => "#66bb6a", "text" => "Nógrádsipeki Pihenő"],
+                ["icon" => "fa-money", "color" => "#9ccc65", "text" => "Felsőpetényi Vendégház"],
+                ["icon" => "fa-cutlery", "color" => "#ffb74d", "text" => "Karancssági Fogadó"],
+                ["icon" => "fa-home", "color" => "#4fc3f7", "text" => "Ipolyvecei Pihenőház"],
+                ["icon" => "fa-tent", "color" => "#26a69a", "text" => "Diósjenői Kemping"],
+                ["icon" => "fa-tree", "color" => "#8d6e63", "text" => "Börzsönyi Turistaház"],
+                ["icon" => "fa-mountain", "color" => "#78909c", "text" => "Somlyó-hegyi Apartman"],
+                ["icon" => "fa-university", "color" => "#9575cd", "text" => "Cserhátsurányi Kastélyszálló"],
+                ["icon" => "fa-bed", "color" => "#dce775", "text" => "Endrefalvai Vendégház"],
+                ["icon" => "fa-star", "color" => "#f06292", "text" => "Garábi Élményszálló"],
+                ["icon" => "fa-star", "color" => "#ffcc00", "text" => "Castellum Hotel Hollókő 4⭐"],
+                ["icon" => "fa-tint", "color" => "#00d2ff", "text" => "Tó Wellness Hotel Bánk 4⭐"],
+                ["icon" => "fa-leaf", "color" => "#a2d043", "text" => "Főnix Wellness Resort 4 ⭐"],
+                ["icon" => "fa-bed", "color" => "#90a4ae", "text" => "Cédrus Club Hotel 4⭐"],
+                ["icon" => "fa-building-o", "color" => "#78909c", "text" => "Salgó Hotel 3⭐"],
+                ["icon" => "fa-fort-awesome", "color" => "#e1bee7", "text" => "Kastélyhotel Sasvár 4⭐"],
+                ["icon" => "fa-home", "color" => "#8d6e63", "text" => "Boróka Vendégház 3⭐"],
+                ["icon" => "fa-water", "color" => "#4fc3f7", "text" => "Bánki-tó Vendégház 3⭐"],
+                ["icon" => "fa-university", "color" => "#cfd8dc", "text" => "Prónay-kastély Alsópetény 💎"],
+                ["icon" => "fa-diamond", "color" => "#b3e5ff", "text" => "Mátra Mona Luxury Apartment 💎"],
+                ["icon" => "fa-header", "color" => "#546e7a", "text" => "Teleki-Degenfeld Kastélyszálló"],
+                ["icon" => "fa-tent", "color" => "#4db6ac", "text" => "Nádas Camping Bánk ⛺"],
+                ["icon" => "fa-tree", "color" => "#66bb6a", "text" => "Börzsönyi Turistaház Diósjenő"],
+                ["icon" => "fa-sun-o", "color" => "#ffd54f", "text" => "Napfénydomb Vendégház Mátraszele"],
+                ["icon" => "fa-users", "color" => "#ce93d8", "text" => "Mátraverebélyi Zarándokház 🏨"],
             ];
         ?>
         <div class="ads-container hidden-sm hidden-xs">
@@ -815,12 +1004,24 @@ textarea.form-control {
                 <?php endforeach; ?>
             </div>
         </div>
+                          
+           <div class="footer-wrapper" style="width: 100%; margin-top: 50px; padding-bottom: 20px;">
+    <ul class="social-icons" style="display: flex !important; list-style: none; padding: 0; gap: 15px; justify-content: center; margin-bottom: 20px;">
+        <li><a href="https://www.facebook.com/" target="_blank"><i class="fa fa-facebook-official"></i></a></li>
+        <li><a href="https://twitter.com/" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        <li><a href="https://mail.google.com/" target="_blank"><i class="fa fa-envelope"></i></a></li>
+        <li><a href="https://www.youtube.com/" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
+        <li><a href="https://wm-iskola.hu/" target="_blank"><i class="fa fa-graduation-cap"></i></a></li>
+    </ul>
 
-        <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
-                <a href="Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
-                    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
-                </a>
-            </footer>
+    <footer class="premium-footer">
+        <div class="footer-inner">
+            <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
+                <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+            </a>
+        </div>
+    </footer>
+</div>
 
         <style>
             @media (max-width: 767px) {
@@ -879,8 +1080,9 @@ textarea.form-control {
                 });
             });
         })();
-    </script>
-    
+    </script>    
+ 
+                        
     <script src="js/main.js"></script>
     <?php include "weather_mobile.php"; ?>
 </body>

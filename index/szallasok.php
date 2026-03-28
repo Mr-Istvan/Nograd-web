@@ -96,7 +96,7 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
     </style>
 </head>
 
-<body>
+<body class="page-szallas">
 
     
     <header class="nav-down responsive-nav">

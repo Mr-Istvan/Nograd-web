@@ -1,8 +1,20 @@
 <?php
 require_once __DIR__ . '/init.php';
+// A képed alapján a nézet neve: ErtekelesekSzama
+// Ebben már benne van az eszam, atlag és likes oszlop
+//$sql = "SELECT eszam, atlag, likes FROM ErtekelesekSzama LIMIT 1"; // ezt akkor kell használjuk ha a like és értékesitést is futtatjuk!!
+//$res = mysqli_query($conn, $sql);
 
-// Csak akkor hívjuk meg az adatbázist, ha tényleg kell valamihez
-// include "db.php"; 
+//if (!$res) {
+ //   die("Hiba a lekérdezésben: " . mysqli_error($conn));
+//}
+
+//$row = mysqli_fetch_assoc($res);
+
+// Biztonsági tartalék, ha üres lenne a nézet
+//if (!$row) {
+ //   $row = ['eszam' => 0, 'atlag' => 0, 'likes' => 0];
+//}
 ?>
 <!DOCTYPE html>
 <html>
@@ -169,6 +181,90 @@ require_once __DIR__ . '/init.php';
             </ul>
         </nav>
         <?php include "weather.php"; ?> 
+        <style>
+    .sidebar-stats {
+        padding: 20px;
+        color: white;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        text-align: left;
+    }
+    .btn-like-sidebar {
+        background: transparent;
+        color: white;
+        border: 1px solid #7fd0ff;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.3s;
+        width: 100%;
+        margin-top: 10px;
+    }
+    .btn-like-sidebar:hover {
+        background: #7fd0ff;
+        color: #000;
+        box-shadow: 0 0 15px rgba(127, 208, 255, 0.5);
+   }
+
+   /* UNIVERZÁLIS FOOTER FIX */
+.premium-footer {
+    width: 100% !important;
+    display: block !important; /* Ne inline-block legyen! */
+    text-align: center !important;
+    padding: 30px 10px !important;
+    clear: both !important;
+    background: rgba(0, 0, 0, 0.6); /* Sötét háttér a jobb olvashatóságért */
+    margin-top: 50px;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.credits-link {
+    text-decoration: none !important;
+    display: inline-block;
+}
+
+.credits-link p {
+    font-family: 'Georgia', serif !important;
+    font-style: italic !important;
+    color: #000000 !important;
+    font-size: 14px !important;
+    padding: 10px 25px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid #d4af37 !important; /* Arany keret */
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+/* Ha asztali gépen vagyunk, el kell tolni a sidebar miatt */
+@media (min-width: 768px) {
+    .premium-footer {
+        padding-left: 250px !important; /* Az asztali sidebar szélessége */
+    }
+}
+</style>
+
+      <!--  <div class="sidebar-stats">          //ezen ahelyen ez értékelési statisztikák lennének, müködik, de a Like-olási gomb miatt most nem fér el szépen, így egyelőre félretettem. 
+            <div style="margin-bottom: 8px;">
+                <i class="fa fa-users" style="color: #7fd0ff; width: 20px;"></i> 
+                <span id="eszam"><?= $row['eszam'] ?></span> kitöltő
+            </div>
+            <div style="margin-bottom: 8px;">                                              // Ez az értékelési átlag, de mivel a Like gomb miatt nem fér el szépen, így egyelőre félretettem.             
+                <i class="fa fa-star" style="color: #fec107; width: 20px;"></i> 
+                <span id="atlag"><?= round($row['atlag'], 2) ?></span> / 5
+            </div>
+            <div style="margin-bottom: 8px;">
+                <i class="fa fa-thumbs-up" style="color: #28a745; width: 20px;"></i> // Ez a Like-ok száma, de mivel a Like gomb miatt nem fér el szépen, így egyelőre félretettem.
+                <span id="likes"><?= $row['likes'] ?></span> like
+            </div>
+            <button onclick="like()" class="btn-like-sidebar">👍 LIKE</button>
+        </div>  -->
         <ul class="social-icons" style="display: flex !important; list-style: none; padding: 0; gap: 15px; justify-content: center;">
     <li><a href="https://www.facebook.com/" target="_blank"><i class="fa fa-facebook-official"></i></a></li>
     <li><a href="https://twitter.com/" target="_blank"><i class="fa fa-twitter"></i></a></li>
@@ -528,21 +624,18 @@ require_once __DIR__ . '/init.php';
     </section>
 
             <footer class="premium-footer">
-            <!-- 1. SZEKCIÓ: Értékelés felhívás -->
-            <div class="rating-link-container">
-                <p>Tetszett a látogatás? Oszd meg velünk a véleményed!</p>
-                <a href="ertekeles.php" class="btn-sentra-index">⭐ Értékelés Megkezdése</a>
-            </div>
+        <div class="rating-link-container">
+            <p>Tetszett a látogatás? Oszd meg velünk a véleményed!</p>
+            <a href="ertekeles.php" class="btn-sentra-index">⭐ Értékelés Megkezdése</a>
+        </div>
 
-            <hr class="footer-divider">
-
-            <!-- 2. SZEKCIÓ: Készítők linkje legalul -->
-            <div class="credits-container">
-                <a href="Proofiles.php" class="credits-link">
-                  <p>  Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
-                </a>
-            </div>
-        </footer>
+        <div class="credits-container">
+            <div class="footer-inner">
+        <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
+            <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+        </a>
+    </div>
+     </footer>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
@@ -631,7 +724,26 @@ require_once __DIR__ . '/init.php';
         transform: translateY(-3px); /* Kicsit megemelkedik */
     }
         </style>
-           
+           <script>
+function like() {
+    fetch('update_like.php')
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            const likeSpan = document.getElementById('likes');
+            likeSpan.innerText = data.new_likes;
+            
+            // Animáció: megvillan kékkel
+            likeSpan.style.transition = "color 0.3s";
+            likeSpan.style.color = "#7fd0ff";
+            setTimeout(() => {
+                likeSpan.style.color = "";
+            }, 500);
+        }
+    })
+    .catch(err => console.error("Hiba:", err));
+}
+</script>
       <?php include "weather_mobile.php"; ?>
 
 </body>

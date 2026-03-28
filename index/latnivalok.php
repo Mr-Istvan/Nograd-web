@@ -40,7 +40,7 @@ require_once __DIR__ . '/../init.php';
         }
     </style>
 </head>
-<body>    
+<body class="page-latnivalok"> 
     <header class="nav-down responsive-nav">
         <div class="logo-mobile-left">
        <a href="../index.php">NÓG<span>RÁD</span></a>

@@ -66,7 +66,7 @@ require_once __DIR__ . '/../init.php';
             }
     </style>
 </head>
-<body>
+<body class="page-programok">
     <header class="nav-down responsive-nav">
 
     <div class="logo-mobile-left">
@@ -86,9 +86,9 @@ require_once __DIR__ . '/../init.php';
     </div>
 </header>
 
-    <div class="main-wrapper">
+   <div class="main-wrapper">
         <div class="sidebar-navigation">
-        
+            <div class="logo"><a href="../index.php">NÓG<em>RÁD</em></a></div>
             <nav>
                 <div class="user-info" style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px;">
                     <?php if(isset($_SESSION['user_name'])): ?>
