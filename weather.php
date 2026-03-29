@@ -1,4 +1,8 @@
 <?php
+// --- KÖZÖS ADATKEZELŐ BLOKK ---
+$cacheFile = 'data/weather_24.json';
+$refreshInterval = 3600;
+
 $varosok = [
     "Salgótarján" => [48.10, 19.80], "Balassagyarmat" => [48.07, 19.29], "Pásztó" => [47.92, 19.66],
     "Szécsény" => [48.08, 19.51], "Bátonyterenye" => [47.98, 19.83], "Rétság" => [47.92, 19.14],
@@ -8,16 +12,26 @@ $varosok = [
     "Börzsöny" => [47.93, 18.92], "Mátra" => [47.87, 19.92]
 ];
 
-$lats = implode(',', array_column($varosok, 0));
-$lons = implode(',', array_column($varosok, 1));
-$url = "https://api.open-meteo.com/v1/forecast?latitude=$lats&longitude=$lons&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto";
+if (!file_exists($cacheFile) || (time() - filemtime($cacheFile) > $refreshInterval)) {
+    $lats = implode(',', array_column($varosok, 0));
+    $lons = implode(',', array_column($varosok, 1));
+    $url = "https://api.open-meteo.com/v1/forecast?latitude=$lats&longitude=$lons&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,pressure_msl&daily=temperature_2m_max,temperature_2m_min&timezone=auto";
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-$res = curl_exec($ch);
-curl_close($ch);
-$data = json_decode($res, true);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    $res = curl_exec($ch);
+    curl_close($ch);
+
+    if ($res) {
+        if (!is_dir('data')) mkdir('data', 0777, true);
+        file_put_contents($cacheFile, $res);
+    }
+}
+
+$data = json_decode(file_get_contents($cacheFile), true);
+// --- KÖZÖS BLOKK VÉGE ---
 ?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

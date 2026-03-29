@@ -8,6 +8,7 @@ https://templatemo.com/tm-518-sentra
 
 body {
   font-family: 'Open Sans', sans-serif;
+  background-color: #dfdfdf;
 }
 
 p {
@@ -322,13 +323,71 @@ header {
 
 /* Sidebar Style */
 
+/* ===== OLDALSÁV ÉS MODERN SCROLLBAR (Gemini stílus) ===== */
+
 .sidebar-navigation {
-  width: 250px;
-  float: left;
-  height: 100%;
-  position: fixed;
-  background-color: rgba(12,12,12,0.9);
-  z-index: 10;
+    width: 250px;
+    float: left;
+    height: 100vh; /* Biztosítja, hogy mindig kitöltse az ablak magasságát */
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(12,12,12,0.9);
+    z-index: 10;
+    overflow-y: auto; /* Engedélyezi a függőleges görgetést kis kijelzőn */
+    overflow-x: hidden; /* Vízszintes görgetés letiltása */
+    padding-bottom: 20px; /* Egy kis extra hely alul */
+    
+    /* Firefox támogatás a vékony sávhoz */
+    scrollbar-width: thin; 
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent; 
+}
+
+/* Webkit (Chrome, Edge, Safari) beállítások a sidebarhoz */
+.sidebar-navigation::-webkit-scrollbar {
+    width: 14px;  /* Függőleges sáv szélessége */
+    height: 14px; /* Vízszintes sáv magassága */
+}
+
+/* A sáv háttere (a pálya színe) */
+.sidebar-navigation::-webkit-scrollbar-track {
+    background: #2b2d51 !important; /* A kért szürkés-kék szín */
+    border-radius: 0; /* Itt általában jobb a szögletes, hogy kitöltse a sávot */
+}
+
+/* Maga a csúszka (a mozgó gomb) */
+.sidebar-navigation::-webkit-scrollbar-thumb {
+    background-color: #555; /* A gomb alapszíne */
+    border-radius: 10px;
+    
+    /* Átlátszó keret, hogy ne érjen a széléhez (lebegő hatás) */
+    border: 3px solid transparent;
+    background-clip: padding-box;
+
+    /* FEHÉR CSÍK TRÜKK: Lineáris színátmenettel a gomb közepére */
+    background-image: linear-gradient(
+        transparent 35%, 
+        #ffffff 35%, 
+        #ffffff 65%, 
+        transparent 65%
+    );
+}
+
+/* Vízszintes sávnál a fehér csík iránya változik (elforgatjuk) */
+.sidebar-navigation::-webkit-scrollbar-thumb:horizontal {
+    background-image: linear-gradient(
+        90deg, 
+        transparent 35%, 
+        #ffffff 35%, 
+        #ffffff 65%, 
+        transparent 65%
+    );
+}
+
+/* Ha ráviszed az egeret, a csík eltűnik és tiszta fehér lesz a gomb */
+.sidebar-navigation::-webkit-scrollbar-thumb:hover {
+    background-color: #ffffff !important;
+    background-image: none !important;
 }
 
 .sidebar-navigation .logo {
@@ -435,33 +494,46 @@ nav .active-section span {
   background-color: #fff;
 }
 
+/* KÖZÖS IKON KONTÉNER */
 .sidebar-navigation .social-icons {
-  position: absolute;
-  width: 100%;
-  bottom: 10px;
-  padding: 0;
-  margin: 0;
-  text-align: center;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 250px !important; 
+    background-color: #0c0c0c !important; 
+    padding: 15px 0 !important;
+    margin: 0 !important;
+    z-index: 999 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    display: flex !important;
+    justify-content: center;
+    gap: 15px;
 }
 
+/* LISTA ELEMEK FIXÁLÁSA */
 .sidebar-navigation .social-icons li {
-  display: inline-block;
-  margin-right: 15px;
-  margin-top: 0px;
-  margin-bottom: 0px;
+    display: inline-block !important;
+    margin: 0 !important;
 }
 
-.sidebar-navigation .social-icons li:last-child {
-  margin-right: 0px;
+.sidebar-navigation .social-icons li a i {
+    color: #fff !important;
+    font-size: 18px;
+    transition: 0.3s;
 }
 
-.sidebar-navigation .social-icons li a {
-  font-size: 18px;
-  color: #fff;
-  transition: all 0.5s;
+.sidebar-navigation .social-icons li a:hover i {
+    color: #fec107 !important; /* Arany/Sárga kiemelés */
+    transform: translateY(-3px);
 }
 
-sidebar-navigation .social-icons li a:hover {
+/* EXTRA HELY A GÖRGETÉSHEZ */
+.sidebar-navigation {
+    padding-bottom: 80px !important;
+}
+
+.sidebar-navigation .social-icons li a:hover {
   color: #00ffff !important; /* A régi #45489a helyett neon kék */
   transform: scale(1.2);      /* Kicsit nagyobb lesz az ikon */
   transition: 0.3s;           /* Sima átmenet */
@@ -1007,42 +1079,46 @@ sidebar-navigation .social-icons li a:hover {
   .ads-list { height: 220px; animation: none; overflow-y:auto; }
 }
 
-/* --- PRÉMIUM FOOTER EGYSÉGESÍTÉS - ÁTLÁTSZÓ SÖTÉT VÁLTOZAT --- */
+/* ==========================================================
+   PRÉMIUM FOOTER - VÉGLEGES ÉS KÖZÉPRE IGAZÍTOTT VÁLTOZAT
+   ========================================================== */
 
+/* Az egész lábléc doboza */
 .premium-footer {
     width: 100% !important;
-    /* Átlátszó sötét háttér (mint a blog szekcióknál) */
-    background-color: rgba(12, 12, 12, 0.01) !important; 
-    padding: 60px 0 !important;
-    text-align: center !important;
-    border-top: 3px solid #345af2 !important;
+    background-color: transparent !important; /* Vagy amilyen hátteret szeretnél */
+    padding: 40px 0 !important;
+    margin-top: 50px !important;
     clear: both !important;
     position: relative !important;
     z-index: 999 !important;
     box-sizing: border-box !important;
+    text-align: center !important; /* Itt kényszerítjük a középre zárást */
     display: block !important;
 }
 
-/* PC-S ELRENDEZÉS (Sidebar melletti terület közepére igazítás) */
+/* PC-S ELRENDEZÉS (Amikor látszik a bal oldali menü) */
 @media (min-width: 768px) {
     .premium-footer {
-        /* Sidebar eltolás a centrázáshoz */
+        /* Ez a kulcs! Itt toljuk el balról 250px-el a dobozt, így a "közepe" már az igazi középpont lesz */
         padding-left: 250px !important; 
     }
 }
 
-/* BELSŐ KONTÉNEREK IGAZÍTÁSA */
+/* BELSŐ KONTÉNEREK (Hogy biztosan minden középen maradjon) */
 .rating-link-container, 
-.credits-container {
+.credits-container,
+.footer-inner-wrapper {
     width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important; 
     justify-content: center !important;
     margin: 0 auto !important;
+    text-align: center !important;
 }
 
-/* A KAPSZULA (PILL) DIZÁJN */
+/* A KAPSZULA (A készítők neve és az üzenet) */
 .site-footer-fixed__pill {
     display: inline-block !important;
     background: #fcfcfc !important; 
@@ -1055,12 +1131,14 @@ sidebar-navigation .social-icons li a:hover {
     font-size: 13px !important;
     box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
     margin-bottom: 15px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     text-decoration: none !important;
     transition: 0.3s !important;
     max-width: fit-content;
 }
 
-/* ÉRTÉKELÉS GOMB FIXÁLÁSA */
+/* AZ ÉRTÉKELÉS GOMB */
 .btn-sentra-index {
     display: inline-block !important;
     text-decoration: none !important;
@@ -1073,6 +1151,8 @@ sidebar-navigation .social-icons li a:hover {
     border-radius: 50px !important;
     transition: 0.4s !important;
     margin-bottom: 30px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     font-size: 14px !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
 }
@@ -1084,13 +1164,12 @@ sidebar-navigation .social-icons li a:hover {
     transform: translateY(-3px) !important;
 }
 
-/* MOBIL FIXEK (767px ALATT) */
+/* MOBIL FIXEK (Amikor eltűnik a bal oldali menü) */
 @media (max-width: 767px) {
     .premium-footer {
-        padding-left: 0 !important;   
+        padding-left: 0 !important;   /* Levesszük a bal oldali tolást, mert nincs menü */
         padding-right: 0 !important;
-        padding-bottom: 140px !important; 
-        background-color: rgba(202, 202, 202, 0.01) !important; /* Mobilon kicsit sötétebb az olvashatóságért */
+        padding-bottom: 140px !important; /* Hely a mobil menünek alul */
     }
 
     .site-footer-fixed__pill {
@@ -1111,6 +1190,7 @@ sidebar-navigation .social-icons li a:hover {
     }
 }
 
+
 /* 6. BLOG SPECIFIKUS ELRENDEZÉS */
 body.blog-page .page-content {
     display: flex;
@@ -1123,23 +1203,7 @@ body.blog-page .footer-wrapper {
     margin-top: auto;
 }
 
-/* Értékelő rész stílusa a footerben */
-.rating-link-container {
-    margin-bottom: 25px;
-    padding: 10px;
-}
 
-.rating-link-container p {
-    color: #fff;
-    font-size: 16px;
-    margin-bottom: 15px;
-}
-
-/* Készítők sávja */
-.credits-container {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 20px;
-}
 
 
 /* ============================================================

@@ -60,7 +60,7 @@ $userLoggedIn = ($userData !== null);
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>NÓGRÁD</title>
+        <title>NóGRÁD-Blog</title>
         
 <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -209,11 +209,12 @@ $userLoggedIn = ($userData !== null);
             
             @media (max-width: 767px) {
                 /* --- 1. A FEJLÉCEK (Eltűnnek görgetéskor) --- */
+               /* --- 1. A FEJLÉCEK (Okos görgetés) --- */
                 header.responsive-nav, 
                 header.blog-mobile-nav { 
                     display: flex !important;
                     align-items: center !important;
-                    position: absolute !important; 
+                    position: fixed !important; /* Fixen tartjuk */
                     top: 0; 
                     left: 0; 
                     width: 100%;
@@ -221,9 +222,14 @@ $userLoggedIn = ($userData !== null);
                     background: #ffffff !important; 
                     z-index: 9999 !important;
                     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                    border-bottom: 3px solid #333; /* Alap szín */
+                    border-bottom: 3px solid #333;
+                    transition: top 0.3s ease-in-out !important; /* Sima animáció fel/le */
                 }
 
+                /* Ez az az osztály, amit a gép ráad, ha lefele görgetsz */
+                header.blog-mobile-nav.nav-up {
+                    top: -100px !important; /* Felhúzza a képernyőn kívülre */
+                }
                 /* --- 2. A GOMBOK (Hajszálpontosan középen, modern forma) --- */
                 .navbar-toggle, 
                 #blog-mobile-toggle {
@@ -455,7 +461,7 @@ $userLoggedIn = ($userData !== null);
             body.blog-page .composer{
                 background:rgba(255,255,255,0.05);
                 padding:20px;
-                border-radius:10px;
+                border-radius:20px;
                 margin-bottom:20px;
                 border:1px solid #45489a;
             }
@@ -471,16 +477,25 @@ $userLoggedIn = ($userData !== null);
                 width: 125px; height: 600px; position: fixed; right: 20px; top: 100px;
                 background: rgba(0,0,0,0.5); border: 1px solid #45489a; overflow: hidden; z-index: 10;
             }
-            body.blog-page .ad-train { position: absolute; width: 100%; animation: adRun 15s linear infinite; }
-            @keyframes adRun { 0% { top: 600px; } 100% { top: -100%; } }
+                    /* ASZTALI FÜGGŐLEGES (Felfelé úszó) */
+            body.blog-page .ad-train {
+                position: absolute;
+                width: 100%!important;
+                min-height: 35px !important;
+                /* A 60s a sebesség, növeld ha túl gyors */
+                animation: infiniteVertical 5s linear infinite; 
+            }
 
+            @keyframes infiniteVertical {
+                0% { top: 0; }
+                100% { top: -50%; } /* Csak a feléig megyünk, mert ott kezdődik a másolat */
+            }
             /* MOBIL REKLÁM (Vízszintes úszás alul) */
             body.blog-page .mobile-ad-bar {
                 display: none; position: fixed; bottom: 0; left: 0; width: 100%;
-                background: #45489a; color: white; padding: 10px 0; z-index: 9999; overflow: hidden;
+                background: #2b2d51; color: white; padding: 0 0; z-index: 9999; overflow: hidden;
             }
-            body.blog-page .mobile-ad-train { display: flex; white-space: nowrap; animation: adRunSide 15s linear infinite; }
-
+           
             /* Mobil ad-box: férjen ki a teljes szöveg (legyen szélesebb, ne vágjon) */
             @media (max-width: 1001px){
                 body.blog-page .ad-box{
@@ -491,25 +506,25 @@ $userLoggedIn = ($userData !== null);
             }
             @keyframes adRunSide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
             
-            body.blog-page .ad-box{
+                    /* A szöveges dobozok (kapszulák) végleges, szűkített kódja */
+            body.blog-page .ad-box {
                 background: rgba(0,0,0,0.22);
                 color: rgba(255,255,255,0.92);
-                margin: 6px;
-                padding: 8px 12px;
-                text-align: left;
-                font-size: 12px;
+                margin: 0 5px !important;    
+                padding: 2px 12px !important; 
+                text-align: center;
+                font-size: 11px !important;  
                 font-weight: 800;
                 border: 1px solid rgba(255,255,255,0.22);
                 border-radius: 12px;
-                box-shadow: 0 6px 16px rgba(0,0,0,0.22);
-
-                /* ne vágja le: férjen ki a teljes szó/szöveg */
-                white-space: normal;
-                overflow: visible;
-                text-overflow: clip;
+                display: flex;
+                align-items: center;
+                height: 31px; /* Ez tartja kordában a magasságot */
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Kicsit finomabb árnyék */
+                white-space: nowrap; /* Hogy a név egy sorban maradjon */
             }
             body.blog-page .ad-box i{
-                width: 15px;
+                width: 28px;
                 text-align: center;
             }
 
@@ -533,6 +548,7 @@ $userLoggedIn = ($userData !== null);
                 body.blog-page .site-footer-fixed{
                     position: fixed;
                     left: 50%;
+                    bottom: 5px;;
                     transform: translateX(-50%);
                     bottom: calc(50px + 18px + env(safe-area-inset-bottom)); /* mindig a kék reklámsáv fölött */
                     z-index: 10000;
@@ -541,7 +557,7 @@ $userLoggedIn = ($userData !== null);
                 }
             }
             @media (max-width: 767px){
-                body.blog-page .site-footer-fixed{
+                body.blog-page .site-footer-fixed{ 
                     bottom: calc(50px + 18px + env(safe-area-inset-bottom)); /* mobilon is ugyanúgy */
                 }
             }
@@ -560,7 +576,34 @@ $userLoggedIn = ($userData !== null);
                 text-align: center;
                 white-space: nowrap;
             }
+                                /* --- MOBIL REKLÁM VONAT ÖSSZEVONT ÉS JAVÍTOTT --- */
+                body.blog-page .mobile-ad-train {
+                    display: flex !important;          /* Elemek egymás mellett */
+                    white-space: nowrap !important;    /* Ne törje meg a sorokat */
+                    height:35px;                      /* Fix magasság */
+                    align-items: center;               /* Függőlegesen középre teszi az ikonokat/szöveget */
+                    width: max-content;                /* Engedi, hogy a tartalom túllógjon a képernyőn */
+                    
+                    /* VÉGTELENÍTETT ANIMÁCIÓ: 30 másodperc (állítsd nagyobbra, ha túl gyors) */
+                    animation: adRunSideInfinite 60s linear infinite;
+                }
 
+                /* Hoverre megáll, hogy el lehessen olvasni a hotelt */
+                body.blog-page .mobile-ad-train:hover {
+                    animation-play-state: paused;
+                }
+
+                /* A JAVÍTOTT KEYFRAME: Csak 50%-ig toljuk el! */
+                @keyframes adRunSideInfinite {
+                    0% {
+                        transform: translateX(0);
+                    }
+                    100% {
+                        /* Mivel PHP-ban dupláztuk a listát, a -50%-nál pont 
+                        ugyanúgy néz ki, mint az elején, így észrevétlen az ugrás */
+                        transform: translateX(-50%);
+                    }
+                }
             /* FIX bottom szabályok már nem kellenek, mert nem lebeg a footer */
             @media (max-width: 1001px){
                 body.blog-page .site-footer-fixed__pill{
@@ -610,10 +653,7 @@ $userLoggedIn = ($userData !== null);
                     min-height: 100vh;
                     padding-bottom: 180px !important; /* Elég hely a reklámnak és a footernek */
                 }
-                body.blog-page .mobile-ad-train {
-                    height: 50px;
-                    align-items: center;
-                }
+               
                 body.blog-page .ad-box {
                     font-size: 12px;
                     padding: 1px 31px; /* szélesebb +5px (26->31) és alacsonyabb -5px (6->1) */
@@ -681,7 +721,13 @@ $userLoggedIn = ($userData !== null);
     background-color: rgba(250,250,250,.95);
     box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
     z-index: 20000 !important;
+    transition: top 0.3s ease-in-out !important;
   }
+
+  body.blog-page .blog-mobile-nav.nav-up {
+    top: -100px !important;
+  }
+
   body.blog-page .blog-mobile-nav__brand{
     position:absolute;
     left: 18px;
@@ -763,15 +809,23 @@ textarea.form-control {
         display: block !important;
         position: fixed !important;
         bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 50px;
+        left: 250px; /* Eltoljuk a menüsáv szélességével */
+        width: calc(100% - 250px); /* A szélességből levonjuk a menüt */
+        height: 35px;
         background: #45489a;
         z-index: 99999;
     }
 
     body.blog-page .page-content {
         padding-bottom: 120px !important;
+    }
+}
+
+/* 767px alatt eltűnik a bal oldali menü, itt a reklámnak újra 100%-osnak kell lennie */
+@media (max-width: 767px) {
+    body.blog-page .mobile-ad-bar {
+        left: 0 !important;
+        width: 100% !important;
     }
 }
 
@@ -816,7 +870,7 @@ body.blog-page .premium-footer {
 </style>
 
     <!-- BLOG mobil hamburger menü (767px alatt) - index stílus: fehér header, középen gomb -->
-    <header class="blog-mobile-nav hidden-lg hidden-md" aria-label="Mobil navigáció">
+    <header class="blog-mobile-nav hidden-lg hidden-md nav-down" aria-label="Mobil navigáció">
         <a class="blog-mobile-nav__brand" href="index.php">NÓG<span style="color:#d4a373;">RÁD</span></a>
 
         <button type="button" id="blog-mobile-toggle" class="blog-mobile-nav__toggle" aria-controls="blog-mobile-menu" aria-expanded="false">
@@ -843,7 +897,7 @@ body.blog-page .premium-footer {
 
     <div class="sidebar-navigation hidden-sm hidden-xs">
         <div class="logo">
-            <a href="index.php">NÓG<em>RÁD</em></a>
+            <a href="index.php"><em>NÓG</em>RÁD</a>
         </div>
         <nav>
             <ul>
@@ -994,14 +1048,19 @@ body.blog-page .premium-footer {
                 ["icon" => "fa-users", "color" => "#ce93d8", "text" => "Mátraverebélyi Zarándokház 🏨"],
             ];
         ?>
+            <!-- ASZTALI REKLÁM -->
         <div class="ads-container hidden-sm hidden-xs">
             <div class="ad-train">
-                <?php foreach($adItems as $ad): ?>
-                    <div class="ad-box">
-                        <i class="fa <?php echo htmlspecialchars($ad['icon']); ?>" aria-hidden="true" style="color: <?php echo htmlspecialchars($ad['color']); ?>; margin-right: 8px;"></i>
-                        <?php echo htmlspecialchars($ad['text']); ?>
-                    </div>
-                <?php endforeach; ?>
+                <?php 
+                // Kétszer íratjuk ki a listát a folyamatosságért
+                for ($i = 0; $i < 2; $i++): 
+                    foreach($adItems as $ad): ?>
+                        <div class="ad-box">
+                            <i class="fa <?php echo htmlspecialchars($ad['icon']); ?>" style="color: <?php echo htmlspecialchars($ad['color']); ?>;"></i>
+                            <?php echo htmlspecialchars($ad['text']); ?>
+                        </div>
+                    <?php endforeach; 
+                endfor; ?>
             </div>
         </div>
                           
@@ -1017,7 +1076,7 @@ body.blog-page .premium-footer {
     <footer class="premium-footer">
         <div class="footer-inner">
             <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
-                <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                <p><em>Nóg</em>rádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
             </a>
         </div>
     </footer>
@@ -1030,14 +1089,19 @@ body.blog-page .premium-footer {
         </style>
     </div>
 
+        <!-- MOBIL REKLÁM -->
     <div class="mobile-ad-bar">
         <div class="mobile-ad-train">
-            <?php foreach($adItems as $ad): ?>
-                <div class="ad-box">
-                    <i class="fa <?php echo htmlspecialchars($ad['icon']); ?>" aria-hidden="true" style="color: <?php echo htmlspecialchars($ad['color']); ?>; margin-right: 8px;"></i>
-                    <?php echo htmlspecialchars($ad['text']); ?>
-                </div>
-            <?php endforeach; ?>
+            <?php 
+            // Itt is duplázunk a végtelenítéshez
+            for ($i = 0; $i < 2; $i++):
+                foreach($adItems as $ad): ?>
+                    <div class="ad-box">
+                        <i class="fa <?php echo htmlspecialchars($ad['icon']); ?>" style="color: <?php echo htmlspecialchars($ad['color']); ?>;"></i>
+                        <?php echo htmlspecialchars($ad['text']); ?>
+                    </div>
+                <?php endforeach;
+            endfor; ?>
         </div>
     </div>
 
@@ -1080,8 +1144,56 @@ body.blog-page .premium-footer {
                 });
             });
         })();
-    </script>    
- 
+    </script>
+    <script>
+        $(document).ready(function() {
+            if (!$('header.blog-mobile-nav').length) return;
+
+            var didScroll = false;
+            var lastScrollTop = 0;
+            var delta = 5;
+
+            $(window).on('scroll', function() {
+                didScroll = true;
+            });
+
+            setInterval(function() {
+                if (!didScroll) return;
+                didScroll = false;
+
+                var st = $(window).scrollTop();
+                var navbar = $('header.blog-mobile-nav');
+                var navbarHeight = navbar.outerHeight() || 0;
+
+                if (Math.abs(lastScrollTop - st) <= delta) return;
+
+                if (st > lastScrollTop && st > navbarHeight) {
+                    navbar.addClass('nav-up').removeClass('nav-down');
+                    var nav = document.getElementById('blog-mobile-menu');
+                    var btn = document.getElementById('blog-mobile-toggle');
+                    if (nav && nav.style.display === 'block') {
+                        nav.style.display = 'none';
+                        if (btn) btn.setAttribute('aria-expanded', 'false');
+                    }
+                } else if (st + $(window).height() < $(document).height()) {
+                    navbar.removeClass('nav-up').addClass('nav-down');
+                }
+
+                lastScrollTop = st;
+            }, 250);
+        });
+    </script>
+    <style>
+    @media (max-width: 767px) {
+        body.blog-page header.blog-mobile-nav {
+            transition: top 0.3s ease-in-out !important;
+        }
+
+        body.blog-page header.blog-mobile-nav.nav-up {
+            top: -100px !important;
+        }
+    }
+</style>
                         
     <script src="js/main.js"></script>
     <?php include "weather_mobile.php"; ?>

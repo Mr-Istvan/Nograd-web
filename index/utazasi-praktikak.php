@@ -124,7 +124,7 @@ require_once __DIR__ . '/../init.php';
     <div class="main-wrapper">
         <div class="sidebar-navigation">
             <div class="logo">
-                <a href="../index.php">NÓG<em>RÁD</em></a>
+                <a href="../index.php"><em>NÓG</em>RÁD</a>
             </div>
             <nav>
                 <div class="user-info" style="padding: 7px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px;">
@@ -238,7 +238,7 @@ require_once __DIR__ . '/../init.php';
 
              <footer class="premium-footer" style="padding: 17px; text-align: center; color: #0a1f98;">
                 <a href="../Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
-                    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                    <p><em>Nóg</em>rádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
                 </a>
             </footer>
         </div>

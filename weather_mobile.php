@@ -1,38 +1,37 @@
 <?php
-// 1. TELEPÜLÉSEK ÉS KOORDINÁTÁK
+// --- KÖZÖS ADATKEZELŐ BLOKK ---
+$cacheFile = 'data/weather_24.json';
+$refreshInterval = 3600;
+
 $varosok = [
-    "Salgótarján" => [48.10, 19.80],
-    "Balassagyarmat" => [48.07, 19.29],
-    "Pásztó" => [47.92, 19.66],
-    "Szécsény" => [48.08, 19.51],
-    "Bátonyterenye" => [47.98, 19.83],
-    "Rétság" => [47.92, 19.14],
-    "Hollókő" => [47.99, 19.58],
-    "Bánk" => [47.92, 19.17],
-    "Nógrádszakál" => [48.19, 19.53],
-    "Tar" => [47.95, 19.74],
-    "Somoskő" => [48.17, 19.85],
-    "Rónabánya" => [48.12, 19.89],
-    "Ipolytarnóc" => [48.24, 19.62],
-    "Kozárd" => [47.92, 19.63],
-    "Cserhát" => [47.91, 19.46],
-    "Börzsöny" => [47.93, 18.92],
-    "Mátra" => [47.87, 19.92] 
+    "Salgótarján" => [48.10, 19.80], "Balassagyarmat" => [48.07, 19.29], "Pásztó" => [47.92, 19.66],
+    "Szécsény" => [48.08, 19.51], "Bátonyterenye" => [47.98, 19.83], "Rétság" => [47.92, 19.14],
+    "Hollókő" => [47.99, 19.58], "Bánk" => [47.92, 19.17], "Nógrádszakál" => [48.19, 19.53],
+    "Tar" => [47.95, 19.74], "Somoskő" => [48.17, 19.85], "Rónabánya" => [48.12, 19.89],
+    "Ipolytarnóc" => [48.24, 19.62], "Kozárd" => [47.92, 19.63], "Cserhát" => [47.91, 19.46],
+    "Börzsöny" => [47.93, 18.92], "Mátra" => [47.87, 19.92]
 ];
 
-$lats = implode(',', array_column($varosok, 0));
-$lons = implode(',', array_column($varosok, 1));
+if (!file_exists($cacheFile) || (time() - filemtime($cacheFile) > $refreshInterval)) {
+    $lats = implode(',', array_column($varosok, 0));
+    $lons = implode(',', array_column($varosok, 1));
+    $url = "https://api.open-meteo.com/v1/forecast?latitude=$lats&longitude=$lons&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,pressure_msl&daily=temperature_2m_max,temperature_2m_min&timezone=auto";
 
-// API hívás - Fontos a formátum!
-$m_url = "https://api.open-meteo.com/v1/forecast?latitude=$lats&longitude=$lons&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,pressure_msl&daily=temperature_2m_max,temperature_2m_min&timezone=auto";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    $res = curl_exec($ch);
+    curl_close($ch);
 
-$m_ch = curl_init(); 
-curl_setopt($m_ch, CURLOPT_URL, $m_url); 
-curl_setopt($m_ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($m_ch, CURLOPT_SSL_VERIFYPEER, false); // Biztonság kedvéért, ha a szerver nem tudná ellenőrizni az SSL-t
-$m_res = curl_exec($m_ch); 
-curl_close($m_ch); 
-$m_data = json_decode($m_res, true);
+    if ($res) {
+        if (!is_dir('data')) mkdir('data', 0777, true);
+        file_put_contents($cacheFile, $res);
+    }
+}
+
+$data = json_decode(file_get_contents($cacheFile), true);
+// --- KÖZÖS BLOKK VÉGE ---
 ?>
 
 <style>
@@ -95,7 +94,7 @@ $m_data = json_decode($m_res, true);
 
 <script>
 (function() {
-    const rawData = <?= json_encode($m_data) ?>;
+    const rawData = <?= json_encode($data) ?>;
     const cityNames = <?= json_encode(array_keys($varosok)) ?>;
 
     // JAVÍTOTT ADATKINYERÉS: Az Open-Meteo tömböt ad vissza, ha több koordinátát kérünk

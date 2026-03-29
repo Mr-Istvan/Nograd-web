@@ -21,7 +21,7 @@ require_once __DIR__ . '/init.php';
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>NÓGRÁD</title>
+        <title>NÓGRÁD Csodák</title>
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -90,7 +90,7 @@ require_once __DIR__ . '/init.php';
     
     <div class="sidebar-navigation">
         <div class="logo">
-            <a href="index.php">Nóg<em>rád</em></a>
+            <a href="index.php"><em>Nóg</em>rád </a>
         </div>
         <nav>
             <ul>
@@ -231,8 +231,9 @@ require_once __DIR__ . '/init.php';
 
 .premium-footer {
     /* Biztosítjuk, hogy a footer tudja, hol a széle */
-    padding-left: 250px !important; 
+    /* padding-left: 250px !important; */
     box-sizing: border-box !important;
+    text-align: center;
 }
 
 @media (max-width: 767px) {
@@ -269,15 +270,15 @@ require_once __DIR__ . '/init.php';
 
       <!--  <div class="sidebar-stats">          //ezen ahelyen ez értékelési statisztikák lennének, müködik, de a Like-olási gomb miatt most nem fér el szépen, így egyelőre félretettem. 
             <div style="margin-bottom: 8px;">
-                <i class="fa fa-users" style="color: #7fd0ff; width: 20px;"></i> 
+                <i class="fa fa-users" style="color: #ffffff; width: 20px;"></i> 
                 <span id="eszam"><?= $row['eszam'] ?></span> kitöltő
             </div>
             <div style="margin-bottom: 8px;">                                              // Ez az értékelési átlag, de mivel a Like gomb miatt nem fér el szépen, így egyelőre félretettem.             
-                <i class="fa fa-star" style="color: #fec107; width: 20px;"></i> 
+                <i class="fa fa-star" style="color: #ffffff; width: 20px;"></i> 
                 <span id="atlag"><?= round($row['atlag'], 2) ?></span> / 5
             </div>
             <div style="margin-bottom: 8px;">
-                <i class="fa fa-thumbs-up" style="color: #28a745; width: 20px;"></i> // Ez a Like-ok száma, de mivel a Like gomb miatt nem fér el szépen, így egyelőre félretettem.
+                <i class="fa fa-thumbs-up" style="color: #f0f0f0; width: 20px;"></i> // Ez a Like-ok száma, de mivel a Like gomb miatt nem fér el szépen, így egyelőre félretettem.
                 <span id="likes"><?= $row['likes'] ?></span> like
             </div>
             <button onclick="like()" class="btn-like-sidebar">👍 LIKE</button>
@@ -298,7 +299,7 @@ require_once __DIR__ . '/init.php';
                 <div class="image"></div>
                 <div class="info">
                     <div>
-                      <h1>Csodálatos helyek<br>Nógrád megyében</h1>
+                      <h1>Csodálatos helyek<br><em>Nóg</em>rád megyében</h1>
                       <p>Nógrád legszebb látnivalói, kirándulóhelyek,<br>
                             városnézések és programajánlók.</p>
                       <div class="white-button button">
@@ -329,8 +330,8 @@ require_once __DIR__ . '/init.php';
                     <div class="image"></div>
                         <div class="info">
                             <div>
-                                <h1>Nógrád vármegyei fesztiválok<br>programok</h1>
-                                <p>Válogass kedvedre Nógrád vármegyei <br>kirándulóhelyekből,látnivalókból és
+                                <h1><em>Nóg</em>rád vármegyei fesztiválok<br>programok</h1>
+                                <p>Válogass kedvedre <em>Nóg</em>rád vármegyei <br>kirándulóhelyekből,látnivalókból és
                                 programjaiból.</p>
                         
                              <div class="white-button button">
@@ -374,7 +375,7 @@ require_once __DIR__ . '/init.php';
                 <div class="text-content">
                     <h4>Programajánló</h4>
                     <span>Élmények, kalandok</span>
-                    <p>Nógrád megye számos élményprogramot kínál. Az aktív kikapcsolódás szerelmeseinek kerékpártúrák, lovastúrák, kalandpark. Fesztiválozóknak falunapok és Palóc Fesztiválok, kézműves foglalkozások, néptáncbemutatók. Családoknak erdei kisvasutak, kalandparkok, valamint horgász- és vízi sportlehetőségek.</p>
+                    <p><em>Nóg</em>rád megye számos élményprogramot kínál. Az aktív kikapcsolódás szerelmeseinek kerékpártúrák, lovastúrák, kalandpark. Fesztiválozóknak falunapok és Palóc Fesztiválok, kézműves foglalkozások, néptáncbemutatók. Családoknak erdei kisvasutak, kalandparkok, valamint horgász- és vízi sportlehetőségek.</p>
                 </div>
             </div>
 
@@ -414,7 +415,7 @@ require_once __DIR__ . '/init.php';
                     </div>
                 </div>
                 <div class="text-content">
-                    <h4>Nógrádi Ízutazás</h4>
+                    <h4><em>Nóg</em>rád Ízutazás</h4>
                     <span>Palóc konyha és helyi piacok</span>
                     <p>Keresse a helyi védjegyes termékeket! A palócleves és a juhtúrós sztrapacska mellett érdemes megkóstolni a nógrádi nemesnyár lekvárt. Salgótarjánban szombatonként a helyi kistermelői piacon friss kecskesajtot és füstölt vadhúst is vásárolhat.</p>
                 </div>
@@ -441,7 +442,7 @@ require_once __DIR__ . '/init.php';
 
     <section id="projects" class="content-section">
         <div class="section-heading">
-            <h1>Élménydús<br><em>Nógrád</em></h1>
+            <h1>Élménydús<br><em>Nóg</em>rád </h1>
             <p>
                 <strong>Miért válaszd Nógrád vármegyét?</strong>
                 Várak, panorámák, erdők és palóc hangulat – rövid kiruccanásra is tökéletes, élményekből pedig sosem fogy ki.
@@ -513,7 +514,7 @@ require_once __DIR__ . '/init.php';
         <div class="row">
             <div class="col-md-12">
                 <div class="section-heading">
-                    <h1><em>Nóg</em>rád csodák <em>bemutató!</em></h1>
+                    <h1><em>Nóg</em>rád <span style="font-size: 0.9em;">csodák</span> <span style="font-size: 0.75em;">bemutató!</span></h1>
                     <p>Engedd, hogy elvarázsoljon Nógrád megye szépsége!</p>
                 </div>
             </div>
@@ -713,7 +714,7 @@ require_once __DIR__ . '/init.php';
         text-align: center;
         margin: 40px 0;
         padding: 20px;
-        left: 250px;
+    
         background: rgba(0, 0, 0, 0.6);
         border: 1px solid #345af2;
         border-radius: 25px; /* Kanyaros szél */
