@@ -131,7 +131,7 @@ p {
   min-width: 280px;
 }
 
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 767px) and (max-width: 991px) {
   body.blog-page .sidebar-navigation.hidden-sm.hidden-xs {
     display: block !important;
   }
@@ -1001,7 +1001,7 @@ nav .active-section span {
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 767px) {
   #map.content-section,
   #contact-content {
     margin-left: 0 !important;
@@ -1080,47 +1080,105 @@ nav .active-section span {
 }
 
 /* ==========================================================
-   PRÉMIUM FOOTER - VÉGLEGES ÉS KÖZÉPRE IGAZÍTOTT VÁLTOZAT
+   PRÉMIUM FOOTER - JAVÍTOTT, KÖZÉPRE IGAZÍTOTT VÁLTOZAT
    ========================================================== */
 
 /* Az egész lábléc doboza */
 .premium-footer {
     width: 100% !important;
-    background-color: transparent !important; /* Vagy amilyen hátteret szeretnél */
+    margin-left: 0 !important;
     padding: 40px 0 !important;
     margin-top: 50px !important;
     clear: both !important;
     position: relative !important;
     z-index: 999 !important;
     box-sizing: border-box !important;
-    text-align: center !important; /* Itt kényszerítjük a középre zárást */
+    text-align: center !important;
     display: block !important;
+    float: none !important;
 }
 
 /* PC-S ELRENDEZÉS (Amikor látszik a bal oldali menü) */
-@media (min-width: 768px) {
+@media (min-width: 767px) {
     .premium-footer {
-        /* Ez a kulcs! Itt toljuk el balról 250px-el a dobozt, így a "közepe" már az igazi középpont lesz */
-        padding-left: 250px !important; 
+        width: calc(100% - 60px) !important;
+        margin-left: 30px !important;
+        margin-right: 30px !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
+        float: none !important;
+        max-width: calc(100% - 60px) !important;
+    }
+
+    .footer-inner-wrapper,
+    .rating-link-container,
+    .credits-container {
+        padding-left: 30px !important;
+        padding-right: 30px !important;
+        box-sizing: border-box !important;
+    }
+
+    .site-footer-fixed__pill,
+    .btn-sentra-index {
+        color: #1f1f1f !important;
+        font-size: 14px !important;
+        line-height: 1.6 !important;
+        font-family: 'Open Sans', sans-serif !important;
+        text-align: center !important;
+    }
+
+    .site-footer-fixed__pill {
+        background: #fcfcfc !important;
+        border: 2px solid #d4af37 !important;
+        border-radius: 50px !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
+        padding: 12px 25px !important;
+        max-width: 100% !important;
+        display: inline-block !important;
+    }
+
+    .btn-sentra-index {
+        background: #1f378c !important;
+        border: 2px solid #345af2 !important;
+        border-radius: 50px !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+        padding: 14px 40px !important;
+        color: #ffffff !important;
+        text-transform: uppercase !important;
+        display: inline-block !important;
+    }
+
+    .credits-link {
+        display: inline-block !important;
+        text-decoration: none !important;
     }
 }
 
-/* BELSŐ KONTÉNEREK (Hogy biztosan minden középen maradjon) */
-.rating-link-container, 
-.credits-container,
-.footer-inner-wrapper {
-    width: 100% !important;
+/* BELSŐ KONTÉNEREK RESETÁLÁSA */
+.footer-inner-wrapper,
+.rating-link-container,
+.credits-container {
+   width: 100% !important;
+    max-width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important; 
     justify-content: center !important;
-    margin: 0 auto !important;
+    margin-left: 0 !important; 
+    margin-right: 0 !important;
+    left: 0 !important;
+    position: relative !important;
     text-align: center !important;
+    float: none !important;
+    transform: none !important;
+    box-sizing: border-box !important;
 }
 
 /* A KAPSZULA (A készítők neve és az üzenet) */
 .site-footer-fixed__pill {
-    display: inline-block !important;
+    display: block !important;
+    width: fit-content !important;
     background: #fcfcfc !important; 
     color: #1a1a1a !important;    
     padding: 12px 25px !important;
@@ -1134,8 +1192,22 @@ nav .active-section span {
     margin-left: auto !important;
     margin-right: auto !important;
     text-decoration: none !important;
+    text-align: center !important;
     transition: 0.3s !important;
     max-width: fit-content;
+    position: relative !important;
+}
+.site-footer-fixed__pill,
+.btn-sentra-index {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
+    width: fit-content !important;
+    text-align: center !important;
+    float: none !important;
+    position: relative !important;
+    left: 0 !important;
+    right: 0 !important;
 }
 
 /* AZ ÉRTÉKELÉS GOMB */
@@ -1155,6 +1227,7 @@ nav .active-section span {
     margin-right: auto !important;
     font-size: 14px !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+    position: relative !important;
 }
 
 .btn-sentra-index:hover {
@@ -1167,14 +1240,15 @@ nav .active-section span {
 /* MOBIL FIXEK (Amikor eltűnik a bal oldali menü) */
 @media (max-width: 767px) {
     .premium-footer {
-        padding-left: 0 !important;   /* Levesszük a bal oldali tolást, mert nincs menü */
-        padding-right: 0 !important;
-        padding-bottom: 140px !important; /* Hely a mobil menünek alul */
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        padding-bottom: 120px !important;
     }
 
     .site-footer-fixed__pill {
         font-size: 11px !important;
-        width: 90% !important;        
+        width: 90% !important;
         box-sizing: border-box !important;
     }
 
@@ -1186,10 +1260,9 @@ nav .active-section span {
     .premium-footer p, 
     .rating-link-container p,
     .credits-container p {
-        color: #ffffff !important; 
+        color: #ffffff !important;
     }
 }
-
 
 /* 6. BLOG SPECIFIKUS ELRENDEZÉS */
 body.blog-page .page-content {
@@ -1218,7 +1291,7 @@ header.responsive-nav {
   color: #fff !important;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 767px) {
   .sidebar-navigation {
     width: 250px !important;
     position: fixed !important;
@@ -1548,7 +1621,7 @@ header {
   border-radius: 4px !important;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 767px) {
   #contact-content .section-content {
     width: 100% !important;
     max-width: 100% !important;

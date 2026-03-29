@@ -1074,9 +1074,9 @@ body.blog-page .premium-footer {
     </ul>
 
     <footer class="premium-footer">
-        <div class="footer-inner">
+        <div class="credits-container">
             <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
-                <p><em>Nóg</em>rádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
             </a>
         </div>
     </footer>
