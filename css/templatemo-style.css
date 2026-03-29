@@ -1007,17 +1007,120 @@ sidebar-navigation .social-icons li a:hover {
   .ads-list { height: 220px; animation: none; overflow-y:auto; }
 }
 
-/* --- VÉGLEGES LÁBLÉC FIX --- */
+/* --- PRÉMIUM FOOTER EGYSÉGESÍTÉS - ÁTLÁTSZÓ SÖTÉT VÁLTOZAT --- */
+
 .premium-footer {
-    width: 100%;
-    background-color: rgba(12, 12, 12, 0.95);
-    padding: 40px 0; /* Fix magasság helyett padding, hogy beleférjen a gombod is */
-    text-align: center;
-    border-top: 2px solid #345af2;
-    clear: both; /* Megállítja a galéria elemek rácsúszását */
-    position: relative;
-    z-index: 10;
-    margin-top: 50px;
+    width: 100% !important;
+    /* Átlátszó sötét háttér (mint a blog szekcióknál) */
+    background-color: rgba(12, 12, 12, 0.01) !important; 
+    padding: 60px 0 !important;
+    text-align: center !important;
+    border-top: 3px solid #345af2 !important;
+    clear: both !important;
+    position: relative !important;
+    z-index: 999 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+}
+
+/* PC-S ELRENDEZÉS (Sidebar melletti terület közepére igazítás) */
+@media (min-width: 768px) {
+    .premium-footer {
+        /* Sidebar eltolás a centrázáshoz */
+        padding-left: 250px !important; 
+    }
+}
+
+/* BELSŐ KONTÉNEREK IGAZÍTÁSA */
+.rating-link-container, 
+.credits-container {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important; 
+    justify-content: center !important;
+    margin: 0 auto !important;
+}
+
+/* A KAPSZULA (PILL) DIZÁJN */
+.site-footer-fixed__pill {
+    display: inline-block !important;
+    background: #fcfcfc !important; 
+    color: #1a1a1a !important;    
+    padding: 12px 25px !important;
+    border: 2px solid #d4af37 !important; 
+    border-radius: 50px !important;
+    font-family: 'Open Sans', sans-serif !important;
+    font-style: italic !important;
+    font-size: 13px !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
+    margin-bottom: 15px !important;
+    text-decoration: none !important;
+    transition: 0.3s !important;
+    max-width: fit-content;
+}
+
+/* ÉRTÉKELÉS GOMB FIXÁLÁSA */
+.btn-sentra-index {
+    display: inline-block !important;
+    text-decoration: none !important;
+    background: #1f378c !important; 
+    color: #ffffff !important;      
+    border: 2px solid #345af2 !important;
+    padding: 14px 40px !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    border-radius: 50px !important;
+    transition: 0.4s !important;
+    margin-bottom: 30px !important;
+    font-size: 14px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.btn-sentra-index:hover {
+    background: #00ffff !important; 
+    color: #000000 !important;      
+    box-shadow: 0 0 20px #00ffff !important;
+    transform: translateY(-3px) !important;
+}
+
+/* MOBIL FIXEK (767px ALATT) */
+@media (max-width: 767px) {
+    .premium-footer {
+        padding-left: 0 !important;   
+        padding-right: 0 !important;
+        padding-bottom: 140px !important; 
+        background-color: rgba(202, 202, 202, 0.01) !important; /* Mobilon kicsit sötétebb az olvashatóságért */
+    }
+
+    .site-footer-fixed__pill {
+        font-size: 11px !important;
+        width: 90% !important;        
+        box-sizing: border-box !important;
+    }
+
+    .btn-sentra-index {
+        width: 85% !important;
+        padding: 12px 20px !important;
+    }
+
+    .premium-footer p, 
+    .rating-link-container p,
+    .credits-container p {
+        color: #ffffff !important; 
+    }
+}
+
+/* 6. BLOG SPECIFIKUS ELRENDEZÉS */
+body.blog-page .page-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* A footer mindig az oldal alján maradjon */
+body.blog-page .footer-wrapper {
+    margin-top: auto;
 }
 
 /* Értékelő rész stílusa a footerben */
@@ -1038,31 +1141,6 @@ sidebar-navigation .social-icons li a:hover {
     padding-top: 20px;
 }
 
-.premium-footer p {
-    margin-bottom: 0px;
-    font-size: 13px;
-    color: #b7a312; /* A kért nógrádi arany szín */
-    letter-spacing: 0.5px;
-    font-weight: 300;
-}
-
-.premium-footer a {
-    text-decoration: none;
-    color: #fff;
-    font-weight: 600;
-    transition: 0.3s;
-}
-
-.premium-footer a:hover {
-    color: #345af2;
-}
-
-/* Mobilos eltolás a sidebar miatt */
-@media (max-width: 767px) {
-    .premium-footer {
-        padding-bottom: 110px; /* Hely a fix kék mobil reklámsávnak */
-    }
-}
 
 /* ============================================================
    VÉGLEGES, TISZTA RESZPONZÍV FIX (CSAK 767px VÁLTÓPONT)

@@ -773,8 +773,8 @@ textarea.form-control {
     body.blog-page .page-content {
         padding-bottom: 120px !important;
     }
+}
 
-    /* FOOTER FIXÁLÁSA MINDEN ESZKÖZRE */
 .footer-wrapper {
     clear: both;
     display: block;

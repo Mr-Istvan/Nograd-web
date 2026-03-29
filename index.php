@@ -206,47 +206,64 @@ require_once __DIR__ . '/init.php';
         box-shadow: 0 0 15px rgba(127, 208, 255, 0.5);
    }
 
-   /* UNIVERZÁLIS FOOTER FIX */
-.premium-footer {
+/* VISSZAHÚZZUK A GOMBOT KÖZÉPRE */
+.rating-link-container {
+    position: relative !important;
+    /* A korábbi fix 250px-et leütjük nullára */
+    left: 0 !important; 
+    /* Vagy ha még mindig kint van, akkor használhatsz negatív margót: */
+    /* margin-left: -250px !important; */ 
+    
     width: 100% !important;
-    display: block !important; /* Ne inline-block legyen! */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 20px auto !important;
+}
+
+/* A gomb alatti készítők sávját is húzzuk vissza */
+.credits-container {
+    left: 0 !important;
+    width: 100% !important;
     text-align: center !important;
-    padding: 30px 10px !important;
-    clear: both !important;
-    background: rgba(0, 0, 0, 0.6); /* Sötét háttér a jobb olvashatóságért */
-    margin-top: 50px;
 }
 
-.footer-inner {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+.premium-footer {
+    /* Biztosítjuk, hogy a footer tudja, hol a széle */
+    padding-left: 250px !important; 
+    box-sizing: border-box !important;
 }
 
-.credits-link {
-    text-decoration: none !important;
-    display: inline-block;
-}
-
-.credits-link p {
-    font-family: 'Georgia', serif !important;
-    font-style: italic !important;
-    color: #000000 !important;
-    font-size: 14px !important;
-    padding: 10px 25px !important;
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 2px solid #d4af37 !important; /* Arany keret */
-    border-radius: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    margin: 0 auto;
-    cursor: pointer;
-}
-
-/* Ha asztali gépen vagyunk, el kell tolni a sidebar miatt */
-@media (min-width: 768px) {
+@media (max-width: 767px) {
+    /* Mobilon tiltsd le a visszahúzást, mert ott nincs sidebar! */
     .premium-footer {
-        padding-left: 250px !important; /* Az asztali sidebar szélessége */
+        padding-left: 0 !important;
     }
+    .rating-link-container {
+        margin-left: 0 !important;
+    }
+}
+
+.btn-sentra-index {
+    display: inline-block;
+    text-decoration: none;
+    background: #1f378c; /* Sötétkék háttér, hogy látszódjon a fehér szöveg */
+    color: #ffffff !important;
+    border: 2px solid #345af2;
+    padding: 14px 40px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 50px;
+    transition: 0.4s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-sentra-index:hover {
+    background: #00ffff;
+    color: #000 !important;
+    box-shadow: 0 0 25px #00ffff;
+    transform: translateY(-3px);
 }
 </style>
 
@@ -581,7 +598,7 @@ require_once __DIR__ . '/init.php';
 
              <div id="contact-content">
             <div class="section-heading">
-                <h1>Kap<em>csol</em>at</h1>
+                <h1><em>Kapcsolat</em></h1>
                 <p>Kérdésed van vagy információt gyűjtenél? Írj nekünk közvetlenül!</p>
             </div>
             
@@ -622,20 +639,22 @@ require_once __DIR__ . '/init.php';
         </div>
 
     </section>
-
             <footer class="premium-footer">
-        <div class="rating-link-container">
-            <p>Tetszett a látogatás? Oszd meg velünk a véleményed!</p>
-            <a href="ertekeles.php" class="btn-sentra-index">⭐ Értékelés Megkezdése</a>
-        </div>
+                <div class="footer-inner-wrapper">
+                    <!-- Felső rész: Értékelés -->
+                    <div class="rating-link-container">
+                        <p class="site-footer-fixed__pill">Tetszett a látogatás? Oszd meg velünk a véleményed!</p>
+                        <a href="ertekeles.php" class="btn-sentra-index">⭐ ÉRTÉKELÉS MEGKEZDÉSE</a>
+                    </div>
 
-        <div class="credits-container">
-            <div class="footer-inner">
-        <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
-            <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
-        </a>
-    </div>
-     </footer>
+                    <!-- Alsó rész: Készítők -->
+                    <div class="credits-container">
+                        <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
+                            <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                        </a>
+                    </div>
+                </div>
+            </footer>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
