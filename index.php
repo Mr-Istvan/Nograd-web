@@ -642,13 +642,11 @@ require_once __DIR__ . '/init.php';
     </section>
             <footer class="premium-footer">
                 <div class="footer-inner-wrapper">
-                    <!-- Felső rész: Értékelés -->
                     <div class="rating-link-container">
                         <p class="site-footer-fixed__pill">Tetszett a látogatás? Oszd meg velünk a véleményed!</p>
                         <a href="ertekeles.php" class="btn-sentra-index">⭐ ÉRTÉKELÉS MEGKEZDÉSE</a>
                     </div>
 
-                    <!-- Alsó rész: Készítők -->
                     <div class="credits-container">
                         <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
                             <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>

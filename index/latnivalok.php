@@ -218,9 +218,11 @@ require_once __DIR__ . '/../init.php';
             </section>
 
             <footer class="premium-footer" style="padding: 12px; text-align: center; color: #0a1f98;">
-                <a href="../Proofiles.php" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
-                    <p>Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
-                </a>
+                <div class="credits-container">
+                    <a href="../Proofiles.php" class="credits-link" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
+                        <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                    </a>
+                </div>
             </footer>
         </div>
     </div>
