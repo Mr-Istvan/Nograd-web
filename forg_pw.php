@@ -1,18 +1,32 @@
 <?php
 require_once __DIR__ . '/init.php';
 
-// Ha már van folyamatban lévő reset, töröljük a biztonság kedvéért az elején
+// --- OKOS MEMÓRIA KEZELÉS (VÉGTELEN CIKLUS ELLEN) ---
+// Ezeket az oldalakat SOHA nem mentjük el eredeti kiindulópontnak
+$exclude_pages = ['login.php', 'reg_id.php', 'forgot_password.php', 'forg_pw.php', 'reg_process.php', 'login_process.php'];
+
+if (isset($_SERVER['HTTP_REFERER'])) {
+    $from_page = basename(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH));
+    
+    // Csak akkor mentünk ÚJ eredeti címet, ha NEM a tiltólistáról érkezik a júzer
+    if (!in_array($from_page, $exclude_pages)) {
+        $_SESSION['user_origin_url'] = $_SERVER['HTTP_REFERER'];
+    }
+}
+
+// Az X gomb célpontja: Az eredeti tartalom (pl. latnivalok.php), ha nincs, akkor index.php
+$final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
+
+// --- FOLYAMAT KEZELÉSE ---
 if (!isset($_GET['error'])) {
-    unset($_SESSION['reset_uid']);
-    unset($_SESSION['reset_q']);
+    unset($_SESSION['reset_uid'], $_SESSION['reset_q']);
 }
 
 $error = "";
-if (isset($_GET['error'])) {
-    if ($_GET['error'] == 'no_user') $error = "Helytelen adatok! Nincs ilyen felhasználó.";
+if (isset($_GET['error']) && $_GET['error'] == 'no_user') {
+    $error = "Helytelen adatok! Nincs ilyen felhasználó.";
 }
 
-// FELDOLGOZÁS
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $uemail = mysqli_real_escape_string($conn, trim($_POST['uemail']));
     $unev = mysqli_real_escape_string($conn, trim($_POST['unev']));
@@ -23,17 +37,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($row = mysqli_fetch_assoc($result)) {
         $_SESSION['reset_uid'] = $row['uid'];
         $_SESSION['reset_q'] = $row['usecret_q'];
-        
-        // JS átirányítás a 2. lépésre (Vissza-gomb védelem)
+        // window.location.replace-t használunk, hogy ne kerüljön be az előzményekbe a POST küldés
         echo "<script>window.location.replace('forgot_password.php?step=2');</script>";
         exit();
     } else {
-        // JS átirányítás hiba esetén is
         echo "<script>window.location.replace('forg_pw.php?error=no_user');</script>";
         exit();
     }
 }
 ?>
+<!-- A HTML részben az X gomb: -->
+<a href="<?php echo htmlspecialchars($final_x_url); ?>" class="close-icon" title="Bezárás">&times;</a>
 
 <!DOCTYPE html>
 <html lang="hu">
@@ -52,10 +66,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .btn-sentra:hover { background: #5659b1; color: white; }
         .error-msg { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; font-size: 14px; border: 1px solid rgba(255, 77, 77, 0.2); }
         label { font-size: 13px; color: #aaa; margin-bottom: 5px; }
+        .close-icon { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 35px; 
+            color: #ef4444; 
+            cursor: pointer; 
+            z-index: 100; 
+            text-decoration: none !important;
+            line-height: 1;
+            transition: 0.3s;
+        }
+        .close-icon:hover { 
+            color: #ff0000; 
+            transform: scale(1.2); 
+        }
     </style>
 </head>
 <body>
     <div class="card">
+        <a href="<?php echo htmlspecialchars($final_x_url); ?>" class="close-icon" title="Bezárás">&times;</a>
         <h2 class="text-center mb-4">JELSZÓ <em>PÓTLÁSA</em> 🐸</h2>
         
         <?php if ($error): ?>

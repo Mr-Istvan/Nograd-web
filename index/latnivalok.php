@@ -11,7 +11,7 @@ require_once __DIR__ . '/../init.php';
     
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/fontAwesome.css">
-    <link rel="stylesheet" href="../css/templatemo-style.css"> 
+    <link rel="stylesheet" href="../css/templatemo-style.css">
     <link rel="stylesheet" href="../css/turizm.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="mobile_style.css">
@@ -22,17 +22,17 @@ require_once __DIR__ . '/../init.php';
             background-size: cover !important;
         }
         /* --- HUMOR BOX (Most már egységes a többivel) --- */
-    .humor-box {
-        background: rgba(0, 0, 0, 0.7) !important;
-        color: #b76c09 !important;
-        padding: 13px 15px;
-        border-radius: 50px;
-        border: 2px dashed #d6790fea;
-        display: inline-block;
-        margin: 20px auto;
-        font-weight: bold;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-    }
+        .humor-box {
+            background: rgba(0, 0, 0, 0.7) !important;
+            color: #b76c09 !important;
+            padding: 13px 15px;
+            border-radius: 50px;
+            border: 2px dashed #d6790fea;
+            display: inline-block;
+            margin: 20px auto;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
         /* Egyedi ikon szín a látnivalókhoz */
         .turizm-card.latnivalo i {
             color: #aa5209;
@@ -40,50 +40,74 @@ require_once __DIR__ . '/../init.php';
         }
     </style>
 </head>
-<body class="page-latnivalok"> 
+<body class="page-latnivalok">
     <header class="nav-down responsive-nav">
         <div class="logo-mobile-left">
-       <a href="../index.php">NÓG<span>RÁD</span></a>
-    </div>
-    <button type="button" id="nav-toggle" class="navbar-toggle">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </button>
-    <div id="main-nav">
-        <nav style="padding: 12px;">
-            <ul class="nav navbar-nav">
-                <?php include 'mobile_menu.php'; ?>
-            </ul>
-        </nav>
-    </div>
-</header>
+            <a href="../index.php">NÓG<span>RÁD</span></a>
+        </div>
+        <button type="button" id="nav-toggle" class="navbar-toggle">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <div id="main-nav">
+            <nav style="padding: 12px;">
+                <ul class="nav navbar-nav">
+                    <?php include 'mobile_menu.php'; ?>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-     <div class="main-wrapper">
+    <div class="main-wrapper">
         <div class="sidebar-navigation">
             <div class="logo">
                 <a href="../index.php">NÓG<em>RÁD</em></a>
             </div>
             <nav>
-                <div class="user-info" style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px;">
-                    <?php if(isset($_SESSION['user_name'])): ?>
-                        <span style="display: block; color: #fff; margin-bottom: 5px;">Üdv, <strong><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong>!</span>
-                        <a href="../logout.php" style="color: #45489a; text-decoration: none; font-weight: bold; font-size: 13px;">[ Kilépés ]</a>
-                    <?php else: ?>
-                        <a href="../login.php" style="color: #fff; text-decoration: none; font-weight: bold;">Bejelentkezés</a>
-                    <?php endif; ?>
-                </div>
                 <ul>
-                     <li><a href="../index.php"><span class="rect"></span><span class="circle"></span>Kezdőlap</a></li>
+                    <?php if(isset($_SESSION['user_name'])): ?>
+                         <li>
+                            <a href="../profile.php" style="color: #fec107;">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../logout.php">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                Kilépés
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li>
+                            <a href="../login.php">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                Bejelentkezés
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../reg_id.php">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                Regisztráció
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                    <li style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 15px; list-style: none;"></li>
+                    <li><a href="../index.php"><span class="rect"></span><span class="circle"></span>Kezdőlap</a></li>
                     <li><a href="latnivalok.php"><span class="rect"></span><span class="circle"></span>Látnivalók</a></li>
                     <li><a href="programok.php"><span class="rect"></span><span class="circle"></span>Programok</a></li>
                     <li><a href="szallasok.php"><span class="rect"></span><span class="circle"></span>Szállások</a></li>
-                     <li><a href="gasztronomia.php"><span class="rect"></span><span class="circle"></span>Gasztro</a></li>
+                    <li><a href="gasztronomia.php"><span class="rect"></span><span class="circle"></span>Gasztro</a></li>
                     <li><a href="turazas.php"><span class="rect"></span><span class="circle"></span>Túrázás</a></li>
                     <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
                 </ul>
             </nav>
-           <?php include "../weather.php"; ?>
+            <?php include "../weather.php"; ?>
         </div>
 
         <div class="page-content">
@@ -97,7 +121,7 @@ require_once __DIR__ . '/../init.php';
 
                 <div class="container-fluid">
                     <div class="row">
-                       <div class="col-md-6">
+                        <div class="col-md-6">
                             <div class="turizm-card latnivalo">
                                 <h4><i class="fa fa-fort-awesome"></i> Hollókő Ófalu</h4>
                                 <p>Az UNESCO Világörökség része. Egy élő falu, ahol a hagyományok nem csak a múzeumban léteznek. A 67 védett ház és a középkori vár felejthetetlen látvány.</p>
@@ -212,6 +236,7 @@ require_once __DIR__ . '/../init.php';
                                 <div class="fun-fact">
                                     <strong>Figyelem:</strong> Nagy esőzés után gumicsizma erősen ajánlott!
                                 </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,14 +254,13 @@ require_once __DIR__ . '/../init.php';
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
-       $(document).ready(function() {
-        // Kattintás a hamburger ikonra
-        $('#nav-toggle').on('click', function (e) {
-            e.preventDefault();
-            $('#main-nav').slideToggle(300); // 300ms alatt gördül le/fel
+        $(document).ready(function() {
+            $('#nav-toggle').on('click', function (e) {
+                e.preventDefault();
+                $('#main-nav').slideToggle(300);
+            });
         });
-    });
     </script>
-     <?php include "../weather_mobile.php"; ?>
+    <?php include "../weather_mobile.php"; ?>
 </body>
 </html>

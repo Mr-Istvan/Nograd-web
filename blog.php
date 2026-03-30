@@ -883,7 +883,7 @@ body.blog-page .premium-footer {
 
     <nav id="blog-mobile-menu" aria-label="Mobil menü">
         <?php if(isset($_SESSION['user_name'])): ?>
-            <a class="menu-profile" href="profile.php"><i class="fa fa-user"></i> Profil (<?php echo htmlspecialchars($_SESSION['user_name']); ?>)</a>
+            <a class="menu-profile" href="profile.php"><i class="fa fa-user"></i> Üdv, (<?php echo htmlspecialchars($_SESSION['user_name']); ?>)</a>
             <a class="menu-logout" href="logout.php">Kilépés</a>
         <?php else: ?>
             <a href="login.php"><i class="fa fa-sign-in"></i> Belépés</a>
@@ -901,12 +901,36 @@ body.blog-page .premium-footer {
         </div>
         <nav>
             <ul>
-                <?php if($userLoggedIn): ?>
-                    <li><a href="profile.php"><span class="circle"></span>Profil (<?php echo $_SESSION['user_name']; ?>)</a></li>
-                    <li><a href="logout.php"><span class="circle"></span>Kilépés</a></li>
+                <?php if(isset($_SESSION['user_name'])): ?>
+                    <li>
+                        <a href="profile.php" style="color: #fec107;">
+                            <span class="rect"></span>
+                            <span class="circle"></span>
+                            <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="logout.php">
+                            <span class="rect"></span>
+                            <span class="circle"></span>
+                            Kilépés
+                        </a>
+                    </li>
                 <?php else: ?>
-                    <li><a href="login.php"><span class="circle"></span>Bejelentkezés</a></li>
-                    <li><a href="reg_id.php"><span class="circle"></span>Regisztráció</a></li>
+                    <li>
+                        <a href="login.php">
+                            <span class="rect"></span>
+                            <span class="circle"></span>
+                            Bejelentkezés
+                        </a>
+                    </li>
+                    <li>
+                        <a href="reg_id.php">
+                            <span class="rect"></span>
+                            <span class="circle"></span>
+                            Regisztráció
+                        </a>
+                    </li>
                 <?php endif; ?>
                 
                 <hr style="border-top: 1px solid rgba(255,255,255,0.1); width: 80%; margin: 15px auto;">

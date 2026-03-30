@@ -1,8 +1,26 @@
 <?php
 require_once __DIR__ . '/init.php';
+
+// Megakadályozzuk a cache-elést
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
+
+// --- 1. OKOS MEMÓRIA KEZELÉS (VÉGTELEN CIKLUS ELLEN) ---
+// Ezeket az oldalakat SOHA nem mentjük el eredeti kiindulópontnak
+$exclude_pages = ['login.php', 'reg_id.php', 'forgot_password.php', 'forg_pw.php', 'reg_process.php', 'login_process.php'];
+
+if (isset($_SERVER['HTTP_REFERER'])) {
+    $from_page = basename(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH));
+    
+    // Csak akkor frissítjük az eredeti címet, ha NEM a tiltólistáról érkezik a felhasználó
+    if (!in_array($from_page, $exclude_pages)) {
+        $_SESSION['user_origin_url'] = $_SERVER['HTTP_REFERER'];
+    }
+}
+
+// Az X gomb célpontja: Az elmentett eredeti tartalom, ha nincs, akkor index.php
+$final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -77,11 +95,28 @@ header("Expires: 0");
         /* Emeltebb kék link stílus */
         .link-login { color: #45489a !important; text-decoration: none; font-weight: 800; transition: 0.3s; }
         .link-login:hover { color: #6165d7 !important; text-decoration: underline; }
+        .close-icon { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 35px; 
+            color: #ef4444; 
+            cursor: pointer; 
+            z-index: 100; 
+            text-decoration: none !important;
+            line-height: 1;
+            transition: 0.3s;
+        }
+        .close-icon:hover { 
+            color: #ff0000; 
+            transform: scale(1.2); 
+        }
     </style>
 </head>
 <body>
     <?php include 'matrix_bg.php'; ?>
     <div class="login-box">
+       <a href="<?php echo htmlspecialchars($final_x_url); ?>" class="close-icon" title="Bezárás">&times;</a>
         <h2>Regiszt<em>ráció</em></h2>
 
         <div id="msg-box">

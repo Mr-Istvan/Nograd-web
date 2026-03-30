@@ -11,53 +11,73 @@ require_once __DIR__ . '/../init.php';
     
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/fontAwesome.css">
-    <link rel="stylesheet" href="../css/templatemo-style.css"> 
+    <link rel="stylesheet" href="../css/templatemo-style.css">
     <link rel="stylesheet" href="../css/turizm.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="mobile_style.css">
     <style>
-        /* CSAK az oldal-specifikus színek maradjanak itt! */
-        .turizm-card { border-left: 10px solid #fec107 !important; } /* Gasztro sárga */
+        .turizm-card { border-left: 10px solid #fec107 !important; }
         header.responsive-nav { border-bottom: 3px solid #fec107 !important; }
         .navbar-toggle { background-color: #fec107 !important; }
-        .humor-box { color: #fec107; border: 2px dashed #fec107; } /* A vicc doboz is legyen sárga */
+        .humor-box { color: #fec107; border: 2px dashed #fec107; }
     </style>
 </head>
-
 <body>
-
-
     <header class="nav-down responsive-nav">
         <div class="logo-mobile-left">
-       <a href="../index.php">NÓG<span>RÁD</span></a>
-    </div>
-    <button type="button" id="nav-toggle" class="navbar-toggle">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </button>
-    <div id="main-nav">
-        <nav style="padding: 12px;">
-            <ul class="nav navbar-nav">
-                <?php include 'mobile_menu.php'; ?>
-            </ul>
-        </nav>
-    </div>
-</header>
+            <a href="../index.php">NÓG<span>RÁD</span></a>
+        </div>
+        <button type="button" id="nav-toggle" class="navbar-toggle">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <div id="main-nav">
+            <nav style="padding: 12px;">
+                <ul class="nav navbar-nav">
+                    <?php include 'mobile_menu.php'; ?>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
     <div class="main-wrapper">
         <div class="sidebar-navigation">
-            <div class="logo"><a href="../index.php">NÓG<em>RÁD</em></a></div>
+            <div class="logo"><a href="../index.php"><em>NÓG</em>RÁD</a></div>
             <nav>
-                <div class="user-info" style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px;">
-                    <?php if(isset($_SESSION['user_name'])): ?>
-                        <span style="display: block; color: #fff; margin-bottom: 5px;">Üdv, <strong><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong>!</span>
-                        <a href="../logout.php" style="color: #fec107; text-decoration: none; font-weight: bold; font-size: 13px;">[ Kilépés ]</a>
-                    <?php else: ?>
-                        <a href="../login.php" style="color: #fff; text-decoration: none; font-weight: bold;">Bejelentkezés</a>
-                    <?php endif; ?>
-                </div>
                 <ul>
+                    <?php if(isset($_SESSION['user_name'])): ?>
+                        <li>
+                            <a href="../profile.php" style="color: #fec107;">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../logout.php">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                Kilépés
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li>
+                            <a href="../login.php">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                Bejelentkezés
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../reg_id.php">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                Regisztráció
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                    <li style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 15px; list-style: none;"></li>
                     <li><a href="../index.php"><span class="rect"></span><span class="circle"></span>Kezdőlap</a></li>
                     <li><a href="latnivalok.php"><span class="rect"></span><span class="circle"></span>Látnivalók</a></li>
                     <li><a href="programok.php"><span class="rect"></span><span class="circle"></span>Programok</a></li>
@@ -101,24 +121,16 @@ require_once __DIR__ . '/../init.php';
                         </div>
 
                         <div class="col-md-7">
-                            <div class="turizm-card" style="min-height: 600px;"> 
+                            <div class="turizm-card" style="min-height: 600px;">
                                 <h3><i class="fa fa-map-marker"></i> Hol adják a legjobban?</h3>
                                 <p style="font-size: 12px; color: #888 !important;">(Kattints a névre a térkép frissítéséhez!)</p>
                                 <hr>
 
                                 <div style="height: 333px; width: 100%; border: 2px solid #fec107; border-radius: 10px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-                                    <iframe id="map-frame" 
-                                            src="https://maps.google.com/maps?q=Nógrád+megye+gasztronómia&t=&z=10&ie=UTF8&iwloc=&output=embed" 
-                                            width="100%" 
-                                            height="100%" 
-                                            style="border:0;" 
-                                            allowfullscreen="" 
-                                            loading="lazy">
-                                    </iframe>
+                                    <iframe id="map-frame" src="https://maps.google.com/maps?q=Nógrád+megye+gasztronómia&t=&z=10&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                                 </div>
 
                                 <div class="scroll-box" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
-                                    
                                     <div class="venue-box-fancy" style="border-left: 5px solid #9c27b0; background: #f9f9f9; padding: 15px; margin-bottom: 10px; border-radius: 8px; transition: 0.3s;">
                                         <a href="javascript:void(0);" onclick="updateMap('Vargánya Étterem Mátraszentimre', this)" class="venue-link" style="text-decoration: none; display: block;">
                                             <strong style="color: #000; font-size: 16px;">Vargánya Étterem (Mátraszentimre)</strong>
@@ -169,9 +181,11 @@ require_once __DIR__ . '/../init.php';
                                     </div>
                                 </div>
                             </div>
-                        </div> </div> </div> </section>
-            
-           <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
                 <div class="credits-container">
                     <a href="../Proofiles.php" class="credits-link" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
                         <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
@@ -180,77 +194,59 @@ require_once __DIR__ . '/../init.php';
             </footer>
         </div>
     </div>
-                        
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script>
-       $(document).ready(function() {
-        // Kattintás a hamburger ikonra
-        $('#nav-toggle').on('click', function (e) {
-            e.preventDefault();
-            $('#main-nav').slideToggle(300); // 300ms alatt gördül le/fel
-        });
-    });
 
-        // Térkép frissítő függvény (Ide került be)
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#nav-toggle').on('click', function (e) {
+                e.preventDefault();
+                $('#main-nav').slideToggle(300);
+            });
+        });
+
         function updateMap(placeName, element) {
-            // Frissítjük a térkép URL-jét a kiválasztott helyre
             const url = "https://maps.google.com/maps?q=" + encodeURIComponent(placeName) + "&t=&z=15&ie=UTF8&iwloc=&output=embed";
             document.getElementById('map-frame').src = url;
-
-            // Vizuális visszajelzés a kijelölésről
-            $('.venue-box-fancy').css('background', '#f9f9f9'); // Összes visszaállítása alapra
-            $(element).closest('.venue-box-fancy').css('background', '#fff9e6'); // Aktuális kiemelése
+            $('.venue-box-fancy').css('background', '#f9f9f9');
+            $(element).closest('.venue-box-fancy').css('background', '#fff9e6');
         }
     </script>
-
-
-<style>
-        /* 1. HÁTTÉRKÉP BEÁLLÍTÁSA */
+    <style>
         body {
             background: url('../img/gastro_1.jpg') no-repeat center center fixed !important;
             background-size: cover !important;
         }
-
-        /* 2. KÁRTYÁK ÉS SZÖVEG SZÍNEK */
-        .turizm-card { 
-            border-left: 10px solid #fec107 !important; 
-            background: rgba(255, 255, 255, 0.95) !important; 
-            color: #333 !important; /* Ettől lesz sötét a főszöveg */
+        .turizm-card {
+            border-left: 10px solid #fec107 !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #333 !important;
         }
-        
-        /* Ez hozza vissza az ételek alatti kis mondásokat */
         .food-item p {
-            color: #555 !important; 
+            color: #555 !important;
             font-size: 14px;
             font-style: italic;
             line-height: 1.6;
             margin-bottom: 15px;
-            display: block !important; /* Biztosítjuk, hogy ne legyen rejtve */
+            display: block !important;
         }
-
         .food-item strong {
             color: #000 !important;
             font-size: 18px;
         }
-
-        /* 3. EGYÉB DESIGN ELEMEK */
         header.responsive-nav { border-bottom: 3px solid #fec107 !important; }
         .navbar-toggle { background-color: #fec107 !important; }
-        
-        .humor-box { 
-            color: #fec107; 
-            border: 2px dashed #fec107; 
-            background: rgba(0, 0, 0, 0.7); 
+        .humor-box {
+            color: #fec107;
+            border: 2px dashed #fec107;
+            background: rgba(0, 0, 0, 0.7);
             padding: 15px;
             margin: 20px 0;
             font-size: 18px;
         }
-
-        /* Mobil menü elválasztó csíkja sárga legyen */
-        #main-nav li[style*="background: #28a745"] { 
-            background: #fec107 !important; 
+        #main-nav li[style*="background: #28a745"] {
+            background: #fec107 !important;
         }
     </style>
-     <?php include "../weather_mobile.php"; ?>
+    <?php include "../weather_mobile.php"; ?>
 </body>
 </html>

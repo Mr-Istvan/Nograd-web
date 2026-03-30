@@ -1702,3 +1702,15 @@ header {
     color: #45489a !important; /* Neon kék */
     text-decoration: none !important;
 }
+.close-icon { 
+    position: absolute; 
+    top: 20px; 
+    right: 20px; 
+    font-size: 30px; 
+    color: #ef4444; 
+    cursor: pointer; 
+    z-index: 100; 
+    text-decoration: none;
+    line-height: 1;
+}
+.close-icon:hover { color: #ff0000; transform: scale(1.1); }

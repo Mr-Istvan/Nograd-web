@@ -1,7 +1,26 @@
 <?php 
 require_once __DIR__ . '/init.php';
+
 // Megakadályozzuk, hogy a böngésző cache-elje az oldalt
 header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+// --- 1. OKOS MEMÓRIA KEZELÉS (VÉGTELEN CIKLUS ELLEN) ---
+// Ezeket az oldalakat SOHA nem mentjük el eredeti kiindulópontnak
+$exclude_pages = ['login.php', 'reg_id.php', 'forgot_password.php', 'forg_pw.php', 'reg_process.php', 'login_process.php'];
+
+if (isset($_SERVER['HTTP_REFERER'])) {
+    $from_page = basename(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH));
+    
+    // Csak akkor frissítjük az eredeti címet, ha NEM a tiltólistáról érkezik a felhasználó
+    if (!in_array($from_page, $exclude_pages)) {
+        $_SESSION['user_origin_url'] = $_SERVER['HTTP_REFERER'];
+    }
+}
+
+// Az X gomb célpontja: Az elmentett eredeti tartalom, ha nincs, akkor index.php
+$final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -45,8 +64,9 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
                 -webkit-backdrop-filter: blur(5px); 
                 box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
             }.form-control { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; margin-bottom: 15px; height: 45px; }
-        .form-control:focus { background: rgba(255,255,255,0.15); color: #fff; border-color: #45489a; box-shadow: none; }
-        
+             .form-control:focus { background: rgba(255,255,255,0.15); color: #fff; border-color: #45489a; box-shadow: none; }
+             .form-control::placeholder { color: rgba(255,255,255,0.6) !important; }
+             .login-box h2 em { font-style: normal; color: #45489a; }
         /* Gombok stílusa */
         .btn-sentra { background-color: #45489a; color: #fff; border: none; width: 100%; height: 50px; font-weight: 600; border-radius: 8px; transition: 0.3s; margin-bottom: 10px; }
         .btn-sentra:hover { background-color: #5659b1; }
@@ -66,11 +86,28 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
         
         .link-reg { color: #2ecc71 !important; text-decoration: none; font-weight: bold; transition: 0.3s; }
         .link-reg:hover { color: #5efc9d !important; text-decoration: underline; }
+        .close-icon { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 35px; 
+            color: #ef4444; 
+            cursor: pointer; 
+            z-index: 100; 
+            text-decoration: none !important;
+            line-height: 1;
+            transition: 0.3s;
+        }
+        .close-icon:hover { 
+            color: #ff0000; 
+            transform: scale(1.2); 
+        }
     </style>
 </head>
 <body>
     <?php include 'matrix_bg.php'; ?>
     <div class="login-box">
+        <a href="<?php echo htmlspecialchars($final_x_url); ?>" class="close-icon" title="Bezárás">&times;</a>
         <h2 class="text-center text-white mb-4">NÓG<em>RÁD</em></h2>
         
         <div id="info-box">

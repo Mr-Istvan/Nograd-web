@@ -61,20 +61,20 @@ require_once __DIR__ . '/init.php';
             <nav style="padding: 10px 0;"> 
                 <ul class="nav navbar-nav" style="margin: 0; list-style: none; padding: 0;">
                     <?php if(isset($_SESSION['user_name'])): ?>
-                        <li class="profile-link" style="padding: 5px 20px;">
-                            <a href="profile.php" style="font-weight: bold; color: #fec107 !important; text-decoration: none;">
-                                <i class="fa fa-user"></i> <?php echo htmlspecialchars($_SESSION['user_name']); ?>
-                            </a>
+                        <li class="profile-link" style="padding: 10px 20px 5px 20px;">
+                            <span style="display: block; color: #fff; margin-bottom: 2px; font-size: 14px;">
+                                Üdv, <strong style="color: #fec107;"><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong>!
+                            </span>
                         </li>
-                        <li style="padding: 0 15px 10px 15px;">
-                            <a href="logout.php" style="color: #ff4d4d !important; font-size: 12px; text-decoration: none;">[ Kilépés ]</a>
+                        <li style="padding: 0 20px 10px 20px;">
+                            <a href="logout.php" style="color: #ff4d4d !important; font-size: 12px; text-decoration: none; font-weight: bold;">[ Kilépés ]</a>
                         </li>
                     <?php else: ?>
                         <li style="padding: 5px 15px;"><a href="login.php" style="color: #fff; text-decoration: none;"><i class="fa fa-sign-in"></i> Bejelentkezés</a></li>
                         <li style="padding: 5px 15px;"><a href="reg_id.php" style="color: #fff; text-decoration: none;"><i class="fa fa-user-plus"></i> Regisztráció</a></li>
                     <?php endif; ?>
 
-                    <li style="height: 1px; background: rgba(255,255,255,0.2); margin: 1px 1px;"></li>
+                    <li style="height: 1px; background: rgba(255,255,255,0.2); margin: 5px 15px;"></li>
 
                     <li style="padding: 5px 10px;"><a href="#top" style="color: #fff; text-decoration: none;">Kezdőlap</a></li>
                     <li style="padding: 5px 10px;"><a href="#featured" style="color: #fff; text-decoration: none;">Kiemelt</a></li>
@@ -82,7 +82,7 @@ require_once __DIR__ . '/init.php';
                     <li style="padding: 5px 10px;"><a href="blog.php" style="color: #fff; text-decoration: none;">Blog</a></li>
                     <li style="padding: 5px 10px;"><a href="#video" style="color: #fff; text-decoration: none;">Bemutató</a></li>
                     <li style="padding: 5px 10px;"><a href="#map" style="color: #fff; text-decoration: none;">Térképek</a></li>
-                     <li style="padding: 5px 10px;"><a href="#contact" style="color: #fff; text-decoration: none;">Kapcsolat</a></li>
+                    <li style="padding: 5px 10px;"><a href="#contact" style="color: #fff; text-decoration: none;">Kapcsolat</a></li>
                 </ul>
             </nav>
         </div>
@@ -90,7 +90,7 @@ require_once __DIR__ . '/init.php';
     
     <div class="sidebar-navigation">
         <div class="logo">
-            <a href="index.php"><em>Nóg</em>rád </a>
+            <a href="index.php">Nóg<em>rád</em> </a>
         </div>
         <nav>
             <ul>
@@ -99,7 +99,7 @@ require_once __DIR__ . '/init.php';
                         <a href="profile.php" style="color: #fec107;">
                             <span class="rect"></span>
                             <span class="circle"></span>
-                            <i class="fa fa-user"></i> <?php echo htmlspecialchars($_SESSION['user_name']); ?>
+                            <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
                         </a>
                     </li>
                     <li>

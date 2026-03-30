@@ -1,7 +1,7 @@
 <?php if(isset($_SESSION['user_name'])): ?>
     <li class="profile-link" style="background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 3px; margin-bottom: 2px; list-style: none;">
         <a href="../profile.php" style="font-weight: bold; color: #3498db !important; text-decoration: none; font-size: 15px;">
-            <i class="fa fa-user"></i> <?php echo htmlspecialchars($_SESSION['user_name']); ?>
+            <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
         </a>
     </li>
     <li style="margin-bottom: 5px; list-style: none;">

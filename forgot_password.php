@@ -1,15 +1,32 @@
 <?php
 require_once __DIR__ . '/init.php';
 
-// Aktuális lépés és hiba meghatározása
-$step = isset($_GET['step']) ? (int)$_GET['step'] : 1;
-$error = isset($_GET['error']) ? $_GET['error'] : "";
+// --- 1. OKOS MEMÓRIA KEZELÉS (VÉGTELEN CIKLUS ELLEN) ---
+// Ezeket az oldalakat SOHA nem mentjük el eredeti kiindulópontnak
+$exclude_pages = ['login.php', 'reg_id.php', 'forgot_password.php', 'forg_pw.php', 'reg_process.php', 'login_process.php'];
 
-// --- 1. LÉPÉS FELDOLGOZÁSA (Email ellenőrzés) ---
+if (isset($_SERVER['HTTP_REFERER'])) {
+    $from_page = basename(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH));
+    
+    // Csak akkor mentünk ÚJ eredeti címet, ha NEM a tiltólistáról érkezik a felhasználó
+    if (!in_array($from_page, $exclude_pages)) {
+        $_SESSION['user_origin_url'] = $_SERVER['HTTP_REFERER'];
+    }
+}
+
+// Az X gomb célpontja: Az elmentett eredeti tartalom, ha nincs, akkor index.php
+$final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
+
+// --- 2. LÉPÉSEK ÉS HIBÁK MEGHATÁROZÁSA ---
+$step = isset($_GET['step']) ? (int)$_GET['step'] : 1;
+$error = $_GET['error'] ?? "";
+
+// --- 3. PHP FELDOLGOZÓ RÉSZ ---
+
+// 1. LÉPÉS: Email ellenőrzése (Ha valaki közvetlenül ezen az oldalon kezdené)
 if (isset($_POST['check_user'])) {
     $uemail = mysqli_real_escape_string($conn, trim($_POST['uemail']));
     $res = mysqli_query($conn, "SELECT uid, usecret_q FROM felhasznalok WHERE uemail = '$uemail' LIMIT 1");
-    
     if ($row = mysqli_fetch_assoc($res)) {
         $_SESSION['reset_uid'] = $row['uid'];
         $_SESSION['reset_q'] = $row['usecret_q'];
@@ -21,18 +38,14 @@ if (isset($_POST['check_user'])) {
     }
 }
 
-// --- 2. LÉPÉS FELDOLGOZÁSA (Titkos válasz) ---
+// 2. LÉPÉS: Biztonsági válasz ellenőrzése
 if (isset($_POST['check_answer'])) {
-    if (!isset($_SESSION['reset_uid'])) { 
-        echo "<script>window.location.replace('forgot_password.php?step=1');</script>"; 
-        exit(); 
-    }
-    
     $valasz = mysqli_real_escape_string($conn, strtolower(trim($_POST['uanswer'])));
-    $res = mysqli_query($conn, "SELECT usecret_a FROM felhasznalok WHERE uid = '".$_SESSION['reset_uid']."'");
+    $uid = $_SESSION['reset_uid'] ?? 0;
+    $res = mysqli_query($conn, "SELECT usecret_a FROM felhasznalok WHERE uid = '$uid' LIMIT 1");
     $row = mysqli_fetch_assoc($res);
 
-    if ($valasz === $row['usecret_a']) {
+    if ($row && $valasz === strtolower($row['usecret_a'])) {
         echo "<script>window.location.replace('forgot_password.php?step=3');</script>";
         exit();
     } else {
@@ -41,13 +54,8 @@ if (isset($_POST['check_answer'])) {
     }
 }
 
-// --- 3. LÉPÉS FELDOLGOZÁSA (Új jelszó mentése) ---
+// 3. LÉPÉS: Új jelszó mentése
 if (isset($_POST['save_pw'])) {
-    if (!isset($_SESSION['reset_uid'])) { 
-        echo "<script>window.location.replace('forgot_password.php?step=1');</script>"; 
-        exit(); 
-    }
-
     $p1 = $_POST['p1'];
     $p2 = $_POST['p2'];
 
@@ -57,13 +65,21 @@ if (isset($_POST['save_pw'])) {
     } else {
         $upw = password_hash($p1, PASSWORD_DEFAULT);
         $uid = $_SESSION['reset_uid'];
+        
+        // VÉGLEGES MENTÉS AZ ADATBÁZISBA
         mysqli_query($conn, "UPDATE felhasznalok SET upw = '$upw' WHERE uid = '$uid'");
         
+        // Takarítás a végén
         unset($_SESSION['reset_uid'], $_SESSION['reset_q']);
+        // A user_origin_url-t NEM töröljük, hogy a login.php is tudja használni sikeres belépés után
+        
         echo "<script>window.location.replace('login.php?msg=pw_updated');</script>";
         exit();
     }
 }
+?>
+<!-- A HTML részben az X gomb: -->
+<a href="<?php echo htmlspecialchars($final_x_url); ?>" class="close-icon" title="Bezárás">&times;</a>
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -114,6 +130,7 @@ if (isset($_POST['save_pw'])) {
             
             box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
         }
+        .form-control::placeholder { color: rgba(255,255,255,0.6) !important; }
         .form-control { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; margin-bottom: 15px; height: 45px; }
         .form-control:focus { background: rgba(255,255,255,0.15); color: white; border-color: #45489a; box-shadow: none; }
         
@@ -131,11 +148,29 @@ if (isset($_POST['save_pw'])) {
         /* Emeltebb kék link stílus a Bejelentkezéshez */
         .link-login { color: #45489a !important; text-decoration: none; font-weight: 800; transition: 0.3s; }
         .link-login:hover { color: #6165d7 !important; text-decoration: underline; }
+        .box h2 em { font-style: normal; color: #45489a; }
+        .close-icon { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 35px; 
+            color: #ef4444; 
+            cursor: pointer; 
+            z-index: 100; 
+            text-decoration: none !important;
+            line-height: 1;
+            transition: 0.3s;
+        }
+        .close-icon:hover { 
+            color: #ff0000; 
+            transform: scale(1.2); 
+        }
     </style>
 </head>
 <body>
     <?php include 'matrix_bg.php'; ?>
     <div class="box">
+      <a href="<?php echo htmlspecialchars($final_x_url); ?>" class="close-icon" title="Bezárás">&times;</a>
         <h2 class="text-center mb-4">ÚJ <em>JELSZÓ</em></h2>
 
         <?php if($error): ?>

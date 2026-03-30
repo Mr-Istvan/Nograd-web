@@ -8,6 +8,13 @@ if (!isset($_SESSION['user_name'])) {
     header("Location: login.php"); 
     exit(); 
 }
+if (!isset($_GET['msg']) && !isset($_GET['error'])) {
+    // Ha van HTTP_REFERER (az előző oldal címe), elmentjük, de levágjuk róla a felesleges sallangot
+    if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'profile.php') === false) {
+        $_SESSION['back_to_original'] = $_SERVER['HTTP_REFERER'];
+    }
+}
+$final_back_url = $_SESSION['back_to_original'] ?? 'index.php';
 
 $session_user = $_SESSION['user_name'];
 $stmt = mysqli_prepare($conn, "SELECT * FROM felhasznalok WHERE uusername = ?");
@@ -100,6 +107,22 @@ $user = mysqli_stmt_get_result($stmt)->fetch_assoc();
         .msg-error { background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ff4d4d; }
         h2 em { font-style: normal; color: #0dcaf0; }
         label { margin-bottom: 5px; font-weight: 600; display: block; }
+        .close-icon { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 35px; 
+            color: #ef4444; 
+            cursor: pointer; 
+            z-index: 100; 
+            text-decoration: none !important;
+            line-height: 1;
+            transition: 0.3s;
+        }
+        .close-icon:hover { 
+            color: #ff0000; 
+            transform: scale(1.2); 
+        }
     </style>
 </head>
 <body>
@@ -107,6 +130,7 @@ $user = mysqli_stmt_get_result($stmt)->fetch_assoc();
 
 <div class="profile-container">
     <div class="glass-card text-center">
+        <a href="<?php echo htmlspecialchars($final_back_url); ?>" class="close-icon" title="Bezárás">&times;</a>
         <div class="profile-img-wrap">
             <img src="img/profiles/<?php echo !empty($user['uavatar']) ? $user['uavatar'] : 'default.png'; ?>?t=<?php echo time(); ?>" alt="Avatar">
         </div>

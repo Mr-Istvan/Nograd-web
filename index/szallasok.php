@@ -38,7 +38,7 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
     
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/fontAwesome.css">
-    <link rel="stylesheet" href="../css/templatemo-style.css"> 
+    <link rel="stylesheet" href="../css/templatemo-style.css">
     <link rel="stylesheet" href="../css/turizm.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="mobile_style.css">
@@ -91,23 +91,23 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
         .stat-card { background: rgba(40, 167, 69, 0.9); color: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px; }
         .humor-box { background: rgba(0, 0, 0, 0.7); color: #28a745; padding: 15px; border: 2px dashed #28a745; margin-bottom: 25px; text-align: center; font-weight: bold; }
         .price-tag { background: #17a2b8; color: white; padding: 3px 8px; border-radius: 10px; font-size: 13px; font-weight: bold; }
-        
         .cat-icon { font-size: 18px; margin-left: 8px; vertical-align: middle; }
     </style>
 </head>
-
 <body class="page-szallas">
-
-    
     <header class="nav-down responsive-nav">
         <div class="logo-mobile-left">
-       <a href="../index.php">NÓG<span>RÁD</span></a>
-    </div>
+            <a href="../index.php">NÓG<span>RÁD</span></a>
+        </div>
         <button type="button" id="nav-toggle" class="navbar-toggle">
             <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
         </button>
         <div id="main-nav">
-            <nav style="padding: 20px;"><ul class="nav navbar-nav"><?php include 'mobile_menu.php'; ?></ul></nav>
+            <nav style="padding: 20px;">
+                <ul class="nav navbar-nav">
+                    <?php include 'mobile_menu.php'; ?>
+                </ul>
+            </nav>
         </div>
     </header>
 
@@ -115,15 +115,39 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
         <div class="sidebar-navigation">
             <div class="logo"><a href="../index.php">NÓG<em>RÁD</em></a></div>
             <nav>
-                <div class="user-info" style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px;">
-                    <?php if(isset($_SESSION['user_name'])): ?>
-                        <span style="display: block; color: rgba(255,255,255,0.8);">Üdv, <strong><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong>!</span>
-                        <a href="../logout.php" style="color: #28a745; font-weight: bold;">[ Kilépés ]</a>
-                    <?php else: ?>
-                        <a href="../login.php" style="color: #fff;">Bejelentkezés</a>
-                    <?php endif; ?>
-                </div>
                 <ul>
+                    <?php if(isset($_SESSION['user_name'])): ?>
+                        <li>
+                            <a href="../profile.php" style="color: #fec107;">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../logout.php">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                Kilépés
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li>
+                            <a href="../login.php">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                Bejelentkezés
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../reg_id.php">
+                                <span class="rect"></span>
+                                <span class="circle"></span>
+                                Regisztráció
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                    <li style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 15px; list-style: none;"></li>
                     <li><a href="../index.php"><span class="rect"></span><span class="circle"></span>Kezdőlap</a></li>
                     <li><a href="latnivalok.php"><span class="rect"></span><span class="circle"></span>Látnivalók</a></li>
                     <li><a href="programok.php"><span class="rect"></span><span class="circle"></span>Programok</a></li>
@@ -131,7 +155,6 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
                     <li><a href="gasztronomia.php"><span class="rect"></span><span class="circle"></span>Gasztro</a></li>
                     <li><a href="turazas.php"><span class="rect"></span><span class="circle"></span>Túrázás</a></li>
                     <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
-                </ul>
                 </ul>
             </nav>
             <?php include "../weather.php"; ?>
@@ -178,47 +201,28 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
                                                 <tr class="main-row">
                                                     <td class="name-cell">
                                                         <strong><?php echo htmlspecialchars($row['szname']); ?></strong>
-                                                        
                                                         <?php
                                                         $name = $row['szname'];
                                                         $output_icon = "";
-
-                                                        // ⭐⭐⭐⭐ 4 CSILLAG
                                                         if (in_array($name, ['Castellum Hotel Hollókő', 'Tó Wellness Hotel', 'Kastélyhotel Sasvár', 'Teleki-Degenfeld Kastélyszálló', 'Templomvölgy Resort Mátrakeresztes', 'Főnix Wellness Resort', 'Főnix Kastélyszanatórium és Egészséghotel'])) {
                                                             $output_icon = '<span class="cat-icon">⭐⭐⭐⭐</span>';
-                                                        } 
-                                                        // ⭐⭐⭐ 3 CSILLAG
-                                                        elseif (in_array($name, ['Cédrus Club Hotel', 'Salgó Hotel', 'Berceli Kastély', 'Cserhátsurányi Kastélyszálló'])) {
+                                                        } elseif (in_array($name, ['Cédrus Club Hotel', 'Salgó Hotel', 'Berceli Kastély', 'Cserhátsurányi Kastélyszálló'])) {
                                                             $output_icon = '<span class="cat-icon">⭐⭐⭐</span>';
-                                                        } 
-                                                        // ⭐⭐ 2 CSILLAG
-                                                        elseif (in_array($name, ['Eresztvényi Turistaház', 'Börzsönyi Turistaház'])) {
+                                                        } elseif (in_array($name, ['Eresztvényi Turistaház', 'Börzsönyi Turistaház'])) {
                                                             $output_icon = '<span class="cat-icon">⭐⭐</span>';
-                                                        }
-                                                        // 💎 PRÉMIUM
-                                                        elseif (in_array($name, ['Prónay-kastély', 'Mátra Mona Luxury Apartment', 'Napfénydomb Vendégház', 'Galagonya Vendégház'])) {
+                                                        } elseif (in_array($name, ['Prónay-kastély', 'Mátra Mona Luxury Apartment', 'Napfénydomb Vendégház', 'Galagonya Vendégház'])) {
                                                             $output_icon = '<span class="cat-icon">💎</span>';
-                                                        }
-                                                        // ⚖️ KÖZEPES
-                                                        elseif (in_array($name, ['Boróka Vendégház', 'Bánki-tó Vendégház', 'Kaláris Vendégház', 'Zagyva-völgyi Vendégház', 'Legéndi Vendégház', 'Endrefalvai Vendégház'])) {
+                                                        } elseif (in_array($name, ['Boróka Vendégház', 'Bánki-tó Vendégház', 'Kaláris Vendégház', 'Zagyva-völgyi Vendégház', 'Legéndi Vendégház', 'Endrefalvai Vendégház'])) {
                                                             $output_icon = '<span class="cat-icon">⚖️</span>';
-                                                        }
-                                                        // 💰 EGYSZERŰ
-                                                        elseif (in_array($name, ['Piros Csizma Vendégház', 'Nádas fogadó', 'Nógrádsipeki Pihenő', 'Felsőpetényi Vendégház', 'Nádas fogadó Teresztenye'])) {
+                                                        } elseif (in_array($name, ['Piros Csizma Vendégház', 'Nádas fogadó', 'Nógrádsipeki Pihenő', 'Felsőpetényi Vendégház', 'Nádas fogadó Teresztenye'])) {
                                                             $output_icon = '<span class="cat-icon">💰</span>';
-                                                        }
-                                                        // 🏨 PANZIÓK
-                                                        elseif (in_array($name, ['Várhegy Panzió', 'Cserhát Kapuja', 'Rétsági Panzió', 'Karancssági Fogadó', 'Tereskei Vendégház', 'Mátraverebélyi Zarándokház', 'Szentkúti Kegyhely Szálló'])) {
+                                                        } elseif (in_array($name, ['Várhegy Panzió', 'Cserhát Kapuja', 'Rétsági Panzió', 'Karancssági Fogadó', 'Tereskei Vendégház', 'Mátraverebélyi Zarándokház', 'Szentkúti Kegyhely Szálló'])) {
                                                             $output_icon = '<span class="cat-icon">🏨</span>';
-                                                        }
-                                                        // ⛺ KEMPING
-                                                        elseif (in_array($name, ['Nádas Camping', 'Somoskői Kirándulóközpont', 'Mátra Kemping', 'Diósjenői Kemping'])) {
+                                                        } elseif (in_array($name, ['Nádas Camping', 'Somoskői Kirándulóközpont', 'Mátra Kemping', 'Diósjenői Kemping'])) {
                                                             $output_icon = '<span class="cat-icon">⛺</span>';
                                                         }
-
                                                         echo $output_icon;
                                                         ?>
-
                                                         <button class="btn btn-info-custom toggle-details"><i class="fa fa-plus-circle"></i> Infó</button>
                                                     </td>
                                                     <td><?php echo $row['sztipus']; ?></td>
@@ -233,7 +237,6 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
                                                                 <div class="info-item mobile-only-info"><i class="fa fa-map-marker" style="color:#2196f3;"></i> <strong>Város:</strong> <?php echo $row['telepules']; ?></div>
                                                                 <div class="info-item mobile-only-info"><i class="fa fa-location-arrow" style="color:#2196f3;"></i> <strong>Irányítószám:</strong> <?php echo $row['tiranyitoszam']; ?></div>
                                                                 <div class="info-item mobile-only-info"><i class="fa fa-tag" style="color:#4caf50;"></i> <strong>Ár:</strong> <?php echo $row['szejar']; ?></div>
-                                                                
                                                                 <div class="info-item"><i class="fa fa-home" style="color:#45489a;"></i> <strong>Cím:</strong> <?php echo $row['szcim']; ?></div>
                                                                 <div class="info-item"><i class="fa fa-phone" style="color:#28a745;"></i> <strong>Tel:</strong> <?php echo $row['sztel']; ?></div>
                                                                 <div class="info-item"><i class="fa fa-envelope" style="color:#dc3545;"></i> <strong>Email:</strong> <?php echo $row['szemail']; ?></div>
@@ -264,7 +267,7 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
                     </div>
                 </div>
             </section>
-           <footer class="premium-footer" style="padding: 18px; text-align: center; color: #0a1f98;">
+            <footer class="premium-footer" style="padding: 18px; text-align: center; color: #0a1f98;">
                 <div class="credits-container">
                     <a href="../Proofiles.php" class="credits-link" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
                         <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
@@ -294,9 +297,7 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
             let currentRow = $(this).closest('tr');
             let detailsRow = currentRow.next('.details-row');
             let icon = $(this).find('i');
-            
             detailsRow.fadeToggle(300);
-            
             if(icon.hasClass('fa-plus-circle')) {
                 icon.removeClass('fa-plus-circle').addClass('fa-minus-circle');
                 $(this).css('background-color', '#dc3545');
