@@ -11,7 +11,22 @@ if (isset($_SESSION['user_name'])) {
     mysqli_stmt_execute($stmt);
     $userData = mysqli_stmt_get_result($stmt)->fetch_assoc();
 }
-
+// POSZT TÖRLÉSE
+if (isset($_GET['delete']) && $userData) {
+    $id = (int)$_GET['delete'];
+    $postsAll = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
+    
+    if (isset($postsAll[$id]) && $postsAll[$id]['user'] === $userData['uusername']) {
+        if (!empty($postsAll[$id]['image']) && file_exists("img/posts/" . $postsAll[$id]['image'])) {
+            unlink("img/posts/" . $postsAll[$id]['image']);
+        }
+        unset($postsAll[$id]);
+        file_put_contents($postsFile, json_encode($postsAll, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    }
+    // Üzenettel térünk vissza
+    header("Location: blog.php?msg=torolve");
+    exit();
+}
 // POSZT MENTÉS (szöveg + opcionális kép) + név/avatar mentése a posztba
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userData && isset($_POST['text'])) {
     $currentPosts = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
@@ -457,7 +472,63 @@ $userLoggedIn = ($userData !== null);
                 margin: 10px 0 0 0;
                 border-radius: 10px;
             }
+            /* Ezt add hozzá a blog-page .post-card-hoz: */
+            /* Ezt add hozzá a blog-page .post-card-hoz: */
+            body.blog-page .post-card {
+                position: relative; /* Ez nagyon fontos, hogy a gomb a kártyához képest pozícionáljon! */
+            }
 
+           /* --- TÖRLÉS GOMB --- */
+            .delete-post-btn {
+                position: absolute;
+                bottom: 12px; 
+                right: 12px;
+                background-color: #ff0000 !important;
+                color: #ffffff !important;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                z-index: 1000;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                transition: all 0.2s ease-in-out;
+                text-decoration: none !important;
+            }
+
+            .delete-post-btn:hover {
+                background-color: #cc0000 !important;
+                transform: scale(1.15);
+            }
+
+            .delete-post-btn i {
+                font-size: 14px;
+            }
+
+            /* --- ÜZENETDOBOZ (A profilról loptuk, kicsit tuningolva) --- */
+            .status-msg {
+                padding: 12px;
+                border-radius: 12px;
+                text-align: center;
+                margin-bottom: 20px;
+                font-weight: 600;
+                font-size: 14px;
+                backdrop-filter: blur(8px);
+                animation: fadeInDown 0.5s ease;
+            }
+
+            .msg-success {
+                background: rgba(25, 135, 84, 0.3);
+                border: 1px solid #198754;
+                color: #2ecc71;
+            }
+
+            @keyframes fadeInDown {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            /*törlés vége*/ 
             body.blog-page .composer{
                 background:rgba(255,255,255,0.05);
                 padding:20px;
@@ -953,6 +1024,13 @@ body.blog-page .premium-footer {
 
             <div class="row">
                 <div class="col-md-11">
+                    <div id="msg-box">
+                    <?php if (isset($_GET['msg']) && $_GET['msg'] == 'torolve'): ?>
+                        <div class="status-msg msg-success">
+                            ✅ A bejegyzésed sikeresen törölve!
+                        </div>
+                    <?php endif; ?>
+                </div>
                     <?php if($userLoggedIn): ?>
                     <div class="composer">
                         <form action="blog.php" method="POST" enctype="multipart/form-data">
@@ -978,6 +1056,14 @@ body.blog-page .premium-footer {
                                 $avatar = $p['avatar'] ?? 'default.png';
                         ?>
                         <div class="post-card <?php echo $isMine ? 'my-post' : 'other-post'; ?>">
+                             
+                                 <?php if ($isMine): ?>
+                                    <a href="?delete=<?php echo (int)$idx; ?>" class="delete-post-btn" onclick="return confirm('Biztosan törölni szeretnéd ezt a bejegyzést?');">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                 <?php endif; ?>
+                                                
+                        
                             <div class="post-meta" style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; margin-bottom:10px;">
                                 <div style="display:flex; gap:10px; align-items:center;">
                                     <img src="img/profiles/<?php echo htmlspecialchars($avatar); ?>" alt="avatar" style="width:28px; height:28px; border-radius:50%; object-fit:cover;">
@@ -987,7 +1073,7 @@ body.blog-page .premium-footer {
                             </div>
 
                             <p class="post-text"><?php echo nl2br(htmlspecialchars($p['text'] ?? '')); ?></p>
-
+                           
                             <?php if(!empty($p['image'])): ?>
                                 <img src="img/posts/<?php echo htmlspecialchars($p['image']); ?>" alt="post image" style="max-width:100%; border-radius:10px; margin-top:10px;">
                             <?php endif; ?>
@@ -1218,7 +1304,17 @@ body.blog-page .premium-footer {
         }
     }
 </style>
-                        
+       <script>
+    // Az üzenetdoboz automatikus eltüntetése
+        setTimeout(() => {
+            const msg = document.querySelector('.status-msg');
+            if (msg) {
+                msg.style.transition = "opacity 0.6s ease";
+                msg.style.opacity = "0";
+                setTimeout(() => msg.remove(), 600);
+            }
+        }, 4000);
+    </script>                
     <script src="js/main.js"></script>
     <?php include "weather_mobile.php"; ?>
 </body>
