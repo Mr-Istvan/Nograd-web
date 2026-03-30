@@ -15,7 +15,8 @@ $varosok = [
 if (!file_exists($cacheFile) || (time() - filemtime($cacheFile) > $refreshInterval)) {
     $lats = implode(',', array_column($varosok, 0));
     $lons = implode(',', array_column($varosok, 1));
-    $url = "https://api.open-meteo.com/v1/forecast?latitude=$lats&longitude=$lons&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,pressure_msl&daily=temperature_2m_max,temperature_2m_min&timezone=auto";
+    // weather_code hozzáadva a daily paraméterekhez a 6 napos előrejelzés ikonjaihoz
+    $url = "https://api.open-meteo.com/v1/forecast?latitude=$lats&longitude=$lons&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,pressure_msl&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto";
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -44,6 +45,9 @@ $data = json_decode(file_get_contents($cacheFile), true);
             background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(56, 189, 248, 0.3);
             border-radius: 10px; padding: 10px 10px; color: #fff;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            animation: pulse-border 3s infinite;
         }
 
         #weather-modal {
@@ -60,35 +64,62 @@ $data = json_decode(file_get_contents($cacheFile), true);
 
         .card-details {
             display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;
-            border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1); margin-top: 5px; padding-top: 15px;
         }
         .card-details i { color: #facc15; width: 18px; }
+
+        .daily-forecast-container {
+            display: flex; justify-content: space-between; margin-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;
+        }
+        .daily-item {
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .daily-day { font-size: 12px; font-weight: bold; color: #facc15; text-transform: uppercase;}
+        .daily-icon { width: 30px; height: 30px; background: white; border-radius: 6px; padding: 2px;}
+        .daily-temps { font-size: 11px; font-weight: bold; }
+        .temp-min { color: #38bdf8; }
+        .temp-max { color: #ef4444; }
+        
+        /* Hover effektus a kattintható felső sorhoz */
+        .clickable-header {
+            transition: background 0.2s;
+            border-radius: 10px;
+        }
+        .clickable-header:active {
+            background: rgba(255,255,255,0.1);
+        }
     }
 
-    /* Mobil mini widget tuning */
-.weather-mobile-mini {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
-    /* Adunk neki egy pulzáló keretet, hogy vonzza a szemet */
-    animation: pulse-border 3s infinite;
-
+    @keyframes pulse-border {
+        0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); }
+        70% { box-shadow: 0 0 0 6px rgba(56, 189, 248, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+    }
 </style>
 
 <div class="weather-mobile-mini" onclick="window.openWeatherList()">
     <div style="font-size:10px; color:#facc15; font-weight:800; text-transform:uppercase;" id="mw-name">Betöltés...</div>
-    <div id="s-date" style="font-size: 12px; color: #e6c50b; margin-bottom: 10px;"></div>
+    <div id="s-date" style="font-size: 12px; color: #e6c50b; margin-bottom: 5px;"></div>
     <div style="display:flex; align-items:center; gap:8px;">
-        <img src="" id="mw-img" style="height:35px;">
+        <img src="" id="mw-img" style="height:35px; border-radius:6px; background:white;">
         <span style="font-size:28px; font-weight:800;" id="mw-temp">--°</span>
     </div>
-    
 </div>
 
 <div id="weather-modal">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="color:#facc15; margin:0; font-size: 22px;">Helyszínek</h2>
-        <div onclick="window.closeWeatherList()" style="font-size:40px; color:#ef4444; line-height:1; cursor:pointer;">&times;</div>
+    <!-- FEJLÉC: Dátum, Nap, és a Bezárás gomb egy sorban -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap: nowrap;">
+        <h2 style="color:#facc15; margin:0; font-size: 18px;">Helyszínek</h2>
+        
+        <div style="display:flex; align-items:center; gap:8px;">
+            <span id="m-date-time" style="color: #a3e635; font-size: 13px; background: rgba(255,255,255,0.05); padding: 5px 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.1);"></span>
+            <span id="m-day" style="color: #facc15; font-size: 15px; font-weight: 800; text-transform: uppercase;"></span>
+        </div>
+
+        <div onclick="window.closeWeatherList()" style="font-size:35px; color:#ef4444; line-height:1; cursor:pointer;">&times;</div>
     </div>
+    
     <div id="m-list-content"></div>
 </div>
 
@@ -97,9 +128,10 @@ $data = json_decode(file_get_contents($cacheFile), true);
     const rawData = <?= json_encode($data) ?>;
     const cityNames = <?= json_encode(array_keys($varosok)) ?>;
 
-    // JAVÍTOTT ADATKINYERÉS: Az Open-Meteo tömböt ad vissza, ha több koordinátát kérünk
+    const daysShort = ["V", "H", "K", "Sze", "Cs", "P", "Szo"];
+    const dayNamesFull = ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"];
+
     function getCityWeather(i) {
-        // Ha csak egy város lenne, nem lenne tömb, de 18 városnál tömb van!
         const d = Array.isArray(rawData) ? rawData[i] : rawData;
         if (!d || !d.current) return null;
         
@@ -109,23 +141,33 @@ $data = json_decode(file_get_contents($cacheFile), true);
             hum: d.current.relative_humidity_2m,
             wind: d.current.wind_speed_10m,
             pres: d.current.pressure_msl,
-            min: d.daily.temperature_2m_min[0],
-            max: d.daily.temperature_2m_max[0]
+            daily: d.daily
         };
     }
 
-    function getIcon(code, wind = 0) {
-        const h = new Date().getHours();
+    function getIcon(code, wind = 0, isDaily = false) {
         const p = "../img/weather_img/";
+        
         if (wind > 25) return p + "szeles.jpg";
-        if (h >= 18 || h < 6) return (code <= 1) ? p + "ejszakatiszta.jpg" : p + "felhosejszaka.jpg";
+
+        if (!isDaily) {
+            const h = new Date().getHours();
+            if (h >= 18 || h < 6) {
+                if (code <= 1) return p + "ejszakatiszta.jpg";
+                if (code === 2 || code === 3 || (code >= 45 && code <= 48)) return p + "felhosejszaka.jpg";
+            }
+        }
+
         if (code === 0) return p + "nap.jpg";
-        if (code <= 2) return p + "naposfelhos.jpg";
+        if (code === 1 || code === 2) return p + "naposfelhos.jpg";
         if (code === 3 || (code >= 45 && code <= 48)) return p + "felhos.jpg";
-        if (code >= 51 && code <= 65) return p + "esos.jpg";
-        if (code >= 71 && code <= 77) return p + "havas.jpg";
-        if (code === 66 || code === 67 || (code >= 83 && code <= 86)) return p + "havaseso.jpg";
-        return p + "zapor.jpg";
+        
+        if ((code >= 51 && code <= 55) || (code >= 61 && code <= 65)) return p + "esos.jpg";
+        if (code === 56 || code === 57 || code === 66 || code === 67) return p + "havaseso.jpg";
+        if ((code >= 71 && code <= 77) || code === 85 || code === 86) return p + "havas.jpg";
+        if ((code >= 80 && code <= 82) || (code >= 95 && code <= 99)) return p + "zapor.jpg";
+
+        return p + "naposfelhos.jpg";
     }
 
     window.openWeatherList = () => {
@@ -135,25 +177,55 @@ $data = json_decode(file_get_contents($cacheFile), true);
         const saved = localStorage.getItem('mSel') || 0;
         list.innerHTML = '';
         
+        const today = new Date();
+
         cityNames.forEach((name, i) => {
             const w = getCityWeather(i);
             if (!w) return;
+            
+            // 6 napos előrejelzés generálása
+            let dailyHtml = '';
+            for (let d = 1; d <= 6; d++) {
+                if(w.daily.time[d]) {
+                    const targetDate = new Date(today);
+                    targetDate.setDate(today.getDate() + d);
+                    const dayName = daysShort[targetDate.getDay()];
+                    
+                    const minT = Math.round(w.daily.temperature_2m_min[d]);
+                    const maxT = Math.round(w.daily.temperature_2m_max[d]);
+                    const wCode = w.daily.weather_code[d];
+                    
+                    dailyHtml += `
+                        <div class="daily-item">
+                            <span class="daily-day">${dayName}</span>
+                            <img src="${getIcon(wCode, 0, true)}" class="daily-icon">
+                            <span class="daily-temps"><span class="temp-min">${minT}</span> / <span class="temp-max">${maxT}</span></span>
+                        </div>
+                    `;
+                }
+            }
+
             const card = document.createElement('div');
             card.className = `city-card ${i == saved ? 'active' : ''}`;
-            card.onclick = () => { updateMini(i); window.closeWeatherList(); };
+            
+            // Csak a felső, nagyméretű rész kapja meg a kattintást!
             card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <b style="font-size:17px; ${i == saved ? 'color:#38bdf8' : ''}">${name}</b>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <img src="${getIcon(w.code, w.wind)}" style="height:38px;">
-                        <span style="font-size:22px; font-weight:800;">${Math.round(w.temp)}°</span>
+                <div class="clickable-header" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; padding: 5px;" onclick="window.updateMini(${i}); window.closeWeatherList();">
+                    <b style="font-size:20px; ${i == saved ? 'color:#38bdf8' : 'color:#fff'}">${name}</b>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <img src="${getIcon(w.code, w.wind)}" style="height:44px; border-radius:8px; background:white; padding:2px;">
+                        <span style="font-size:28px; font-weight:900; color:#fff">${Math.round(w.temp)}°</span>
                     </div>
                 </div>
+                
                 <div class="card-details">
                     <div><i class="fa fa-wind"></i> <b>${Math.round(w.wind)} km/h</b></div>
                     <div><i class="fa fa-tint"></i> <b>${w.hum}%</b></div>
                     <div><i class="fa fa-tachometer"></i> <b>${Math.round(w.pres)}</b></div>
-                    <div style="color:#38bdf8;"><i class="fa fa-arrows-v"></i> <b>${Math.round(w.min)}° / ${Math.round(w.max)}°</b></div>
+                    <div style="color:#38bdf8;"><i class="fa fa-arrows-v"></i> <b>${Math.round(w.daily.temperature_2m_min[0])}° / ${Math.round(w.daily.temperature_2m_max[0])}°</b></div>
+                </div>
+                <div class="daily-forecast-container">
+                    ${dailyHtml}
                 </div>`;
             list.appendChild(card);
         });
@@ -167,25 +239,31 @@ $data = json_decode(file_get_contents($cacheFile), true);
     window.addEventListener('popstate', () => {
         document.getElementById('weather-modal').style.display = 'none';
     });
+
     function updateDateTime() {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
-    const dateStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}. ${timeStr}`;
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const dayNameFull = dayNamesFull[now.getDay()];
+        const timeStr = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
 
-    // Kis widget frissítése
-    const sDate = document.getElementById('s-date');
-    if(sDate) sDate.innerText = dateStr;
+        // Kis widget datum frissítése
+        const sDate = document.getElementById('s-date');
+        if(sDate) sDate.innerText = `${year}.${month}.${day}. ${timeStr}`;
 
-    // Nagy modal frissítése
-    const mDate = document.getElementById('m-date');
-    if(mDate) mDate.innerText = dateStr;
-}
+        // Nagy modal frissítése - külön a dátum/idő és külön a nap neve
+        const mDateTime = document.getElementById('m-date-time');
+        if(mDateTime) mDateTime.innerText = `${year}.${month}.${day}. ${timeStr}`;
+        
+        const mDay = document.getElementById('m-day');
+        if(mDay) mDay.innerText = dayNameFull;
+    }
 
-    // Azonnali futtatás és percenkénti frissítés
     updateDateTime();
     setInterval(updateDateTime, 60000);
 
-    function updateMini(idx) {
+    window.updateMini = function(idx) {
         const w = getCityWeather(idx);
         if (!w) return;
         document.getElementById('mw-name').innerText = cityNames[idx];
@@ -194,9 +272,8 @@ $data = json_decode(file_get_contents($cacheFile), true);
         localStorage.setItem('mSel', idx);
     }
 
-    // Indítás
     if (rawData) {
-        updateMini(parseInt(localStorage.getItem('mSel') || 0));
+        window.updateMini(parseInt(localStorage.getItem('mSel') || 0));
     } else {
         document.getElementById('mw-name').innerText = "Hiba az adatokkal";
     }
