@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../init.php';
+include '../kozos_menu.php';
+include '../kozos_mobile.php';
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -37,6 +39,52 @@ require_once __DIR__ . '/../init.php';
             font-weight: bold;
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
         }
+
+        .page-content {
+            margin-left: 260px !important;
+            padding: 20px !important;
+            width: calc(100% - 260px) !important;
+            max-width: calc(100% - 260px) !important;
+            box-sizing: border-box !important;
+        }
+
+        .content-section {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .page-content .container-fluid {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .page-content .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .page-content .col-md-12,
+        .page-content .col-md-5,
+        .page-content .col-md-7 {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        @media (max-width: 767px) {
+            .page-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 20px !important;
+                padding-top: 50px !important;
+            }
+        }
         .tour-plan-card {
             background: var(--card-bg) !important;
             border-left: 10px solid var(--turan-green) !important;
@@ -48,6 +96,7 @@ require_once __DIR__ . '/../init.php';
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
             padding-right: 120px;
+            min-height: 250px;
         }
         .tour-plan-card.active-tour {
             border-left-color: var(--turan-accent) !important;
@@ -107,78 +156,74 @@ require_once __DIR__ . '/../init.php';
         .tour-plan-card i { color: var(--turan-green) !important; margin-right: 8px; }
         .fun-fact { font-size: 13px; background: #f8f9fa !important; padding: 10px; margin-top: 10px; border-radius: 6px; border-left: 3px solid var(--turan-accent); color: #555 !important; }
         .map-wrapper { position: sticky; top: 20px; border: 10px solid #fff; border-radius: 20px; height: 600px; box-shadow: 0 15px 45px rgba(0,0,0,0.5); background: #222; overflow: hidden; }
+
+        footer.premium-footer {
+            padding: 12px 0 !important;
+            text-align: center !important;
+            clear: both;
+            margin-top: 50px !important;
+            background: none !important;
+            display: block !important;
+        }
+
+        footer.premium-footer .footer-inner-wrapper {
+            width: 100% !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            display: block !important;
+            text-align: center !important;
+        }
+
+        footer.premium-footer .credits-container {
+            width: 100% !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            display: block !important;
+        }
+
+        footer.premium-footer .credits-link {
+            display: inline-block !important;
+            width: auto !important;
+            margin: 0 auto !important;
+        }
+
+        footer.premium-footer p {
+            font-family: 'Georgia', serif !important;
+            font-style: italic !important;
+            color: #000000 !important;
+            font-size: 14px !important;
+            display: inline-block;
+            padding: 10px 25px !important;
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: 2px solid #d4af37 !important;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 767px) {
+            footer.premium-footer {
+                padding: 20px !important;
+            }
+
+            footer.premium-footer p {
+                font-size: 12px !important;
+                padding: 8px 14px !important;
+                max-width: calc(100vw - 40px);
+                white-space: normal;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                line-height: 1.5;
+            }
+        }
         @media (max-width: 991px) { .map-wrapper { position: relative !important; height: 450px !important; margin-top: 20px; } }
     </style>
 </head>
 <body class="page-turazas">
-    <header class="nav-down responsive-nav">
-        <div class="logo-mobile-left">
-            <a href="../index.php">NÓG<span>RÁD</span></a>
-        </div>
-        <button type="button" id="nav-toggle" class="navbar-toggle">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <div id="main-nav">
-            <nav style="padding: 16px;">
-                <ul class="nav navbar-nav">
-                    <?php include 'mobile_menu.php'; ?>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <div class="main-wrapper">
-        <div class="sidebar-navigation">
-            <div class="logo"><a href="../index.php">NÓG<em>RÁD</em></a></div>
-            <nav>
-                <ul>
-                    <?php if(isset($_SESSION['user_name'])): ?>
-                        <li>
-                            <a href="../profile.php" style="color: #fec107;">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="../logout.php">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                Kilépés
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <li>
-                            <a href="../login.php">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                Bejelentkezés
-                            </a>
-                        </li>
-                        <li>
-                            <a href="../reg_id.php">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                Regisztráció
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                    <li style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 15px; list-style: none;"></li>
-                    <li><a href="../index.php"><span class="rect"></span><span class="circle"></span>Kezdőlap</a></li>
-                    <li><a href="latnivalok.php"><span class="rect"></span><span class="circle"></span>Látnivalók</a></li>
-                    <li><a href="programok.php"><span class="rect"></span><span class="circle"></span>Programok</a></li>
-                    <li><a href="szallasok.php"><span class="rect"></span><span class="circle"></span>Szállások</a></li>
-                    <li><a href="gasztronomia.php"><span class="rect"></span><span class="circle"></span>Gasztro</a></li>
-                    <li><a href="turazas.php"><span class="rect"></span><span class="circle"></span>Túrázás</a></li>
-                    <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
-                </ul>
-            </nav>
-            <?php include "../weather.php"; ?>
-        </div>
+   <?= $kozos_menu ?>
+<?= $kozos_mobile ?>
 
         <div class="page-content">
+         
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12 text-center">
@@ -296,7 +341,8 @@ require_once __DIR__ . '/../init.php';
         function updateMap(destination, element) {
             const fullLocation = destination + ", Nógrád, Hungary";
             const url = "https://maps.google.com/maps?q=" + encodeURIComponent(fullLocation) + "&t=k&z=15&ie=UTF8&iwloc=&output=embed";
-            document.getElementById('map-frame').src = url;
+            const mapFrame = document.getElementById('map-frame');
+            mapFrame.src = url;
             $('.tour-plan-card').removeClass('active-tour');
             $(element).addClass('active-tour');
             if ($(window).width() < 992) {
@@ -350,6 +396,6 @@ require_once __DIR__ . '/../init.php';
         }
         document.getElementById("tour-note-modal").addEventListener("click", function (e) { if (e.target === this) closeTourNote(); });
     </script>
-    <?php include "../weather_mobile.php"; ?>
+
 </body>
 </html>

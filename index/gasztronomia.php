@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../init.php';
+include '../kozos_menu.php';
+include '../kozos_mobile.php';
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -16,79 +18,195 @@ require_once __DIR__ . '/../init.php';
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="mobile_style.css">
     <style>
-        .turizm-card { border-left: 10px solid #fec107 !important; }
-        header.responsive-nav { border-bottom: 3px solid #fec107 !important; }
-        .navbar-toggle { background-color: #fec107 !important; }
-        .humor-box { color: #fec107; border: 2px dashed #fec107; }
+        :root {
+            --praktika-blue: #fec107;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background: url('../img/gastro_1.jpg') no-repeat center center fixed !important;
+            background-size: cover !important;
+            overflow-x: hidden;
+        }
+
+        .humor-box {
+            background: rgba(0, 0, 0, 0.75) !important;
+            color: #fec107 !important;
+            padding: 13px 15px;
+            border-radius: 50px;
+            border: 2px dashed #fec107;
+            display: inline-block;
+            margin: 20px auto;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+
+        .page-content {
+            margin-left: 250px !important;
+            padding: 20px !important;
+            width: calc(100% - 250px) !important;
+            max-width: calc(100% - 250px) !important;
+            box-sizing: border-box !important;
+        }
+
+        .content-section {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .page-content .container-fluid {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .page-content .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .page-content .col-md-12,
+        .page-content .col-md-5,
+        .page-content .col-md-7 {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .turizm-card {
+            background: #ffffff !important;
+            border-left: 10px solid var(--praktika-blue) !important;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            min-height: 250px;
+            text-align: left;
+        }
+
+        .turizm-card h3 {
+            color: var(--praktika-blue) !important;
+            font-weight: 800 !important;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            display: block !important;
+        }
+
+        .page-content .col-md-7 .turizm-card {
+            min-height: 600px;
+        }
+
+        .page-content .col-md-7 .scroll-box {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .venue-box-fancy {
+            border-left: 5px solid #9c27b0;
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .venue-link {
+            text-decoration: none;
+            display: block;
+        }
+
+        .venue-link strong {
+            color: #000;
+            font-size: 16px;
+        }
+
+        .venue-link p {
+            color: #555 !important;
+            font-size: 13px;
+            margin: 5px 0 0 0;
+        }
+
+        footer.premium-footer {
+            padding: 12px 0 !important;
+            text-align: center !important;
+            clear: both;
+            margin-top: 50px !important;
+            background: none !important;
+            display: block !important;
+        }
+
+        footer.premium-footer .footer-inner-wrapper {
+            width: 100% !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            display: block !important;
+            text-align: center !important;
+        }
+
+        footer.premium-footer .credits-container {
+            width: 100% !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            display: block !important;
+        }
+
+        footer.premium-footer .credits-link {
+            display: inline-block !important;
+            width: auto !important;
+            margin: 0 auto !important;
+        }
+
+        footer.premium-footer p {
+            font-family: 'Georgia', serif !important;
+            font-style: italic !important;
+            color: #000000 !important;
+            font-size: 14px !important;
+            display: inline-block;
+            padding: 10px 25px !important;
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: 0 !important;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 767px) {
+            .page-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 20px !important;
+                padding-top: 50px !important;
+            }
+
+            .turizm-card {
+                padding: 20px;
+            }
+
+            footer.premium-footer {
+                padding: 20px !important;
+            }
+
+            footer.premium-footer p {
+                font-size: 12px !important;
+                padding: 8px 14px !important;
+                max-width: calc(100vw - 40px);
+                white-space: normal;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                line-height: 1.5;
+            }
+        }
     </style>
 </head>
 <body>
-    <header class="nav-down responsive-nav">
-        <div class="logo-mobile-left">
-            <a href="../index.php">NÓG<span>RÁD</span></a>
-        </div>
-        <button type="button" id="nav-toggle" class="navbar-toggle">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <div id="main-nav">
-            <nav style="padding: 12px;">
-                <ul class="nav navbar-nav">
-                    <?php include 'mobile_menu.php'; ?>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <div class="main-wrapper">
-        <div class="sidebar-navigation">
-            <div class="logo"><a href="../index.php"><em>NÓG</em>RÁD</a></div>
-            <nav>
-                <ul>
-                    <?php if(isset($_SESSION['user_name'])): ?>
-                        <li>
-                            <a href="../profile.php" style="color: #fec107;">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="../logout.php">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                Kilépés
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <li>
-                            <a href="../login.php">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                Bejelentkezés
-                            </a>
-                        </li>
-                        <li>
-                            <a href="../reg_id.php">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                Regisztráció
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                    <li style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 15px; list-style: none;"></li>
-                    <li><a href="../index.php"><span class="rect"></span><span class="circle"></span>Kezdőlap</a></li>
-                    <li><a href="latnivalok.php"><span class="rect"></span><span class="circle"></span>Látnivalók</a></li>
-                    <li><a href="programok.php"><span class="rect"></span><span class="circle"></span>Programok</a></li>
-                    <li><a href="szallasok.php"><span class="rect"></span><span class="circle"></span>Szállások</a></li>
-                    <li><a href="gasztronomia.php"><span class="rect"></span><span class="circle"></span>Gasztro</a></li>
-                    <li><a href="turazas.php"><span class="rect"></span><span class="circle"></span>Túrázás</a></li>
-                    <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
-                </ul>
-            </nav>
-            <?php include "../weather.php"; ?>
-        </div>
+   <?= $kozos_menu ?>
+<?= $kozos_mobile ?>
 
         <div class="page-content">
             <section class="content-section">
@@ -185,11 +303,13 @@ require_once __DIR__ . '/../init.php';
                     </div>
                 </div>
             </section>
-            <footer class="premium-footer" style="padding: 20px; text-align: center; color: #0a1f98;">
-                <div class="credits-container">
-                    <a href="../Proofiles.php" class="credits-link" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
-                        <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
-                    </a>
+            <footer class="premium-footer">
+                <div class="footer-inner-wrapper">
+                    <div class="credits-container">
+                        <a href="../Proofiles.php" class="credits-link">
+                            <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                        </a>
+                    </div>
                 </div>
             </footer>
         </div>
@@ -247,6 +367,6 @@ require_once __DIR__ . '/../init.php';
             background: #fec107 !important;
         }
     </style>
-    <?php include "../weather_mobile.php"; ?>
+
 </body>
 </html>

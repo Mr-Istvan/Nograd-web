@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../init.php';
+include '../kozos_menu.php';
+include '../kozos_mobile.php';
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -71,8 +73,54 @@ require_once __DIR__ . '/../init.php';
             min-width: 20px;
             font-size: 18px;
         }
+
+        .main-wrapper {
+            margin-top: 15px;
+        }
+
+        .page-content {
+            margin-left: 260px !important;
+            padding: 20px !important;
+            width: calc(100% - 260px) !important;
+            max-width: calc(100% - 260px) !important;
+            box-sizing: border-box !important;
+        }
+
+        .content-section {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .page-content .container-fluid {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .page-content .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .page-content .col-md-12,
+        .page-content .col-md-6 {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            box-sizing: border-box !important;
+        }
         @media (max-width: 767px) {
-            .page-content { padding-top: 100px !important; }
+            .page-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 20px !important;
+                padding-top: 50px !important;
+            }
+
             .responsive-nav {
                 background: #232323 !important;
                 border-bottom: 3px solid var(--praktika-blue) !important;
@@ -83,78 +131,18 @@ require_once __DIR__ . '/../init.php';
             }
             .navbar-toggle .icon-bar { background-color: #fff !important; }
         }
+
+        @media (max-width: 767px) {
+            .page-content h1 {
+                position: relative;
+                top: -50px;
+            }
+        }
     </style>
 </head>
 <body>
-    <header class="nav-down responsive-nav">
-        <div class="logo-mobile-left">
-            <a href="../index.php">NÓG<span>RÁD</span></a>
-        </div>
-        <button type="button" id="nav-toggle" class="navbar-toggle">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <div id="main-nav">
-            <nav style="padding: 20px;">
-                <ul class="nav navbar-nav">
-                    <?php include 'mobile_menu.php'; ?>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <div class="main-wrapper">
-        <div class="sidebar-navigation">
-            <div class="logo">
-                <a href="../index.php"><em>NÓG</em>RÁD</a>
-            </div>
-            <nav>
-                <ul>
-                    <?php if(isset($_SESSION['user_name'])): ?>
-                        <li>
-                            <a href="../profile.php" style="color: #fec107;">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="../logout.php">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                Kilépés
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <li>
-                            <a href="../login.php">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                Bejelentkezés
-                            </a>
-                        </li>
-                        <li>
-                            <a href="../reg_id.php">
-                                <span class="rect"></span>
-                                <span class="circle"></span>
-                                Regisztráció
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                    <li style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 15px; list-style: none;"></li>
-                    <li><a href="../index.php"><span class="rect"></span><span class="circle"></span>Kezdőlap</a></li>
-                    <li><a href="latnivalok.php"><span class="rect"></span><span class="circle"></span>Látnivalók</a></li>
-                    <li><a href="programok.php"><span class="rect"></span><span class="circle"></span>Programok</a></li>
-                    <li><a href="szallasok.php"><span class="rect"></span><span class="circle"></span>Szállások</a></li>
-                    <li><a href="gasztronomia.php"><span class="rect"></span><span class="circle"></span>Gasztro</a></li>
-                    <li><a href="turazas.php"><span class="rect"></span><span class="circle"></span>Túrázás</a></li>
-                    <li><a href="utazasi-praktikak.php"><span class="rect"></span><span class="circle"></span>Praktikák</a></li>
-                </ul>
-            </nav>
-            <?php include "../weather.php"; ?>
-        </div>
-
+<?= $kozos_menu ?>
+<?= $kozos_mobile ?>
         <div class="page-content">
             <section class="content-section">
                 <div class="row text-center">
@@ -164,7 +152,7 @@ require_once __DIR__ . '/../init.php';
                     </div>
                 </div>
 
-                <div class="container-fluid">
+                        <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="turizm-card">
@@ -244,11 +232,9 @@ require_once __DIR__ . '/../init.php';
             </section>
 
             <footer class="premium-footer" style="padding: 17px; text-align: center; color: #0a1f98;">
-                <div class="credits-container">
-                    <a href="../Proofiles.php" class="credits-link" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
-                        <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
-                    </a>
-                </div>
+                <a href="../Proofiles.php" class="credits-link" style="display:block; color: inherit; text-decoration: none; cursor: pointer; text-align:center; width:100%;">
+                    <p class="site-footer-fixed__pill" style="margin:0 auto; text-align:center; display:inline-block;">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                </a>
             </footer>
         </div>
     </div>
@@ -262,6 +248,6 @@ require_once __DIR__ . '/../init.php';
             });
         });
     </script>
-    <?php include "../weather_mobile.php"; ?>
+    
 </body>
 </html>

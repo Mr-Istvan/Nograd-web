@@ -1,39 +1,53 @@
 <?php
 /**
- * init.php
- * Közös belépési pont minden olyan oldalnak, ahol session-t használsz.
- *
- * Miért jó?
- * - Nem kell minden PHP fájl tetejére ugyanazt a session + timeout kódot bemásolni.
- * - Elég 1 sort írni: require_once 'init.php';
+ * init.php - Nógrád Csodák Rendszermag
+ * Ez a fájl felel a munkamenet, az adatbázis és a biztonsági ellenőrzések futtatásáért.
  */
 
-/**
- * 1) Session indítása (CSAK ha még nincs aktív)
- *
- * session_status():
- * - PHP_SESSION_NONE    => még nincs session, lehet indítani
- * - PHP_SESSION_ACTIVE  => már fut a session, nem indítjuk újra (különben warning lehet)
- */
+// 1. Munkamenet indítása (ha még nem fut)
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/**
- * 2) Inaktivitás figyelés / automatikus kijelentkeztetés
- *
- * A session_timeout.php feladata:
- * - ellenőrzi, hogy mennyi ideje volt utoljára aktivitás
- * - ha lejárt az idő, átirányít logout.php-ra
- */
+// 2. Szükséges alapfájlok betöltése
+require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/session_timeout.php';
 
-// Adatbázis kapcsolat (opcionális, de ajánlott ide rakni)
-require_once __DIR__ . '/db.php';
+// 3. AKTIVITÁS ÉS BIZTONSÁGI ELLENŐRZÉSEK
+if (isset($_SESSION['uid'])) {
+    $current_uid = (int)$_SESSION['uid'];
 
-/**
- * 3) Adatbázis kapcsolat
- *
- * Ha az adott oldal DB-t használ, elég az init.php-t behúzni és a $conn elérhető lesz.
- * (A db.php jelenleg automatikusan csatlakozik és beállítja az utf8mb4-t.)
- */
+    // --- UTOLSÓ AKTIVITÁS FRISSÍTÉSE (Munkamenetben) ---
+    // Nem írunk az adatbázisba minden kattintásnál, csak a session-ben tároljuk az időt.
+    // Ez megakadályozza, hogy az Admin "eltűnjön" vagy a Helpdesk megbolonduljon.
+    $_SESSION['last_activity'] = time();
+
+    // --- KICK ELLENŐRZÉS (Ha az admint kidobták a panelről) ---
+    $kick_query = "SELECT ukick FROM felhasznalok WHERE uid = $current_uid LIMIT 1";
+    $kick_res = mysqli_query($conn, $kick_query);
+
+    if ($kick_res && mysqli_num_rows($kick_res) > 0) {
+        $kick_data = mysqli_fetch_assoc($kick_res);
+
+        if ((int)$kick_data['ukick'] === 1) {
+            // Kick flag visszaállítása, hogy ne ragadjon be a ciklus
+            mysqli_query($conn, "UPDATE felhasznalok SET ukick = 0 WHERE uid = $current_uid");
+            
+            // Munkamenet megsemmisítése
+            $_SESSION = array();
+            if (ini_get("session.use_cookies")) {
+                $params = session_get_cookie_params();
+                setcookie(session_name(), '', time() - 42000,
+                    $params["path"], $params["domain"],
+                    $params["secure"], $params["httponly"]
+                );
+            }
+            session_destroy();
+
+            // Átirányítás a loginra speciális üzenettel
+            header("Location: login.php?reason=kicked");
+            exit();
+        }
+    }
+}
+?>

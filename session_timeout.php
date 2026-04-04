@@ -6,10 +6,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$timeoutSeconds = 0; // 0 = kikapcsolva (nincs automatikus kijelentkeztetés inaktivitás miatt)
+$timeoutSeconds = 1800; // 30 perc (30 * 60 másodperc)
 
 // Ha belépett felhasználó, frissítjük az aktivitás időpontját minden kérésnél
-if (isset($_SESSION['uid'])) { // user_id helyett uid, mert ezt használod a profilnál
+if (isset($_SESSION['user_name'])) { 
     if ($timeoutSeconds > 0 && isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeoutSeconds) {
         header("Location: logout.php?reason=timeout");
         exit();

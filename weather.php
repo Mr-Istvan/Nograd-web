@@ -70,7 +70,7 @@ $data = json_decode(file_get_contents($cacheFile), true);
     /* --- ASZTALI OLDALSÁV WIDGET (SIDE CARD) --- */
     .side-weather-card {
         width: 100%; 
-        max-width: 280px;
+        max-width: 222px;
         background: rgba(15, 23, 42, 0.8); 
         border: 1px solid rgba(56, 189, 248, 0.4);
         border-radius: 15px; 
@@ -90,7 +90,7 @@ $data = json_decode(file_get_contents($cacheFile), true);
     .s-day-badge { color: #facc15; font-weight: 900; font-size: 14px; text-transform: capitalize; background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 5px; }
 
     .side-header { 
-        display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; 
+        display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; 
     }
     .city-nav-btn { cursor: pointer; color: #38bdf8; padding: 5px; transition: 0.2s; }
     .city-nav-btn:hover { color: #facc15; transform: scale(1.1); }

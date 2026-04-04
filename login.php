@@ -28,6 +28,7 @@ $final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bejelentkezés - Nógrád</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
        /* 1. MÓDOSÍTÁS: Alapbeállítások */
@@ -79,7 +80,7 @@ $final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
         .status-msg { padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 20px; font-weight: 600; font-size: 14px; transition: opacity 0.5s ease; }
         .msg-success { background: rgba(25, 135, 84, 0.2); border: 1px solid #198754; color: #2ecc71; }
         .msg-error { background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ff4d4d; }
-        
+        .msg-warning { background: rgba(252, 200, 46, 0.74); border: 1px solid #ffc107; color: #fec107; }
         /* Alsó linkek */
         .link-forgot { color: #ff4d4d !important; text-decoration: none; transition: 0.3s; }
         .link-forgot:hover { color: #ff8080 !important; text-decoration: underline; }
@@ -121,7 +122,17 @@ $final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
             <?php endif; ?>
 
             <?php if (isset($_GET['error'])): ?>
-                <div class="status-msg msg-error">❌ Hibás felhasználónév vagy jelszó!</div>
+                <?php if($_GET['error'] == 'timeout'): ?>
+                    <!-- Ez a doboz marad sokáig -->
+                    <div id="timeout-msg" class="status-msg msg-warning">
+                        ⏱️ Inaktivitás miatt a rendszer automatikusan kiléptetett!
+                    </div>
+                <?php else: ?>
+                    <!-- Ez a doboz eltűnik hamar -->
+                    <div id="fade-msg" class="status-msg msg-error">
+                        ❌ Hibás felhasználónév vagy jelszó!
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 
@@ -132,7 +143,7 @@ $final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
             <button type="submit" class="btn btn-sentra">BELÉPÉS</button>
             <a href="index.php" class="btn-back-red">VISSZA</a>
         </form>
-
+                  
         <div class="text-center mt-3">
             <p class="small mb-1">
                 <a href="forgot_password.php" class="link-forgot">Elfelejtett jelszó?</a>
@@ -150,6 +161,14 @@ $final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
                 msg.style.opacity = '0';
                 setTimeout(() => { msg.style.display = 'none'; }, 500);
             }, 3000);
+        }
+        // 2. Timeout üzenet eltüntetése 15 PERC (900 000 ms) után!
+        const timeoutMsg = document.getElementById('timeout-msg');
+        if (timeoutMsg) {
+            setTimeout(() => {
+                timeoutMsg.style.opacity = '0';
+                setTimeout(() => { timeoutMsg.style.display = 'none'; }, 500);
+            }, 900000); // 15 perc * 60 mp * 1000 ms
         }
     </script>
 </body>

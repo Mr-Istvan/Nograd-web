@@ -125,7 +125,7 @@ if (!$isFinished) {
     <div class="eval-box">
         <!-- DINAMIKUS X GOMB: Ha kész, simán visszavisz, ha nincs kész, kérdez -->
         <a href="index.php" class="close-exit" title="Kilépés" 
-           onclick="<?php echo $isFinished ? '' : "return confirm('Biztosan kilépsz? A válaszok elveznek!')"; ?>">X</a>
+           onclick="<?php echo $isFinished ? '' : "return confirm('Biztosan kilépsz? A válaszok elvesznek!')"; ?>">X</a>
 
         <?php if ($isFinished): ?>
             <!-- --- KÖSZÖNJÜK / KIJELENTKEZÉS ÁLLAPOT --- -->

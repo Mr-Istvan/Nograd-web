@@ -1,6 +1,23 @@
 <?php
 require_once __DIR__ . '/init.php';
 
+$current_page = basename($_SERVER['PHP_SELF']);
+$kiemelt_pages = ['galeria.php', 'index.php'];
+$felfedezes_pages = ['latnivalok.php', 'programok.php', 'szallasok.php', 'gasztronomia.php', 'turazas.php', 'utazasi-praktikak.php'];
+$blog_pages = [ 'profile.php', 'login.php', 'reg_id.php'];
+$is_authenticated = isset($_SESSION['user_name']);
+
+$is_active = function (array $pages) use ($current_page) {
+    return in_array($current_page, $pages, true);
+};
+
+$is_open = function (array $pages) use ($current_page) {
+    return in_array($current_page, $pages, true);
+};
+
+include 'kozos_menu.php';
+include 'kozos_mobile.php';
+
 $postsFile = 'data/posts.json';
 
 // USER ADATOK BETÖLTÉSE
@@ -11,27 +28,31 @@ if (isset($_SESSION['user_name'])) {
     mysqli_stmt_execute($stmt);
     $userData = mysqli_stmt_get_result($stmt)->fetch_assoc();
 }
-// POSZT TÖRLÉSE
+
+// POSZT TÖRLÉSE (Szerző vagy Admin/VIP)
 if (isset($_GET['delete']) && $userData) {
     $id = (int)$_GET['delete'];
     $postsAll = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
-    
-    if (isset($postsAll[$id]) && $postsAll[$id]['user'] === $userData['uusername']) {
+
+    $isAuthor = (isset($postsAll[$id]) && $postsAll[$id]['user'] === $userData['uusername']);
+    $isModerator = (isset($_SESSION['status']) && ($_SESSION['status'] === 'C' || $_SESSION['status'] === 'B'));
+
+    if (isset($postsAll[$id]) && ($isAuthor || $isModerator)) {
         if (!empty($postsAll[$id]['image']) && file_exists("img/posts/" . $postsAll[$id]['image'])) {
             unlink("img/posts/" . $postsAll[$id]['image']);
         }
         unset($postsAll[$id]);
         file_put_contents($postsFile, json_encode($postsAll, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     }
-    // Üzenettel térünk vissza
+
     header("Location: blog.php?msg=torolve");
     exit();
 }
-// POSZT MENTÉS (szöveg + opcionális kép) + név/avatar mentése a posztba
+
+// POSZT MENTÉS (szöveg + opcionális kép)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userData && isset($_POST['text'])) {
     $currentPosts = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
 
-    // KÉP FELTÖLTÉS
     $img = "";
     if (!empty($_FILES['image']['name'])) {
         $img = time() . "_" . basename($_FILES['image']['name']);
@@ -69,1018 +90,393 @@ if (isset($_GET['like'])) {
 // Beolvasás a megjelenítéshez
 $posts = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
 $userLoggedIn = ($userData !== null);
+
+$adItems = [
+    ["icon" => "fa-star", "color" => "#ffcc00", "text" => "Castellum Hotel Hollókő"],
+    ["icon" => "fa-tint", "color" => "#00d2ff", "text" => "Tó Wellness Hotel Bánk"],
+    ["icon" => "fa-leaf", "color" => "#a2d043", "text" => "Főnix Wellness Resort"],
+    ["icon" => "fa-bed", "color" => "#90a4ae", "text" => "Cédrus Club Hotel"],
+    ["icon" => "fa-building-o", "color" => "#78909c", "text" => "Salgó Hotel"],
+    ["icon" => "fa-fort-awesome", "color" => "#e1bee7", "text" => "Kastélyhotel Sasvár"],
+    ["icon" => "fa-home", "color" => "#8d6e63", "text" => "Boróka Vendégház"],
+    ["icon" => "fa-water", "color" => "#4fc3f7", "text" => "Bánki-tó Vendégház"],
+    ["icon" => "fa-university", "color" => "#cfd8dc", "text" => "Prónay-kastély"],
+    ["icon" => "fa-diamond", "color" => "#b3e5ff", "text" => "Mátra Mona Luxury"],
+    ["icon" => "fa-coffee", "color" => "#a1887f", "text" => "Nádas fogadó Teresztenye"],
+    ["icon" => "fa-header", "color" => "#546e7a", "text" => "Teleki-Degenfeld Kastély"],
+    ["icon" => "fa-home", "color" => "#ffab91", "text" => "Piros Csizma Vendégház"],
+    ["icon" => "fa-map", "color" => "#81c784", "text" => "Galagonya Vendégház"],
+    ["icon" => "fa-lightbulb-o", "color" => "#fff176", "text" => "Hétlámpás Vendégház"],
+    ["icon" => "fa-cutlery", "color" => "#ff8a65", "text" => "Felső Fogadó Felsőtold"],
+    ["icon" => "fa-building", "color" => "#ce93d8", "text" => "FeteKert Apartmanok"],
+    ["icon" => "fa-sun-o", "color" => "#ffd54f", "text" => "Napfénydomb Vendégház"],
+    ["icon" => "fa-tent", "color" => "#4db6ac", "text" => "Nádas Camping Bánk"],
+    ["icon" => "fa-tree", "color" => "#66bb6a", "text" => "Bárna Vadász- és Pihenőház"],
+    ["icon" => "fa-fire", "color" => "#ff7043", "text" => "Somoskői Kirándulóközpont"],
+    ["icon" => "fa-tag", "color" => "#ba68c8", "text" => "Kaláris Vendégház"],
+    ["icon" => "fa-university", "color" => "#90caf9", "text" => "Templomvölgy Resort"],
+    ["icon" => "fa-compass", "color" => "#4caf50", "text" => "Mátra Kemping Sástó"],
+    ["icon" => "fa-home", "color" => "#9575cd", "text" => "Tóparti Apartman"],
+    ["icon" => "fa-bed", "color" => "#4fc3f7", "text" => "Zagyva-völgyi Vendégház"],
+    ["icon" => "fa-fort-awesome", "color" => "#8d6e63", "text" => "Várhegy Panzió Nógrád"],
+    ["icon" => "fa-key", "color" => "#f48fb1", "text" => "Cserhát Kapuja Nézsa"],
+    ["icon" => "fa-home", "color" => "#a5d6a7", "text" => "Hollóköves Vendégház"],
+    ["icon" => "fa-university", "color" => "#b0bec5", "text" => "Eresztvényi Turistaház"],
+    ["icon" => "fa-building-o", "color" => "#90a4ae", "text" => "Rétsági Panzió"],
+    ["icon" => "fa-bed", "color" => "#81c784", "text" => "Tereskei Vendégház"],
+    ["icon" => "fa-header", "color" => "#5c6bc0", "text" => "Berceli Kastély"],
+    ["icon" => "fa-home", "color" => "#ffcc80", "text" => "Kutasó Apartman"],
+    ["icon" => "fa-tint", "color" => "#81d4fa", "text" => "Palotási Tóparti Ház"],
+    ["icon" => "fa-users", "color" => "#ce93d8", "text" => "Mátraverebélyi Zarándokház"],
+    ["icon" => "fa-university", "color" => "#d1c4e9", "text" => "Szentkúti Kegyhely Szálló"],
+    ["icon" => "fa-bed", "color" => "#aed581", "text" => "Legéndi Vendégház"],
+    ["icon" => "fa-money", "color" => "#66bb6a", "text" => "Nógrádsipeki Pihenő"],
+    ["icon" => "fa-money", "color" => "#9ccc65", "text" => "Felsőpetényi Vendégház"],
+    ["icon" => "fa-cutlery", "color" => "#ffb74d", "text" => "Karancssági Fogadó"],
+    ["icon" => "fa-home", "color" => "#4fc3f7", "text" => "Ipolyvecei Pihenőház"],
+    ["icon" => "fa-tent", "color" => "#26a69a", "text" => "Diósjenői Kemping"],
+    ["icon" => "fa-tree", "color" => "#8d6e63", "text" => "Börzsönyi Turistaház"],
+    ["icon" => "fa-mountain", "color" => "#78909c", "text" => "Somlyó-hegyi Apartman"],
+    ["icon" => "fa-university", "color" => "#9575cd", "text" => "Cserhátsurányi Kastélyszálló"],
+    ["icon" => "fa-bed", "color" => "#dce775", "text" => "Endrefalvai Vendégház"],
+    ["icon" => "fa-star", "color" => "#f06292", "text" => "Garábi Élményszálló"],
+    ["icon" => "fa-star", "color" => "#ffcc00", "text" => "Castellum Hotel Hollókő 4⭐"],
+    ["icon" => "fa-tint", "color" => "#00d2ff", "text" => "Tó Wellness Hotel Bánk 4⭐"],
+    ["icon" => "fa-leaf", "color" => "#a2d043", "text" => "Főnix Wellness Resort 4 ⭐"],
+    ["icon" => "fa-bed", "color" => "#90a4ae", "text" => "Cédrus Club Hotel 4⭐"],
+    ["icon" => "fa-building-o", "color" => "#78909c", "text" => "Salgó Hotel 3⭐"],
+    ["icon" => "fa-fort-awesome", "color" => "#e1bee7", "text" => "Kastélyhotel Sasvár 4⭐"],
+    ["icon" => "fa-home", "color" => "#8d6e63", "text" => "Boróka Vendégház 3⭐"],
+    ["icon" => "fa-water", "color" => "#4fc3f7", "text" => "Bánki-tó Vendégház 3⭐"],
+    ["icon" => "fa-university", "color" => "#cfd8dc", "text" => "Prónay-kastély Alsópetény 💎"],
+    ["icon" => "fa-diamond", "color" => "#b3e5ff", "text" => "Mátra Mona Luxury Apartment 💎"],
+    ["icon" => "fa-header", "color" => "#546e7a", "text" => "Teleki-Degenfeld Kastélyszálló"],
+    ["icon" => "fa-tent", "color" => "#4db6ac", "text" => "Nádas Camping Bánk ⛺"],
+    ["icon" => "fa-tree", "color" => "#66bb6a", "text" => "Börzsönyi Turistaház Diósjenő"],
+    ["icon" => "fa-sun-o", "color" => "#ffd54f", "text" => "Napfénydomb Vendégház Mátraszele"],
+    ["icon" => "fa-users", "color" => "#ce93d8", "text" => "Mátraverebélyi Zarándokház 🏨"],
+];
 ?>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>NóGRÁD-Blog</title>
-        
-<meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>NÓGRÁD-Blog</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/fontAwesome.css">
-        <link rel="stylesheet" href="css/light-box.css">
-        <link rel="stylesheet" href="css/owl-carousel.css">
-        <link rel="stylesheet" href="css/templatemo-style.css">
-        <link rel="stylesheet" href="index/mobile_style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/fontAwesome.css">
+    <link rel="stylesheet" href="css/light-box.css">
+    <link rel="stylesheet" href="css/owl-carousel.css">
+    <link rel="stylesheet" href="css/templatemo-style.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
+    <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/templatemo-style.css">
 
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
-
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-    
-
-        <style> 
-        
-        /* BLOG MOBIL MENÜGOMB: HAJSZÁLPONTOSAN KÖZÉPEN */
-@media (max-width: 767px) {
-    #blog-mobile-toggle {
-        display: block !important;
-        position: absolute !important;
-        left: 50% !important;   /* Vízszintesen középre tolja */
-        top: 50% !important;    /* Függőlegesen középre tolja */
-        transform: translate(-50%, -50%) !important; /* Mértani középpont korrekció */
-        margin: 0 !important;
-        
-        /* Megjelenés: kényelmes, nagyobb gomb */
-        padding: 12px 20px !important; 
-        border-radius: 12px !important;
-        border: none !important;
-        z-index: 20001 !important; /* Fontos, hogy a header felett legyen */
-        transition: all 0.3s ease;
-    }
-
-    /* A gomb színe a blog oldal stílusához igazodva (prémium sötét) */
-    body.blog-page #blog-mobile-toggle { 
-        background-color: #444 !important; 
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important; 
-    }
-
-    /* A hamburger csíkok fehér színe */
-    #blog-mobile-toggle .icon-bar {
-        background-color: #ffffff !important;
-        width: 22px !important;
-        height: 2px !important;
-        display: block !important;
-        margin: 4px auto !important;
-    }
-}
-                        /* BLOG - PRÉMIUM SÖTÉT/SZÜRKE */
-            body.page-blog header.blog-mobile-nav { border-bottom-color: #444 !important; }
-            body.page-blog #blog-mobile-toggle { 
-                background-color: #444 !important; 
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important; 
+    <style>
+        .sidebar-navigation { z-index: 9999 !important; }
+        body.blog-page { background: url('img/blog_back.jpg') no-repeat center center fixed, linear-gradient(to bottom, #afa89d, #b0a99f); background-size: cover; background-blend-mode: multiply; }
+        body.blog-page .page-content { padding: 40px; }
+        body.blog-page .content-section { padding-top: 20px !important; }
+        body.blog-page .section-heading { width: 100% !important; text-align: center !important; margin-top: 20px !important; margin-bottom: 30px !important; margin-left: 20px !important; margin-right: 2px !important; padding-left: 0 !important; padding-right: 0 !important; }
+        @media (min-width: 767px) { body.blog-page .section-heading { display: block !important; max-width: 100% !important; } }
+        body.blog-page .section-heading h1{ font-size: clamp(34px, 4vw, 50px); font-weight: 900; letter-spacing: 0.6px; text-transform: uppercase; position: relative; display: inline-block; padding: 12px 18px 12px 58px; border-radius: 16px; -webkit-text-stroke: 2px #ffffff; paint-order: stroke fill; background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(180,220,255,0.14) 35%, rgba(0,0,0,0.12)), radial-gradient(120% 140% at 0% 0%, rgba(90,160,255,0.22) 0%, rgba(0,0,0,0) 60%); border: 1px solid rgba(120,190,255,0.55); box-shadow: 0 14px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15); text-shadow: 0 10px 22px rgba(0,0,0,0.65); font-family: "Trebuchet MS","Segoe UI",system-ui,-apple-system,Arial,sans-serif; }
+        @supports not (-webkit-text-stroke: 2px #fff){ body.blog-page .section-heading h1{ text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px  1px 0 #fff, 1px  1px 0 #fff, 0 10px 22px rgba(0,0,0,0.65); } }
+        body.blog-page .section-heading h1::before{ content: "◆"; position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #7fd0ff; text-shadow: 0 8px 18px rgba(0,0,0,0.55); font-size: 28px; line-height: 1; }
+        body.blog-page .section-heading h1 em{ color: #7fd0ff; font-style: normal; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35)); }
+        body.blog-page .section-heading p{ font-size: clamp(18px, 2.2vw, 24px); color: rgba(235,245,255,0.96) !important; text-shadow: 0 8px 18px rgba(0,0,0,0.65); margin-top: 16px; font-family: "Segoe UI",system-ui,-apple-system,Arial,sans-serif; letter-spacing: 0.2px; }
+        body.blog-page{ font-size: 24px; }
+        @media (min-width: 1200px){ body.blog-page{ font-size: 23px; } }
+        @media (max-width: 767px){ body.blog-page{ font-size: clamp(21px, 4vw, 18px); } body.blog-page .content-section { padding-top: 50px !important; } }
+        @media (max-width: 767px) { body.blog-page .page-content { padding-top: 10px !important; margin-top: 0 !important; } body.blog-page .content-section { padding-top: 0 !important; margin-top: 0 !important; } body.blog-page .section-heading { margin-top: -20px !important; padding-top: 0 !important; } body.blog-page .section-heading h1 { margin-top: 0 !important; padding-top: 0 !important; } }
+        body.blog-page .page-content{ min-height: 100vh; display: flex; flex-direction: column; padding: 0 20px 110px 0 !important; }
+        .page-content, .content-section, .content-section .row, .content-section .col-md-12 { max-width: 100% !important; width: 100% !important; padding-left: 0 !important; padding-right: 5px !important; margin-left: 0 !important; margin-right: 0 !important; }
+        .content-section .section-heading { text-align: left !important; margin-left: 15px !important; }
+        .feed { max-width: none !important; width: auto !important; margin-left: 15px !important; margin-right: 15px !important; }
+        /* --- 1. ALAPHELYZET (767px alatt: Mobil) --- */
+        @media (max-width: 766px) {
+            body.blog-page .composer,
+            body.blog-page .feed {
+                margin-left: 5px !important;
+                margin-right: 10px !important;
+                width: 100% !important;
             }
-            body { 
-                background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('img/blog_back.jpg') no-repeat center center fixed; 
-                background-size: cover;
-            }
+        }
 
-            /* blog specifikus scope: nem hat más oldalakra */
-            body.blog-page .page-content { padding: 40px; }
-
-            /* A blog cím (section-heading) kerüljön feljebb: a nagy felső üresség innen jön.
-               Desktopon feljebb húzzuk, mobilon (<=767) maradjon annyi hely, hogy ne ütközzön a fix mobil menüvel. */
-            body.blog-page .content-section { padding-top: 20px !important; }
-            body.blog-page .section-heading { margin-bottom: 30px; }
-
-            /* Blog-fal cím: “diamond” + fehér/kék/fekete/világoskék/sötétkék + aranykék (nem sima sárga) */
-            body.blog-page .section-heading h1{
-                font-size: clamp(34px, 4vw, 50px);
-                font-weight: 900;
-                letter-spacing: 0.6px;
-                text-transform: uppercase;
-                position: relative;
-                display: inline-block;
-                padding: 12px 18px 12px 58px;
-                border-radius: 16px;
-
-                /* 2px fehér körvonal a felirat körül */
-                -webkit-text-stroke: 2px #ffffff;
-                paint-order: stroke fill;
-            }
-            /* Firefox fallback: text-shadow körvonallal */
-            @supports not (-webkit-text-stroke: 2px #fff){
-                body.blog-page .section-heading h1{
-                    text-shadow:
-                        -1px -1px 0 #fff,
-                        1px -1px 0 #fff,
-                        -1px  1px 0 #fff,
-                        1px  1px 0 #fff,
-                        0 10px 22px rgba(0,0,0,0.65);
-                }
-            }
-            body.blog-page .section-heading h1{
-
-                /* fehér-kék-fekete-világoskék-sötétkék hangulat */
-                background:
-                    linear-gradient(135deg, rgba(255,255,255,0.10), rgba(180,220,255,0.14) 35%, rgba(0,0,0,0.12)),
-                    radial-gradient(120% 140% at 0% 0%, rgba(90,160,255,0.22) 0%, rgba(0,0,0,0) 60%);
-                border: 1px solid rgba(120,190,255,0.55);
-                box-shadow:
-                    0 14px 30px rgba(0,0,0,0.35),
-                    inset 0 1px 0 rgba(255,255,255,0.15);
-                text-shadow: 0 10px 22px rgba(0,0,0,0.65);
-
-                /* “betűtípusos dizájn”: kicsit elegánsabb display feel */
-                font-family: "Trebuchet MS","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
-            }
-            body.blog-page .section-heading h1::before{
-                content: "◆";
-                position: absolute;
-                left: 20px;
-                top: 50%;
-                transform: translateY(-50%);
-                /* aranykék (nem sima sárga) */
-                color: #7fd0ff;
-                text-shadow: 0 8px 18px rgba(0,0,0,0.55);
-                font-size: 28px;
-                line-height: 1;
-            }
-            body.blog-page .section-heading h1 em{
-                /* aranykék árnyalat */
-                color: #7fd0ff;
-                font-style: normal;
-                filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
-            }
-
-            /* Alcím: nagyobb + világosabb */
-            body.blog-page .section-heading p{
-                font-size: clamp(18px, 2.2vw, 24px);
-                color: rgba(235,245,255,0.96) !important;
-                text-shadow: 0 8px 18px rgba(0,0,0,0.65);
-                margin-top: 16px;
-                font-family: "Segoe UI",system-ui,-apple-system,Arial,sans-serif;
-                letter-spacing: 0.2px;
-            }
-
-            @media (max-width: 767px) {
-                body.blog-page .content-section { padding-top: 105px !important; }
-            }
-            
-            @media (max-width: 767px) {
-                /* --- 1. A FEJLÉCEK (Eltűnnek görgetéskor) --- */
-               /* --- 1. A FEJLÉCEK (Okos görgetés) --- */
-                header.responsive-nav, 
-                header.blog-mobile-nav { 
-                    display: flex !important;
-                    align-items: center !important;
-                    position: fixed !important; /* Fixen tartjuk */
-                    top: 0; 
-                    left: 0; 
-                    width: 100%;
-                    height: 90px !important;
-                    background: #ffffff !important; 
-                    z-index: 9999 !important;
-                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                    border-bottom: 3px solid #333;
-                    transition: top 0.3s ease-in-out !important; /* Sima animáció fel/le */
-                }
-
-                /* Ez az az osztály, amit a gép ráad, ha lefele görgetsz */
-                header.blog-mobile-nav.nav-up {
-                    top: -100px !important; /* Felhúzza a képernyőn kívülre */
-                }
-                /* --- 2. A GOMBOK (Hajszálpontosan középen, modern forma) --- */
-                .navbar-toggle, 
-                #blog-mobile-toggle {
-                    display: block !important;
-                    position: absolute !important;
-                    left: 50% !important;
-                    top: 50% !important;
-                    transform: translate(-50%, -50%) !important;
-                    margin: 0 !important;
-                    padding: 12px 20px !important;
-                    border-radius: 12px !important;
-                    border: none !important;
-                    z-index: 1001 !important;
-                    transition: all 0.3s ease;
-                }
-
-                /* --- 3. A HAMBURGER CSÍKOK (Hogy a blogon is ugyanaz legyen) --- */
-                /* Ez kezeli a .icon-bar-t és a blog span-jeit is */
-                .navbar-toggle .icon-bar, 
-                #blog-mobile-toggle span {
-                    background-color: #ffffff !important;
-                    width: 26px !important; /* Megnövelt szélesség */
-                    height: 2px !important;
-                    display: block !important;
-                    margin: 3px 0 !important; /* Egyforma távolság a csíkok között */
-                    border-radius: 1px !important;
-                    transition: all 0.3s ease;
-                }
-
-                /* --- 4. SZŐNYEG MENÜK --- */
-                #main-nav, #blog-mobile-menu { 
-                    background: rgba(26, 26, 26, 0.98) !important; 
-                    display: none; 
-                    position: absolute !important;
-                    top: 90px !important; 
-                    left: 0 !important;
-                    width: 100% !important;
-                    z-index: 9998 !important;
-                    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-                }
-
-                #main-nav ul li a, #blog-mobile-menu a { 
-                    color: #ffffff !important; 
-                    display: block !important;
-                    padding: 12px 0 !important; /* Szép szellős sorköz */
-                    text-align: center !important;
-                    font-size: 16px !important;
-                    text-decoration: none !important;
-                    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
-                }
-            }
-            
-            /* ===========================
-               RESZPONZÍV ÜZENŐFAL + TIPOGRÁFIA (blog-page scope)
-               - PC alap: 16px
-               - Mobil alap: 16–18px (fluid)
-               - Chat/üzenetszöveg: ~16px
-               - Kis szöveg (időbélyeg): 12–14px
-               =========================== */
-
-            /* PC alap betűméret: 20–22px (kényelmesebb chat) */
-            body.blog-page{
-                font-size: 20px;
-            }
-            @media (min-width: 1200px){
-                body.blog-page{
-                    font-size: 22px;
-                }
-            }
-
-            /* Mobilon: 16–18px (folyékony skálázás) */
-            @media (max-width: 767px){
-                body.blog-page{
-                    font-size: clamp(16px, 4vw, 18px);
-                }
-            }
-
-            /* ===========================
-               Rugalmas magasság: csak a FEED görgethető
-               Szerkezet:
-               - section-heading (fix tartalom)
-               - composer (fix tartalom)
-               - feed (flex:1 => kitölti a maradék helyet, és scrolloz)
-               =========================== */
-
-            /* A page-content legyen "oszlop" és érjen le a viewport aljáig,
-               hogy a footer alulra kerülhessen, miközben a feed a köztes teret tölti ki. */
-            body.blog-page .page-content{
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
-
-            /* A tartalmi szekció töltse ki a footer előtti teret */
-            body.blog-page .content-section{
-                display: flex;
-                flex-direction: column;
-                flex: 1 1 auto;
-                min-height: 0; /* fontos: különben a flex-gyerek (feed) nem tud rendesen összemenni */
-            }
-
-                body.blog-page .feed {
-                    flex: none !important;      /* Kikapcsoljuk a rugalmas méretezést */
-                    height: auto !important;    /* Hagyjuk, hogy olyan hosszú legyen, amilyen az üzenetek listája */
-                    overflow-y: visible !important; /* Ne legyen belső görgetősáv */
-                    padding-right: 0;           /* Mobilon nincs szükség a scrollbar eltolásra */
-                }
-
-            /* Mobilon a fix footer + mobil reklámsáv miatt a FEED aljára kell hely,
-               különben az utolsó üzenet alá/fölé belóg. */
-            @media (max-width: 767px){
-                body.blog-page .feed{
-                    padding-bottom: 140px;
-                }
-            }
-
-            /* ha az alsó fix mobil reklámsáv látszik, legyen neki hely */
-            @media (max-width: 1001px){
-                body.blog-page .feed{
-                    padding-bottom: 60px;
-                }
-            }
-            /* Mobilon (<=767) legyen nagyobb hely, hogy a fix footer biztosan ne lógjon rá az utolsó üzenetre */
-            @media (max-width: 767px){
-                body.blog-page .feed{
-                    padding-bottom: 160px;
-                }
-            }
-
-            /* Üzenet kártyák - Fehér, fekete keret */
-            /* ====== MINTA-SZERŰ "CHAT BUBBLE" KÁRTYA ======
-               - szélesebb, egységes max szélesség
-               - lágyabb árnyék, kerekebb sarkok
-               - a saját üzenet jobbra, a többi balra
-            */
-            /* Üzenet megjelenítés (a kérésed alapján):
-               - Mások üzenete: bal oldalt, SZÜRKE háttér, FEKETE betű
-               - Saját üzenet: jobb oldalt, KÉK háttér, FEHÉR betű */
-            body.blog-page .post-card {
-                padding: 14px 16px;
-                margin-bottom: 14px;
-                border-radius: 14px;
-                width: 92%;
-                max-width: 720px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+        /* --- 2. KÖZTES ÁLLAPOT (767px - 1000px között) --- 
+           Itt már ott a 250px-es menü balra, de jobb oldalon MÉG NINCS reklám.
+        */
+        @media (min-width: 767px) and (max-width: 1000px) {
+            body.blog-page .composer,
+            body.blog-page .feed {
+                margin-left: 250px !important; 
+                margin-right: 5px !important;
+                width: calc(100% - 250px) !important;
+                padding: 0 15px !important;
                 box-sizing: border-box;
-                font-size: 1rem; /* chat ~16px */
-                line-height: 1.45;
-                border: 1px solid rgba(0,0,0,0.15) !important;
             }
+        }
 
-            body.blog-page .other-post{
-                margin-left: 0;
-                background: #e6e6e6 !important;
-                color: #000 !important;
+        /* --- 3. ASZTALI NÉZET (1001px felett) --- 
+           Itt ott a 250px menü ÉS a jobb oldali reklám (kb. 150px sáv) is.
+        */
+        @media (min-width: 1001px) {
+            body.blog-page .composer,
+            body.blog-page .feed {
+                margin-left: 250px !important;
+                margin-right: 150px !important;
+                width: calc(100% - 400px) !important;
+                box-sizing: border-box;
+                max-width: none !important;
             }
+        }
 
-            body.blog-page .my-post{
-                margin-left: auto;
-                margin-right: 25px; /* alap: jobbra */
-                background: #45489a !important;
-                color: #fff !important;
+        /* --- ÍRÁSI FELÜLET JAVÍTÁSA (A textarea kényelme) --- */
+        body.blog-page .composer textarea {
+            width: 100% !important;
+            min-height: 120px;
+            padding: 15px;
+            font-size: 16px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        @media (min-width: 768px) and (max-width: 1000px) {
+            body.blog-page .composer,
+            body.blog-page .feed {
+                margin-left: 260px !important;
+                margin-right: 20px !important;
+                width: auto !important;
+                max-width: none !important;
             }
-
-            /* Extra keskeny nézetben (pl. 400px körül) is maradjon jobbra tolva, de ne lógjon ki */
-            @media (max-width: 420px){
-                body.blog-page .my-post{
-                    margin-right: 20px; /* kérés: ~20px */
-                }
+        }
+        @media (min-width: 768px) and (max-width: 1001px) {
+            body.blog-page .page-content { padding-right: 0 !important; }
+            body.blog-page .feed,
+            body.blog-page .composer {
+                width: calc(100% - 260px) !important;
+                max-width: calc(100% - 260px) !important;
+                margin-left: 260px !important;
+                margin-right: 0 !important;
+                box-sizing: border-box !important;
             }
+        }
+        @media (max-width: 767px) { body.blog-page .page-content { padding-top: 10px !important; } .section-heading { margin-top: -40px !important; padding-top: 0 !important; } }
+        @media (min-width: 768px) { body.blog-page .page-content { padding: 0 20px 110px 0 !important; } }
+        @media (max-width: 767px) { body.blog-page .page-content{ padding-top:115px !important; } }
+        @media (max-width: 767px) { body.blog-page .feed .post-content, body.blog-page .feed p, body.blog-page .post-text { font-size: 25px !important; line-height: 1.7 !important; color: #161616 !important; } body.blog-page .feed h2, body.blog-page .feed h3, body.blog-page .post-title { font-size: 1.5rem !important; margin-bottom: 10px !important; } body.blog-page .post, body.blog-page .feed-item { padding: 15px !important; margin-bottom: 20px !important; width: 100% !important; box-sizing: border-box !important; } body.blog-page .post-meta, body.blog-page .user-info span { font-size: 25px !important; } }
+        body.blog-page .content-section{ display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+        body.blog-page .feed { flex: none !important; height: auto !important; overflow-y: visible !important; padding-right: 0; }
+        @media (max-width: 1001px){ body.blog-page .feed{ padding-bottom: 60px; } }
+        @media (max-width: 767px){ body.blog-page .feed{ padding-bottom: 160px; } }
+        body.blog-page .post-card { padding: 14px 16px; margin-bottom: 14px; border-radius: 14px; width: 92%; max-width: 720px; box-shadow: 0 10px 25px rgba(0,0,0,0.18); box-sizing: border-box; font-size: 1rem; line-height: 1.45; border: 1px solid rgba(0,0,0,0.15) !important; position: relative; }
+        body.blog-page .other-post{ margin-left: 0; background: #e6e6e6 !important; color: #000 !important; }
+        body.blog-page .my-post{ margin-left: auto; margin-right: 25px; background: #45489a !important; color: #fff !important; }
+        @media (max-width: 420px){ body.blog-page .my-post{ margin-right: 20px; } }
+        body.blog-page .my-post .post-meta strong, body.blog-page .my-post .post-meta small, body.blog-page .my-post .post-text{ color: #fff !important; }
+        body.blog-page .other-post .post-meta strong, body.blog-page .other-post .post-text{ color: #000 !important; }
+        body.blog-page .other-post .post-meta small{ color: #444 !important; }
+        body.blog-page .post-meta strong{ font-size: calc(1.35em + 1px); font-weight: 800; letter-spacing: 0.2px; }
+        body.blog-page .post-meta small{ font-size: clamp(12px, 0.85rem, 14px); color:#888; }
+        body.blog-page .post-text{ margin: 0; font-size: calc(1.25em + 1.5px); line-height: 1.5; text-align: left; }
+        body.blog-page .post-card img[alt="post image"]{ max-width: 150px; max-height: 150px; width: auto; height: auto; object-fit: cover; display: block; margin: 10px 0 0 0; border-radius: 10px; }
+        .delete-post-btn { position: absolute; bottom: 12px; right: 12px; background-color: #ff0000 !important; color: #ffffff !important; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.2s ease-in-out; text-decoration: none !important; }
+        .delete-post-btn:hover { background-color: #cc0000 !important; transform: scale(1.15); }
+        .delete-post-btn i { font-size: 14px; }
+        .status-msg { padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 20px; font-weight: 600; font-size: 20px; backdrop-filter: blur(8px); animation: fadeInDown 0.5s ease; }
+        .msg-success { background: rgba(25, 135, 84, 0.3); border: 1px solid #198754; color: #2ecc71; }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        body.blog-page .composer{ background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #45489a; }
+        body.blog-page .composer textarea, body.blog-page .composer button{ font-size: 1rem; }
+        body.blog-page .ads-container { width: 125px; height: 600px; position: fixed; right: 20px; top: 100px; background: rgba(0,0,0,0.5); border: 1px solid #45489a; overflow: hidden; z-index: 10; }
+        body.blog-page .ad-train { position: absolute; width: 100%!important; min-height: 35px !important; animation: infiniteVertical 12s linear infinite; }
+        @keyframes infiniteVertical { 0% { top: 0; } 100% { top: -50%; } }
+        body.blog-page .mobile-ad-train { position: absolute; left: 0; top: 0; display: flex; align-items: center; width: max-content; min-width: 100%; height: 100%; animation: mobileAdTrainMove 70s linear infinite; will-change: transform; }
+        @keyframes mobileAdTrainMove { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        body.blog-page .mobile-ad-bar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #2b2d51; color: white; padding: 0; z-index: 9999; overflow: hidden; }
+        body.blog-page .ad-box { background: rgba(0,0,0,0.22); color: rgba(255,255,255,0.92); margin: 0 5px !important; padding: 2px 12px !important; text-align: center; font-size: 11px !important; font-weight: 800; border: 1px solid rgba(255,255,255,0.22); border-radius: 12px; display: flex; align-items: center; height: 31px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); white-space: nowrap; }
+        body.blog-page .ad-box i{ width: 28px; text-align: center; }
+        .footer-wrapper { clear: both; display: block; width: 100%; text-align: center; }
+        body.blog-page .premium-footer { background: transparent !important; padding: 20px 0 !important; margin: 0 auto !important; display: block !important; width: 100% !important; }
+        footer.premium-footer { padding: 30px !important; text-align: center !important; clear: both; margin-top: 50px !important; background: none !important; }
+        footer.premium-footer p { font-family: 'Georgia', serif !important; font-style: italic !important; color: #000000 !important; font-size: 14px !important; display: inline-block; padding: 10px 25px !important; background: rgba(255, 255, 255, 0.9) !important; border: 2px solid #d4af37 !important; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        @media (max-width: 767px) { footer.premium-footer { padding: 20px !important; } footer.premium-footer p { font-size: 12px !important; padding: 8px 14px !important; max-width: calc(100vw - 40px); white-space: normal; overflow-wrap: anywhere; word-break: break-word; line-height: 1.5; } }
+        @media (min-width: 768px) {
+            body.blog-page .page-content { padding-right: 185px; }
+            body.blog-page .page-content .col-md-12 { width: 100% !important; float: none !important; max-width: 980px; margin-left: auto; margin-right: auto; }
+            body.blog-page .post-card { width: 100%; max-width: 900px; }
+        }
+        @media (max-width: 1001px) and (min-width: 768px) { body.blog-page .ads-container { display: none !important; } body.blog-page .page-content { padding-right: 40px; } }
+        @media (max-width: 1001px) { body.blog-page .page-content { display: block !important; height: auto !important; min-height: 100vh; padding-bottom: 110px !important; } body.blog-page .ad-box { font-size: 15px; padding: 1px 31px; margin: 0 6px; } body.blog-page .mobile-ad-bar { display: block !important; position: fixed !important; bottom: 0; left: 250px; width: calc(100% - 250px); height: 35px; background: #45489a; z-index: 99999; } body.blog-page .page-content { padding-bottom: 120px !important; } }
+        @media (max-width: 767px) { body.blog-page .ads-container { display: none; } body.blog-page .mobile-ad-bar { left: 0 !important; width: 100% !important; display: block !important; } body.blog-page .page-content { margin-left: 0 !important; width: 100% !important; padding: 20px; padding-bottom: 140px; padding-right: 0 !important; box-sizing: border-box !important; } body.blog-page .col-md-12 { width: 100% !important; float: none !important; } body.blog-page .post-card { width: 100%; margin-left: 0 !important; max-width: none; } body.blog-page .section-heading h1 { font-size: clamp(26px, 7vw, 32px); } body.blog-page .section-heading p{ font-size: 1rem !important; } body.blog-page .post-card p, body.blog-page .post-card strong, body.blog-page textarea, body.blog-page button { font-size: 1rem !important; } body.blog-page .post-card small{ font-size: clamp(12px, 0.85rem, 14px) !important; } }
+        @media (max-width: 767px){
+            body.blog-page .blog-mobile-nav{ display:block !important; position:fixed !important; top:0; left:0; width:100%; height:90px; background-color:#ffffff; box-shadow:0 2px 10px rgba(0,0,0,0.1); border-bottom:3px solid #333; z-index:9999 !important; transition: top 0.3s ease-in-out !important; }
+            body.blog-page .page-content { padding-right: 0 !important; box-sizing: border-box !important; }
+        @media (max-width: 767px){
+            body.blog-page .blog-mobile-nav{ display:block !important; position:fixed !important; top:0; left:0; width:100%; height:90px; background-color:#ffffff; box-shadow:0 2px 10px rgba(0,0,0,0.1); border-bottom:3px solid #333; z-index:9999 !important; transition: top 0.3s ease-in-out !important; }
+            body.blog-page .page-content { padding-right: 0 !important; box-sizing: border-box !important; }
+            body.blog-page .blog-mobile-nav.nav-up{ top:-100px !important; }
+            body.blog-page .logo-mobile-left{ position:absolute; left:15px; top:50%; transform:translateY(-50%); }
+            body.blog-page .logo-mobile-left a{ font-size:22px; font-weight:800; text-transform:uppercase; text-decoration:none; color:#333333; }
+            body.blog-page .logo-mobile-left a span{ color:#d4a373; }
+            body.blog-page .navbar-toggle, body.blog-page .blog-mobile-nav__toggle{ position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); display:block !important; background:transparent; border:none; padding:10px 12px; z-index:10001; }
+            body.blog-page .navbar-toggle .icon-bar, body.blog-page .blog-mobile-nav__toggle .icon-bar{ display:block; width:22px; height:2px; background-color:#3498db; margin:4px 0; }
+            body.blog-page #main-nav, body.blog-page #blog-mobile-menu{ display:none; position:fixed; top:90px; left:0; width:100%; background-color:rgba(0,0,0,0.95); z-index:9998; box-shadow:0 10px 20px rgba(0,0,0,0.5); padding:12px; }
+            body.blog-page #main-nav nav, body.blog-page #blog-mobile-menu nav{ padding:12px; }
+            body.blog-page #main-nav a, body.blog-page #blog-mobile-menu a{ color:#ffffff !important; display:block !important; text-align:center !important; text-decoration:none !important; padding:5px 0 !important; font-size:16px !important; }
+            body.blog-page .page-content{ padding-top:115px !important; }
+        }
+        /* HELPDESK STÍLUSOK A BLOGHOZ (A profil popup miatt) */
+        :root {
+            --bg-dark: #020617;
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --accent-color: <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === 'C') ? '#0ea5e9' : '#b4865a'; ?>;
+            --border-color: rgba(180, 134, 90, 0.3);
+            --text-muted: #94a3b8;
+        }
 
-            /* meta sor (név/idő) is igazodjon a buborék színéhez */
-            body.blog-page .my-post .post-meta strong,
-            body.blog-page .my-post .post-meta small,
-            body.blog-page .my-post .post-text{
-                color: #fff !important;
-            }
-            body.blog-page .other-post .post-meta strong,
-            body.blog-page .other-post .post-text{
-                color: #000 !important;
-            }
-            body.blog-page .other-post .post-meta small{
-                color: #444 !important;
-            }
-
-            /* Név (profilnév): + ~1px még */
-            body.blog-page .post-meta strong{
-                font-size: calc(1.35em + 1px);
-                font-weight: 800;
-                letter-spacing: 0.2px;
-            }
-            body.blog-page .post-meta small{
-                font-size: clamp(12px, 0.85rem, 14px); /* kis szöveg: 12–14px */
-                color:#888;
-            }
-            /* Üzenet szöveg: + ~1px + még ~0.5px (kicsit jobban olvasható) */
-            body.blog-page .post-text{
-                margin: 0;
-                font-size: calc(1.25em + 1.5px);
-                line-height: 1.5;
-                text-align: left;
-            }
-
-            /* Első betű legyen nagybetűs (vizuális, nem kövér) */
-            body.blog-page .post-text::first-letter{
-                font-size: 1.25em;
-                font-weight: normal;
-                text-transform: uppercase;
-            }
-            /* Új sorok (nl2br -> <br>) utáni első betű nagybetűsítése */
-            body.blog-page .post-text br + *::first-letter,
-            body.blog-page .post-text br + span::first-letter,
-            body.blog-page .post-text br + br + *::first-letter{
-                text-transform: uppercase;
-            }
-
-            /* Feltöltött képek: max 140x140, balra, szöveg körbefolyik */
-            body.blog-page .post-card img[alt="post image"]{
-                max-width: 150px;
-                max-height: 150px;
-                width: auto;
-                height: auto;
-                object-fit: cover;
-                display: block;
-                margin: 10px 0 0 0;
-                border-radius: 10px;
-            }
-            /* Ezt add hozzá a blog-page .post-card-hoz: */
-            /* Ezt add hozzá a blog-page .post-card-hoz: */
-            body.blog-page .post-card {
-                position: relative; /* Ez nagyon fontos, hogy a gomb a kártyához képest pozícionáljon! */
-            }
-
-           /* --- TÖRLÉS GOMB --- */
-            .delete-post-btn {
-                position: absolute;
-                bottom: 12px; 
-                right: 12px;
-                background-color: #ff0000 !important;
-                color: #ffffff !important;
-                width: 32px;
-                height: 32px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                z-index: 1000;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                transition: all 0.2s ease-in-out;
-                text-decoration: none !important;
-            }
-
-            .delete-post-btn:hover {
-                background-color: #cc0000 !important;
-                transform: scale(1.15);
-            }
-
-            .delete-post-btn i {
-                font-size: 14px;
-            }
-
-            /* --- ÜZENETDOBOZ (A profilról loptuk, kicsit tuningolva) --- */
-            .status-msg {
-                padding: 12px;
-                border-radius: 12px;
-                text-align: center;
-                margin-bottom: 20px;
-                font-weight: 600;
-                font-size: 14px;
-                backdrop-filter: blur(8px);
-                animation: fadeInDown 0.5s ease;
-            }
-
-            .msg-success {
-                background: rgba(25, 135, 84, 0.3);
-                border: 1px solid #198754;
-                color: #2ecc71;
-            }
-
-            @keyframes fadeInDown {
-                from { opacity: 0; transform: translateY(-20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            /*törlés vége*/ 
-            body.blog-page .composer{
-                background:rgba(255,255,255,0.05);
-                padding:20px;
-                border-radius:20px;
-                margin-bottom:20px;
-                border:1px solid #45489a;
-            }
-            body.blog-page .composer textarea{
-                font-size: 1rem;
-            }
-            body.blog-page .composer button{
-                font-size: 1rem;
-            }
-
-            /* ASZTALI REKLÁM (Függőleges) */
-            body.blog-page .ads-container {
-                width: 125px; height: 600px; position: fixed; right: 20px; top: 100px;
-                background: rgba(0,0,0,0.5); border: 1px solid #45489a; overflow: hidden; z-index: 10;
-            }
-                    /* ASZTALI FÜGGŐLEGES (Felfelé úszó) */
-            body.blog-page .ad-train {
-                position: absolute;
-                width: 100%!important;
-                min-height: 35px !important;
-                /* A 60s a sebesség, növeld ha túl gyors */
-                animation: infiniteVertical 5s linear infinite; 
-            }
-
-            @keyframes infiniteVertical {
-                0% { top: 0; }
-                100% { top: -50%; } /* Csak a feléig megyünk, mert ott kezdődik a másolat */
-            }
-            /* MOBIL REKLÁM (Vízszintes úszás alul) */
-            body.blog-page .mobile-ad-bar {
-                display: none; position: fixed; bottom: 0; left: 0; width: 100%;
-                background: #2b2d51; color: white; padding: 0 0; z-index: 9999; overflow: hidden;
-            }
-           
-            /* Mobil ad-box: férjen ki a teljes szöveg (legyen szélesebb, ne vágjon) */
-            @media (max-width: 1001px){
-                body.blog-page .ad-box{
-                    width: max-content;
-                    max-width: calc(100vw - 40px);
-                    white-space: normal;
-                }
-            }
-            @keyframes adRunSide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-            
-                    /* A szöveges dobozok (kapszulák) végleges, szűkített kódja */
-            body.blog-page .ad-box {
-                background: rgba(0,0,0,0.22);
-                color: rgba(255,255,255,0.92);
-                margin: 0 5px !important;    
-                padding: 2px 12px !important; 
-                text-align: center;
-                font-size: 11px !important;  
-                font-weight: 800;
-                border: 1px solid rgba(255,255,255,0.22);
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                height: 31px; /* Ez tartja kordában a magasságot */
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Kicsit finomabb árnyék */
-                white-space: nowrap; /* Hogy a név egy sorban maradjon */
-            }
-            body.blog-page .ad-box i{
-                width: 28px;
-                text-align: center;
-            }
-
-            /* ===== FOOTER: desktopon csak a lap legalján, mobilon fixen látszódjon ===== */
-            body.blog-page .site-footer-fixed{
-                position: static; /* desktop/tablet: nem fixed */
-                left: auto;
-                transform: none;
-                bottom: auto;
-                z-index: auto;
-                margin: 16px 0 0 0;
-                padding: 0;
-                pointer-events: none;
-                display: flex;
-                justify-content: center;
-            }
-
-            /* 1001px alatt legyen fix és mindig látszódjon.
-               768-1001 között már nincs jobb oldali reklám (ads-container), ezért lehet fentebb. */
-            @media (max-width: 1001px){
-                body.blog-page .site-footer-fixed{
-                    position: fixed;
-                    left: 50%;
-                    bottom: 5px;;
-                    transform: translateX(-50%);
-                    bottom: calc(50px + 18px + env(safe-area-inset-bottom)); /* mindig a kék reklámsáv fölött */
-                    z-index: 10000;
-                    margin: 0;
-                    width: max-content;
-                }
-            }
-            @media (max-width: 767px){
-                body.blog-page .site-footer-fixed{ 
-                    bottom: calc(50px + 18px + env(safe-area-inset-bottom)); /* mobilon is ugyanúgy */
-                }
-            }
-            body.blog-page .site-footer-fixed__pill{
-                font-family: 'Georgia', serif;
-                font-style: italic;
-                background: #fff;
-                color: #000;
-                padding: 6px 20px;
-                border: 2px solid #d4af37;
-                border-radius: 25px;
-                display: inline-block;
-                margin: 0;
-                line-height: 1.35;
-                pointer-events: auto;
-                text-align: center;
-                white-space: nowrap;
-            }
-                                /* --- MOBIL REKLÁM VONAT ÖSSZEVONT ÉS JAVÍTOTT --- */
-                body.blog-page .mobile-ad-train {
-                    display: flex !important;          /* Elemek egymás mellett */
-                    white-space: nowrap !important;    /* Ne törje meg a sorokat */
-                    height:35px;                      /* Fix magasság */
-                    align-items: center;               /* Függőlegesen középre teszi az ikonokat/szöveget */
-                    width: max-content;                /* Engedi, hogy a tartalom túllógjon a képernyőn */
-                    
-                    /* VÉGTELENÍTETT ANIMÁCIÓ: 30 másodperc (állítsd nagyobbra, ha túl gyors) */
-                    animation: adRunSideInfinite 60s linear infinite;
-                }
-
-                /* Hoverre megáll, hogy el lehessen olvasni a hotelt */
-                body.blog-page .mobile-ad-train:hover {
-                    animation-play-state: paused;
-                }
-
-                /* A JAVÍTOTT KEYFRAME: Csak 50%-ig toljuk el! */
-                @keyframes adRunSideInfinite {
-                    0% {
-                        transform: translateX(0);
-                    }
-                    100% {
-                        /* Mivel PHP-ban dupláztuk a listát, a -50%-nál pont 
-                        ugyanúgy néz ki, mint az elején, így észrevétlen az ugrás */
-                        transform: translateX(-50%);
-                    }
-                }
-            /* FIX bottom szabályok már nem kellenek, mert nem lebeg a footer */
-            @media (max-width: 1001px){
-                body.blog-page .site-footer-fixed__pill{
-                    font-size: 12px;
-                }
-            }
-            @media (max-width: 767px){
-                body.blog-page .site-footer-fixed__pill{
-                    padding: 6px 14px;
-                    font-size: 12px;
-                }
-            }
-
-            /* DESKTOP/TABLET (>=768): üzenőfal ne ütközzön a fixed reklámmal + ne legyen túl széles */
-            @media (min-width: 768px) {
-                body.blog-page .page-content {
-                    /* sidebar + content megvan globál css-ben; a fixed reklám miatt kell jobb oldali hely */
-                    padding-right: 185px; /* 125px reklám + 20px right + ráhagyás */
-                }
-
-                body.blog-page .page-content .col-md-11 {
-                    width: 100% !important;
-                    float: none !important;
-                    max-width: 980px; /* alap nézetben fixebb, nem óriási */
-                    margin-left: auto;
-                    margin-right: auto;
-                }
-
-                body.blog-page .post-card {
-                    width: 100%;
-                    max-width: 900px;
-                }
-            }
-
-            /* 1001px alatt a jobb oldali reklám tűnjön el (ahogy kérted) */
-            @media (max-width: 1001px) and (min-width: 768px) {
-                body.blog-page .ads-container { display: none !important; }
-                body.blog-page .page-content { padding-right: 40px; } /* vissza az alap paddingre */
-            }
-
-            /* 1001px alatt: Stabilizálás és a reklámsáv javítása */
-            @media (max-width: 1001px) {
-                /* 1. Megszüntetjük a rángatást: az oldal magassága legyen rugalmas */
-                body.blog-page .page-content {
-                    display: block !important;
-                    height: auto !important;
-                    min-height: 100vh;
-                    padding-bottom: 180px !important; /* Elég hely a reklámnak és a footernek */
-                }
-               
-                body.blog-page .ad-box {
-                    font-size: 12px;
-                    padding: 1px 31px; /* szélesebb +5px (26->31) és alacsonyabb -5px (6->1) */
-                    margin: 0 6px;
-                }
-
-                /* legyen hely a fix alsó sávnak */
-                body.blog-page .page-content { padding-bottom: 110px; }
-            }
-
-            /* MOBIL    (<=767): csak itt tűnjön el a bal menü, és itt legyen mobil reklám */
-            @media (max-width: 767px) {
-                body.blog-page .ads-container {
-                    display: none;
-                }
-                body.blog-page .mobile-ad-bar {
-                    display: block;
-                }
-                body.blog-page .page-content {
-                    margin-left: 0 !important;
-                    width: 100% !important;
-                    padding: 20px;
-                    /* legyen hely: footer (fix) + mobil reklámsáv alatt */
-                    padding-bottom: 140px;
-                }
-                body.blog-page .col-md-11 {
-                    width: 100% !important;
-                    float: none !important;
-                }
-                body.blog-page .post-card {
-                    width: 100%;
-                    margin-left: 0 !important;
-                    max-width: none;
-                }
-                body.blog-page .section-heading h1 {
-                    font-size: clamp(26px, 7vw, 32px);
-                }
-
-                /* Mobilon NE kényszerítsük 14px-re a teljes chatet,
-                   mert a cél 16–18px alap. Maradjon az alap (1rem). */
-                body.blog-page .section-heading p{ font-size: 1rem !important; }
-                body.blog-page .post-card p,
-                body.blog-page .post-card strong,
-                body.blog-page textarea,
-                body.blog-page button { font-size: 1rem !important; }
-
-                /* kis szöveg maradjon 12–14px tartományban */
-                body.blog-page .post-card small{ font-size: clamp(12px, 0.85rem, 14px) !important; }
-            }
-        </style>
-    </head>
-<body class="blog-page index-subpage">
-     <div class="logo" style="float: left; padding: 15px 20px;">
-       
-    </div>
-
-<style>
-/* BLOG mobil hamburger menü - index.php mobil nav stílus (fehér header, középen gomb) */
-@media (max-width: 767px){
-  body.blog-page .blog-mobile-nav{
-    display:block !important;
-    position:fixed !important;
-    top:0; left:0; width:100%;
-    height: 80px;
-    background-color: rgba(250,250,250,.95);
-    box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
-    z-index: 20000 !important;
-    transition: top 0.3s ease-in-out !important;
-  }
-
-  body.blog-page .blog-mobile-nav.nav-up {
-    top: -100px !important;
-  }
-
-  body.blog-page .blog-mobile-nav__brand{
-    position:absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 22px;
-    text-transform: uppercase;
-    font-weight: 800;
-    text-decoration: none;
-    color: #333;
-  }
-  body.blog-page .blog-mobile-nav__toggle{
-    position:absolute;
-    top: 40%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    display:inline-block;
-    background: transparent;
-    border: none;
-    padding: 10px 12px;
-    z-index: 20001;
-  }
-  /* iconbar: kéK */
-  body.blog-page .blog-mobile-nav__toggle .icon-bar{
-    display:block;
-    width:22px;
-    height:2px;
-    background-color:#3498db;
-    margin:4px 0;
-  }
-
-  body.blog-page #blog-mobile-menu{
-    display:none;
-    position: fixed;
-    z-index: 19999;
-    top: 80px;
-    left: 0;
-    width: 100%;
-    background-color: rgba(0,0,0,0.9);
-  }
-  body.blog-page #blog-mobile-menu a{
-    font-size: 15px;
-    text-transform: capitalize;
-    color: #fff !important;
-    box-shadow: none;
-    border: none;
-    display:block;
-    padding: 12px 0;
-    text-align:center;
-    text-decoration:none !important;
-  }
-  body.blog-page #blog-mobile-menu a:hover{ opacity: .85; background-color: transparent; }
-
-  /* kiemelések */
-  body.blog-page #blog-mobile-menu a.menu-profile{ color: #fec107 !important; font-weight: 800; }
-  body.blog-page #blog-mobile-menu a.menu-logout{ color: #ff4d4d !important; font-weight: 800; }
-
-  /* content ne csússzon a fix header alá */
-  body.blog-page .page-content{ padding-top: 105px !important; }
-}
-@media (min-width: 768px){
-  body.blog-page .blog-mobile-nav{ display:none !important; }
-  body.blog-page #blog-mobile-menu{ display:none !important; }
- 
-}
- textarea.form-control:focus {
-    border: 3px solid #2d5a27; /* A te zölded */
-    box-shadow: 0 0 10px rgba(45, 90, 39, 0.2);
-    outline: none;
-}
-textarea.form-control {
-    font-size: 18px !important; /* Itt állítod a betűméretet */
-    line-height: 1.5;           /* A sorköz, hogy ne érjenek össze a betűk */
-    padding: 12px;              /* Hogy legyen hely a szöveg körül */
-}
-
-@media (max-width: 1001px) {
-    body.blog-page .mobile-ad-bar {
-        display: block !important;
-        position: fixed !important;
-        bottom: 0;
-        left: 250px; /* Eltoljuk a menüsáv szélességével */
-        width: calc(100% - 250px); /* A szélességből levonjuk a menüt */
-        height: 35px;
-        background: #45489a;
-        z-index: 99999;
-    }
-
-    body.blog-page .page-content {
-        padding-bottom: 120px !important;
-    }
-}
-
-/* 767px alatt eltűnik a bal oldali menü, itt a reklámnak újra 100%-osnak kell lennie */
-@media (max-width: 767px) {
-    body.blog-page .mobile-ad-bar {
-        left: 0 !important;
-        width: 100% !important;
-    }
-}
-
-.footer-wrapper {
-    clear: both;
-    display: block;
-    width: 100%;
-    text-align: center;
-}
-
-body.blog-page .premium-footer {
-    background: transparent !important;
-    padding: 20px 0 !important;
-    margin: 0 auto !important;
-    display: block !important;
-    width: 100% !important;
-}
-
-.footer-inner {
-    display: flex;
-    justify-content: center;
-}
-
-/* Asztali gépen a sidebar és a reklám között középre igazítjuk */
-@media (min-width: 1002px) {
-    .footer-wrapper {
-        padding-right: 145px; /* A jobb oldali reklámsáv (125px + gap) kompenzálása */
-    }
-}
-
-/* Mobilon a fix reklámsáv fölé emeljük, hogy ne takarja ki */
-@media (max-width: 1001px) {
-    .footer-wrapper {
-        margin-bottom: 80px !important; /* Hely a kék mozgó reklámnak */
-    }
+        .glass-card-modal {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .glass-card-modal::-webkit-scrollbar { width: 8px; }
+        .glass-card-modal::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
     
-    .credits-link p {
-        font-size: 11px !important;
-        padding: 8px 15px !important;
+        /* --- TÖKÉLETES MOBIL NÉZET AZ ÜVEGKÁRTYÁHOZ (<767px) --- */
+    @media (max-width: 767px) {
+        .blog-profile-modal-box {
+            width: 95% !important;
+            min-height: auto !important;
+            max-height: 85vh !important;
+            padding: 10px !important;
+        }
+        
+        #quickProfileContent div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important; 
+            text-align: center !important;
+            gap: 10px !important;
+        }
+        
+        #quickProfileContent img {
+            margin: 0 auto 15px auto !important; 
+            display: block !important;
+        }
+        
+        #quickProfileContent .btn {
+            width: 100% !important;
+            margin-bottom: 5px !important;
+        }
     }
-}
-</style>
-
-    <!-- BLOG mobil hamburger menü (767px alatt) - index stílus: fehér header, középen gomb -->
-    <header class="blog-mobile-nav hidden-lg hidden-md nav-down" aria-label="Mobil navigáció">
-        <a class="blog-mobile-nav__brand" href="index.php">NÓG<span style="color:#d4a373;">RÁD</span></a>
-
-        <button type="button" id="blog-mobile-toggle" class="blog-mobile-nav__toggle" aria-controls="blog-mobile-menu" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-    </header>
-
-    <nav id="blog-mobile-menu" aria-label="Mobil menü">
-        <?php if(isset($_SESSION['user_name'])): ?>
-            <a class="menu-profile" href="profile.php"><i class="fa fa-user"></i> Üdv, (<?php echo htmlspecialchars($_SESSION['user_name']); ?>)</a>
-            <a class="menu-logout" href="logout.php">Kilépés</a>
-        <?php else: ?>
-            <a href="login.php"><i class="fa fa-sign-in"></i> Belépés</a>
-            <a href="reg_id.php"><i class="fa fa-user-plus"></i> Regisztráció</a>
-        <?php endif; ?>
-
-        <a href="index.php">Kezdőlap</a>
-        <a href="blog.php">Blog</a>
-        <a href="index.php#featured">Kiemelt</a>
-    </nav>
-
-    <div class="sidebar-navigation hidden-sm hidden-xs">
-        <div class="logo">
-            <a href="index.php"><em>NÓG</em>RÁD</a>
-        </div>
-        <nav>
-            <ul>
-                <?php if(isset($_SESSION['user_name'])): ?>
-                    <li>
-                        <a href="profile.php" style="color: #fec107;">
-                            <span class="rect"></span>
-                            <span class="circle"></span>
-                            <i class="fa fa-user"></i>Üdv, <?php echo htmlspecialchars($_SESSION['user_name']); ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="logout.php">
-                            <span class="rect"></span>
-                            <span class="circle"></span>
-                            Kilépés
-                        </a>
-                    </li>
-                <?php else: ?>
-                    <li>
-                        <a href="login.php">
-                            <span class="rect"></span>
-                            <span class="circle"></span>
-                            Bejelentkezés
-                        </a>
-                    </li>
-                    <li>
-                        <a href="reg_id.php">
-                            <span class="rect"></span>
-                            <span class="circle"></span>
-                            Regisztráció
-                        </a>
-                    </li>
-                <?php endif; ?>
-                
-                <hr style="border-top: 1px solid rgba(255,255,255,0.1); width: 80%; margin: 15px auto;">
-                
-                <li><a href="index.php"><span class="circle"></span>Kezdőlap</a></li>
-                <li><a href="blog.php"><span class="circle"></span>Blog-fal</a></li>
-                <li><a href="contact.php"><span class="circle"></span>Kapcsolat</a></li>
-            </ul>
-                    
-        </nav>
-        <?php include "weather.php"; ?>
-    </div>
-
+    </style>
+</head>
+<body class="blog-page">
+    <div class="e">
+            <?= $kozos_menu ?>
+            <?= $kozos_mobile ?>
+    </di>
     <div class="page-content">
         <section class="content-section">
-            <div class="section-heading">
+            <div class="section-heading" style="text-align:center;">
                 <h1>Blog-<em>fal</em></h1>
                 <p>"Nógrád élmények és top ajánlatok"</p>
             </div>
 
             <div class="row">
-                <div class="col-md-11">
+                <div class="col-md-12">
                     <div id="msg-box">
-                    <?php if (isset($_GET['msg']) && $_GET['msg'] == 'torolve'): ?>
-                        <div class="status-msg msg-success">
-                            ✅ A bejegyzésed sikeresen törölve!
-                        </div>
-                    <?php endif; ?>
-                </div>
-                    <?php if($userLoggedIn): ?>
-                    <div class="composer">
-                        <form action="blog.php" method="POST" enctype="multipart/form-data">
-                            <textarea name="text" class="form-control" rows="5" 
-          placeholder="Írj valamit a falra..." 
-          required="" 
-          style="background: #fff; color: #000; font-size: 18px; min-height: 66px;"></textarea>
-                            <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                                <input type="file" name="image" class="form-control" style="max-width: 320px; background:#fff;">
-                                <button type="submit" class="btn btn-primary" style="background:#45489a; border:none; padding:10px 30px;">Küldés</button>
-                            </div>
-                        </form>
+                        <?php if (isset($_GET['msg']) && $_GET['msg'] == 'torolve'): ?>
+                            <div class="status-msg msg-success">✅ A bejegyzésed sikeresen törölve!</div>
+                        <?php endif; ?>
                     </div>
+
+                    <?php if($userLoggedIn): ?>
+                        <div class="composer">
+                            <form action="blog.php" method="POST" enctype="multipart/form-data">
+                                <textarea name="text" class="form-control" rows="5" placeholder="Írj valamit a falra..." required style="background: #fff; color: #000; font-size: 18px; min-height: 66px;"></textarea>
+                                <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                    <input type="file" name="image" class="form-control" style="max-width: 320px; background:#fff;">
+                                    <button type="submit" class="btn btn-primary" style="background:#45489a; border:none; padding:10px 30px;">Küldés</button>
+                                </div>
+                            </form>
+                        </div>
                     <?php endif; ?>
 
                     <div class="feed" aria-label="Üzenőfal" role="region">
                         <?php
-                            $postsReversed = array_reverse($posts, true); // kulcsok megmaradnak (like-hoz kell)
-                            foreach($postsReversed as $idx => $p):
-                                $isMine = ($userLoggedIn && $p['user'] == $userData['uusername']);
-                                $likes = (int)($p['likes'] ?? 0);
-                                $name = $p['name'] ?? ('@' . $p['user']);
-                                $avatar = $p['avatar'] ?? 'default.png';
+                        $postsReversed = array_reverse($posts, true);
+                        foreach($postsReversed as $idx => $p):
+                            $p_uid = $p['uid'] ?? 0;
+                            if($p_uid == 0 && isset($p['user'])) {
+                                $un = mysqli_real_escape_string($conn, $p['user']);
+                                $fRow = mysqli_fetch_assoc(mysqli_query($conn, "SELECT uid FROM felhasznalok WHERE uusername = '$un'"));
+                                $p_uid = $fRow['uid'] ?? 0;
+                            }
+
+                            $isMine = ($userLoggedIn && $p['user'] == $userData['uusername']);
+                            $isAdmin = (isset($_SESSION['status']) && $_SESSION['status'] === 'C');
+                            $isVIP = (isset($_SESSION['status']) && $_SESSION['status'] === 'B');
+                            $canDelete = ($isMine || $isAdmin || $isVIP);
+                            
+                            $likes = (int)($p['likes'] ?? 0);
+                            $name = $p['name'] ?? ('@' . $p['user']);
+                            $avatar = $p['avatar'] ?? 'default.png';
                         ?>
-                        <div class="post-card <?php echo $isMine ? 'my-post' : 'other-post'; ?>">
-                             
-                                 <?php if ($isMine): ?>
-                                    <a href="?delete=<?php echo (int)$idx; ?>" class="delete-post-btn" onclick="return confirm('Biztosan törölni szeretnéd ezt a bejegyzést?');">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-                                 <?php endif; ?>
-                                                
-                        
-                            <div class="post-meta" style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; margin-bottom:10px;">
-                                <div style="display:flex; gap:10px; align-items:center;">
-                                    <img src="img/profiles/<?php echo htmlspecialchars($avatar); ?>" alt="avatar" style="width:28px; height:28px; border-radius:50%; object-fit:cover;">
-                                    <strong><?php echo htmlspecialchars($name); ?></strong>
+                        <div class="post-card <?php echo $isMine ? 'my-post' : 'other-post'; ?>" id="post-<?php echo $idx; ?>" style="background:rgba(0,0,0,0.6); padding:20px; border-radius:15px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.05);">
+                            <div class="post-meta" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:15px;">
+                                <div class="user-trigger" onclick="toggleUserMenu(event, '<?php echo $idx; ?>')" style="display:flex; gap:12px; align-items:center; cursor:pointer; position:relative;">
+                                    <img src="img/profiles/<?php echo htmlspecialchars($avatar); ?>" alt="avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #b4865a;">
+                                    <div style="line-height:1.2;">
+                                        <strong style="color:#fff; font-size:22px;"><?php echo htmlspecialchars($name); ?> <i class="fa fa-caret-down" style="font-size:12px; color:#b4865a; margin-left:3px;"></i></strong>
+                                        <div style="color:#94a3b8; font-size:11px;"><?php echo htmlspecialchars($p['time'] ?? ''); ?></div>
+                                    </div>
+                                    <div id="dropdown-<?php echo $idx; ?>" class="user-quick-menu" style="display:none; position:absolute; top:45px; left:0; background:#0f172a; border:1px solid #b4865a; border-radius:12px; z-index:100; min-width:180px; box-shadow:0 10px 25px rgba(0,0,0,0.8); overflow:hidden;">
+                                        <a href="javascript:void(0)" onclick="openQuickProfile(<?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#fff; text-decoration:none; border-bottom:1px solid #1e293b; font-weight:600;"><i class="fa fa-user" style="width:25px; text-align:center;"></i> Adatlap</a>
+                                       <?php  if($isAdmin || $isVIP): ?>
+                                            <a href="javascript:void(0)" onclick="adminAction('kick', <?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#f59e0b; text-decoration:none; border-bottom:1px solid #1e293b; font-weight:600;"><i class="fa fa-bolt" style="width:25px; text-align:center;"></i> Kick</a>
+                                            <a href="javascript:void(0)" onclick="adminAction('ban', <?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#ef4444; text-decoration:none; <?php echo $isAdmin ? 'border-bottom:1px solid #1e293b;' : ''; ?> font-weight:600;"><i class="fa fa-ban" style="width:25px; text-align:center;"></i> Tiltás</a>
+                                        <?php endif; ?>
+                                        <?php if($isAdmin): ?>
+                                            <a href="javascript:void(0)" onclick="adminAction('reset_pw', <?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#38bdf8; text-decoration:none; font-weight:600;"><i class="fa fa-key" style="width:25px; text-align:center;"></i> PW Reset</a>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                                <small><?php echo htmlspecialchars($p['time'] ?? ''); ?></small>
                             </div>
 
-                            <p class="post-text"><?php echo nl2br(htmlspecialchars($p['text'] ?? '')); ?></p>
-                           
+                            <p class="post-text" style="color:#f1f5f9; font-size:22px; line-height:1.6; margin-bottom:15px;"><?php echo nl2br(htmlspecialchars($p['text'] ?? '')); ?></p>
+
                             <?php if(!empty($p['image'])): ?>
-                                <img src="img/posts/<?php echo htmlspecialchars($p['image']); ?>" alt="post image" style="max-width:100%; border-radius:10px; margin-top:10px;">
+                                <img src="img/posts/<?php echo htmlspecialchars($p['image']); ?>" alt="post image" style="width:100%; border-radius:12px; margin-bottom:15px; border:1px solid rgba(255,255,255,0.1);">
                             <?php endif; ?>
 
-                            <div style="margin-top:10px; display:flex; align-items:center; gap:10px; font-size:0.95rem;">
-                                <span>❤️ <?php echo $likes; ?></span>
-                                <a href="?like=<?php echo (int)$idx; ?>" style="text-decoration:underline; color: inherit;">Like</a>
+                            <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.03); padding:10px 15px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+                                <div style="display:flex; gap:20px; align-items:center;">
+                                    <a href="?like=<?php echo (int)$idx; ?>" style="text-decoration:none; color:<?php echo $likes > 0 ? '#ef4444' : '#94a3b8'; ?>; font-size:22px; display:flex; align-items:center; gap:6px; font-weight:bold;">
+                                        <i class="fa <?php echo $likes > 0 ? 'fa-heart' : 'fa-heart-o'; ?>"></i> <span><?php echo $likes; ?></span>
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="alert('Nem tetszik rögzítve!');" style="text-decoration:none; color:#94a3b8; font-size:22px; display:flex; align-items:center; gap:6px;" title="Nem tetszik">
+                                        <i class="fa fa-thumbs-down"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="reportPost(<?php echo $idx; ?>)" style="text-decoration:none; color:#64748b; font-size:14px; display:flex; align-items:center; gap:6px;" title="Bejegyzés jelentése">
+                                        <i class="fa fa-flag"></i> Jelentés
+                                    </a>
+                                </div>
+                                <?php if ($canDelete): ?>
+                                    <a href="?delete=<?php echo (int)$idx; ?>" onclick="return confirm('Biztosan törölni szeretnéd ezt a bejegyzést?');" style="text-decoration:none; color:#ef4444; font-size:16px;" title="Törlés">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -1088,224 +484,291 @@ body.blog-page .premium-footer {
                 </div>
             </div>
         </section>
-                                    
-        <?php
-            // Reklám-rotátor elemek (név + ikon + "nem egyforma" szín)
-            // Ezeket a nevek/helyek listáit az index aloldalak tartalmából szedtem össze.
-            $adItems = [
-              ["icon" => "fa-star", "color" => "#ffcc00", "text" => "Castellum Hotel Hollókő"],
-                ["icon" => "fa-tint", "color" => "#00d2ff", "text" => "Tó Wellness Hotel Bánk"],
-                ["icon" => "fa-leaf", "color" => "#a2d043", "text" => "Főnix Wellness Resort"],
-                ["icon" => "fa-bed", "color" => "#90a4ae", "text" => "Cédrus Club Hotel"],
-                ["icon" => "fa-building-o", "color" => "#78909c", "text" => "Salgó Hotel"],
-                ["icon" => "fa-fort-awesome", "color" => "#e1bee7", "text" => "Kastélyhotel Sasvár"],
-                ["icon" => "fa-home", "color" => "#8d6e63", "text" => "Boróka Vendégház"],
-                ["icon" => "fa-water", "color" => "#4fc3f7", "text" => "Bánki-tó Vendégház"],
-                ["icon" => "fa-university", "color" => "#cfd8dc", "text" => "Prónay-kastély"],
-                ["icon" => "fa-diamond", "color" => "#b3e5ff", "text" => "Mátra Mona Luxury"],
-                ["icon" => "fa-coffee", "color" => "#a1887f", "text" => "Nádas fogadó Teresztenye"],
-                ["icon" => "fa-header", "color" => "#546e7a", "text" => "Teleki-Degenfeld Kastély"],
-                ["icon" => "fa-home", "color" => "#ffab91", "text" => "Piros Csizma Vendégház"],
-                ["icon" => "fa-map", "color" => "#81c784", "text" => "Galagonya Vendégház"],
-                ["icon" => "fa-lightbulb-o", "color" => "#fff176", "text" => "Hétlámpás Vendégház"],
-                ["icon" => "fa-cutlery", "color" => "#ff8a65", "text" => "Felső Fogadó Felsőtold"],
-                ["icon" => "fa-building", "color" => "#ce93d8", "text" => "FeteKert Apartmanok"],
-                ["icon" => "fa-sun-o", "color" => "#ffd54f", "text" => "Napfénydomb Vendégház"],
-                ["icon" => "fa-tent", "color" => "#4db6ac", "text" => "Nádas Camping Bánk"],
-                ["icon" => "fa-tree", "color" => "#66bb6a", "text" => "Bárna Vadász- és Pihenőház"],
-                ["icon" => "fa-fire", "color" => "#ff7043", "text" => "Somoskői Kirándulóközpont"],
-                ["icon" => "fa-tag", "color" => "#ba68c8", "text" => "Kaláris Vendégház"],
-                ["icon" => "fa-university", "color" => "#90caf9", "text" => "Templomvölgy Resort"],
-                ["icon" => "fa-compass", "color" => "#4caf50", "text" => "Mátra Kemping Sástó"],
-                ["icon" => "fa-home", "color" => "#9575cd", "text" => "Tóparti Apartman"],
-                ["icon" => "fa-bed", "color" => "#4fc3f7", "text" => "Zagyva-völgyi Vendégház"],
-                ["icon" => "fa-fort-awesome", "color" => "#8d6e63", "text" => "Várhegy Panzió Nógrád"],
-                ["icon" => "fa-key", "color" => "#f48fb1", "text" => "Cserhát Kapuja Nézsa"],
-                ["icon" => "fa-home", "color" => "#a5d6a7", "text" => "Hollóköves Vendégház"],
-                ["icon" => "fa-university", "color" => "#b0bec5", "text" => "Eresztvényi Turistaház"],
-                ["icon" => "fa-building-o", "color" => "#90a4ae", "text" => "Rétsági Panzió"],
-                ["icon" => "fa-bed", "color" => "#81c784", "text" => "Tereskei Vendégház"],
-                ["icon" => "fa-header", "color" => "#5c6bc0", "text" => "Berceli Kastély"],
-                ["icon" => "fa-home", "color" => "#ffcc80", "text" => "Kutasó Apartman"],
-                ["icon" => "fa-tint", "color" => "#81d4fa", "text" => "Palotási Tóparti Ház"],
-                ["icon" => "fa-users", "color" => "#ce93d8", "text" => "Mátraverebélyi Zarándokház"],
-                ["icon" => "fa-university", "color" => "#d1c4e9", "text" => "Szentkúti Kegyhely Szálló"],
-                ["icon" => "fa-bed", "color" => "#aed581", "text" => "Legéndi Vendégház"],
-                ["icon" => "fa-money", "color" => "#66bb6a", "text" => "Nógrádsipeki Pihenő"],
-                ["icon" => "fa-money", "color" => "#9ccc65", "text" => "Felsőpetényi Vendégház"],
-                ["icon" => "fa-cutlery", "color" => "#ffb74d", "text" => "Karancssági Fogadó"],
-                ["icon" => "fa-home", "color" => "#4fc3f7", "text" => "Ipolyvecei Pihenőház"],
-                ["icon" => "fa-tent", "color" => "#26a69a", "text" => "Diósjenői Kemping"],
-                ["icon" => "fa-tree", "color" => "#8d6e63", "text" => "Börzsönyi Turistaház"],
-                ["icon" => "fa-mountain", "color" => "#78909c", "text" => "Somlyó-hegyi Apartman"],
-                ["icon" => "fa-university", "color" => "#9575cd", "text" => "Cserhátsurányi Kastélyszálló"],
-                ["icon" => "fa-bed", "color" => "#dce775", "text" => "Endrefalvai Vendégház"],
-                ["icon" => "fa-star", "color" => "#f06292", "text" => "Garábi Élményszálló"],
-                ["icon" => "fa-star", "color" => "#ffcc00", "text" => "Castellum Hotel Hollókő 4⭐"],
-                ["icon" => "fa-tint", "color" => "#00d2ff", "text" => "Tó Wellness Hotel Bánk 4⭐"],
-                ["icon" => "fa-leaf", "color" => "#a2d043", "text" => "Főnix Wellness Resort 4 ⭐"],
-                ["icon" => "fa-bed", "color" => "#90a4ae", "text" => "Cédrus Club Hotel 4⭐"],
-                ["icon" => "fa-building-o", "color" => "#78909c", "text" => "Salgó Hotel 3⭐"],
-                ["icon" => "fa-fort-awesome", "color" => "#e1bee7", "text" => "Kastélyhotel Sasvár 4⭐"],
-                ["icon" => "fa-home", "color" => "#8d6e63", "text" => "Boróka Vendégház 3⭐"],
-                ["icon" => "fa-water", "color" => "#4fc3f7", "text" => "Bánki-tó Vendégház 3⭐"],
-                ["icon" => "fa-university", "color" => "#cfd8dc", "text" => "Prónay-kastély Alsópetény 💎"],
-                ["icon" => "fa-diamond", "color" => "#b3e5ff", "text" => "Mátra Mona Luxury Apartment 💎"],
-                ["icon" => "fa-header", "color" => "#546e7a", "text" => "Teleki-Degenfeld Kastélyszálló"],
-                ["icon" => "fa-tent", "color" => "#4db6ac", "text" => "Nádas Camping Bánk ⛺"],
-                ["icon" => "fa-tree", "color" => "#66bb6a", "text" => "Börzsönyi Turistaház Diósjenő"],
-                ["icon" => "fa-sun-o", "color" => "#ffd54f", "text" => "Napfénydomb Vendégház Mátraszele"],
-                ["icon" => "fa-users", "color" => "#ce93d8", "text" => "Mátraverebélyi Zarándokház 🏨"],
-            ];
-        ?>
-            <!-- ASZTALI REKLÁM -->
+
         <div class="ads-container hidden-sm hidden-xs">
             <div class="ad-train">
-                <?php 
-                // Kétszer íratjuk ki a listát a folyamatosságért
-                for ($i = 0; $i < 2; $i++): 
-                    foreach($adItems as $ad): ?>
+                <?php for ($i = 0; $i < 2; $i++): ?>
+                    <?php foreach($adItems as $ad): ?>
                         <div class="ad-box">
                             <i class="fa <?php echo htmlspecialchars($ad['icon']); ?>" style="color: <?php echo htmlspecialchars($ad['color']); ?>;"></i>
                             <?php echo htmlspecialchars($ad['text']); ?>
                         </div>
-                    <?php endforeach; 
-                endfor; ?>
+                    <?php endforeach; ?>
+                <?php endfor; ?>
             </div>
         </div>
-                          
-           <div class="footer-wrapper" style="width: 100%; margin-top: 50px; padding-bottom: 20px;">
-    <ul class="social-icons" style="display: flex !important; list-style: none; padding: 0; gap: 15px; justify-content: center; margin-bottom: 20px;">
-        <li><a href="https://www.facebook.com/" target="_blank"><i class="fa fa-facebook-official"></i></a></li>
-        <li><a href="https://twitter.com/" target="_blank"><i class="fa fa-twitter"></i></a></li>
-        <li><a href="https://mail.google.com/" target="_blank"><i class="fa fa-envelope"></i></a></li>
-        <li><a href="https://www.youtube.com/" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
-        <li><a href="https://wm-iskola.hu/" target="_blank"><i class="fa fa-graduation-cap"></i></a></li>
-    </ul>
 
-    <footer class="premium-footer">
-        <div class="credits-container">
-            <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
-                <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
-            </a>
+        <div class="footer-wrapper">
+           
+            <footer class="premium-footer">
+                <p>
+                    <a href="../Proofiles.php" class="credits-link" style="color: inherit; text-decoration: none; cursor: pointer;">
+                        Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István
+                    </a>
+                </p>
+            </footer>
         </div>
-    </footer>
-</div>
-
-        <style>
-            @media (max-width: 767px) {
-                footer[style*="color: #cd7e0f"] { margin-bottom: 45px !important; }
-            }
-        </style>
     </div>
 
-        <!-- MOBIL REKLÁM -->
     <div class="mobile-ad-bar">
         <div class="mobile-ad-train">
-            <?php 
-            // Itt is duplázunk a végtelenítéshez
-            for ($i = 0; $i < 2; $i++):
-                foreach($adItems as $ad): ?>
+            <?php for ($i = 0; $i < 2; $i++): ?>
+                <?php foreach($adItems as $ad): ?>
                     <div class="ad-box">
                         <i class="fa <?php echo htmlspecialchars($ad['icon']); ?>" style="color: <?php echo htmlspecialchars($ad['color']); ?>;"></i>
                         <?php echo htmlspecialchars($ad['text']); ?>
                     </div>
-                <?php endforeach;
-            endfor; ?>
+                <?php endforeach; ?>
+            <?php endfor; ?>
+        </div>
+    </div>
+    <style>
+        :root {
+            --modal-accent: <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === 'C') ? '#0ea5e9' : '#b4865a'; ?>;
+            --modal-border: <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === 'C') ? 'rgba(14, 165, 233, 0.5)' : 'rgba(180, 134, 90, 0.5)'; ?>;
+        }
+
+        .blog-profile-modal-box {
+            background: rgba(10, 15, 30, 0.75) !important;
+            backdrop-filter: blur(15px) !important;
+            border: 1px solid var(--modal-border) !important;
+            border-radius: 20px !important;
+            position: relative;
+            width: 90vw !important; 
+            max-width: 500px !important;
+            min-height: 300px !important;
+            max-height: 85vh !important;
+            box-sizing: border-box !important; 
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.9);
+        }
+
+        #quickProfileContent {
+            padding: 15px;
+            overflow-y: auto !important; 
+            overflow-x: auto !important; 
+            flex: 1;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        #quickProfileContent * {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        #quickProfileContent::-webkit-scrollbar { width: 12px; }
+        #quickProfileContent::-webkit-scrollbar-thumb { background: var(--modal-accent); border-radius: 10px; }
+
+        @media (max-width: 767px) {
+            body.blog-page .section-heading h1 {
+                font-size: 46px !important;
+                margin-top: -22px !important;
+                padding: 10px 16px 10px 48px !important;
+            }
+
+            body.blog-page .section-heading h1::before {
+                left: 12px !important;
+                font-size: 26px !important;
+            }
+
+            body.blog-page .section-heading p{
+                font-size: 1.35rem !important;
+                margin-top: 8px !important;
+            }
+
+            body.blog-page .post-card p,
+            body.blog-page .post-card strong,
+            body.blog-page textarea,
+            body.blog-page button,
+            body.blog-page .post-meta small,
+            body.blog-page .post-meta span,
+            body.blog-page .ad-box {
+                font-size: 1.22rem !important;
+            }
+
+            body.blog-page .post-text {
+                font-size: 1.35rem !important;
+                line-height: 1.75 !important;
+            }
+
+            body.blog-page .post-card small{ font-size: 1.08rem !important; }
+        }
+        }
+    </style>
+
+    <div id="quickProfileModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:transparent; z-index:99999; justify-content:center; align-items:center;">
+        <div class="blog-profile-modal-box">
+            <button onclick="closeQuickProfile()" style="position:absolute; top:15px; right:15px; background:rgba(255,255,255,0.1); color:white; border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; z-index:100; transition: 0.3s; display:flex; align-items:center; justify-content:center;" onmouseover="this.style.background='#ef4444'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                <i class="fa fa-times"></i>
+            </button>
+            <div id="quickProfileContent"></div>
         </div>
     </div>
 
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script>
-        // Blog mobil menü: független a template main.js-től
-        (function () {
-            function ready(fn){ if(document.readyState!=='loading'){ fn(); } else { document.addEventListener('DOMContentLoaded', fn); } }
-            ready(function(){
-                var btn = document.getElementById('blog-mobile-toggle');
-                var nav = document.getElementById('blog-mobile-menu');
-                if(!btn || !nav) return;
-
-                function closeMenu(){
-                    nav.style.display = 'none';
-                    btn.setAttribute('aria-expanded', 'false');
-                }
-                function toggleMenu(){
-                    var open = (nav.style.display !== 'none' && nav.style.display !== '');
-                    if(open) closeMenu();
-                    else {
-                        nav.style.display = 'block';
-                        btn.setAttribute('aria-expanded', 'true');
+        document.addEventListener('DOMContentLoaded', function() {
+            var quickProfileModal = document.getElementById('quickProfileModal');
+            if (quickProfileModal) {
+                quickProfileModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeQuickProfile();
                     }
-                }
-
-                btn.addEventListener('click', function(e){ e.preventDefault(); toggleMenu(); });
-
-                // linkre katt -> csukódjon mobilon
-                nav.addEventListener('click', function(e){
-                    var a = e.target && e.target.closest ? e.target.closest('a') : null;
-                    if(!a) return;
-                    if (window.innerWidth < 768) closeMenu();
                 });
+            }
 
-                // resize -> csuk (ha átlépünk desktopra)
-                window.addEventListener('resize', function(){
-                    if(window.innerWidth >= 768) closeMenu();
-                });
-            });
-        })();
-    </script>
-    <script>
-        $(document).ready(function() {
-            if (!$('header.blog-mobile-nav').length) return;
-
-            var didScroll = false;
-            var lastScrollTop = 0;
-            var delta = 5;
-
-            $(window).on('scroll', function() {
-                didScroll = true;
-            });
-
-            setInterval(function() {
-                if (!didScroll) return;
-                didScroll = false;
-
-                var st = $(window).scrollTop();
-                var navbar = $('header.blog-mobile-nav');
-                var navbarHeight = navbar.outerHeight() || 0;
-
-                if (Math.abs(lastScrollTop - st) <= delta) return;
-
-                if (st > lastScrollTop && st > navbarHeight) {
-                    navbar.addClass('nav-up').removeClass('nav-down');
-                    var nav = document.getElementById('blog-mobile-menu');
-                    var btn = document.getElementById('blog-mobile-toggle');
-                    if (nav && nav.style.display === 'block') {
-                        nav.style.display = 'none';
-                        if (btn) btn.setAttribute('aria-expanded', 'false');
-                    }
-                } else if (st + $(window).height() < $(document).height()) {
-                    navbar.removeClass('nav-up').addClass('nav-down');
-                }
-
-                lastScrollTop = st;
-            }, 250);
+            if (window.jQuery) {
+                $('#mobile-panel').hide();
+                $('#mobile-hamburger').removeClass('active');
+                $('.m-has-submenu').removeClass('open').find('.m-submenu').hide();
+                $('body').css('overflow', 'auto');
+            }
         });
     </script>
-    <style>
-    @media (max-width: 767px) {
-        body.blog-page header.blog-mobile-nav {
-            transition: top 0.3s ease-in-out !important;
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        function toggleUserMenu(event, id) {
+            event.stopPropagation();
+            document.querySelectorAll('.user-quick-menu').forEach(menu => {
+                if(menu.id !== 'dropdown-' + id) menu.style.display = 'none';
+            });
+            const menu = document.getElementById('dropdown-' + id);
+            if(menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
 
-        body.blog-page header.blog-mobile-nav.nav-up {
-            top: -100px !important;
+        window.addEventListener('click', function(event) {
+            if (!event.target.closest('.user-trigger')) {
+                document.querySelectorAll('.user-quick-menu').forEach(menu => menu.style.display = 'none');
+            }
+        });
+
+        function resetBlogMenus() {
+            if (window.jQuery) {
+                $('#mobile-hamburger').removeClass('active');
+                $('#mobile-panel').hide();
+                $('body').css('overflow', 'auto');
+            }
         }
-    }
-</style>
-       <script>
-    // Az üzenetdoboz automatikus eltüntetése
+
+        document.addEventListener('DOMContentLoaded', function() {
+            resetBlogMenus();
+        });
+
+        function openQuickProfile(uid) {
+            if(!uid || uid == 0) return;
+            const modal = document.getElementById('quickProfileModal');
+            const content = document.getElementById('quickProfileContent');
+
+            modal.style.display = 'flex';
+            content.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#b4865a;">
+                    <i class="fa fa-refresh fa-spin fa-4x" style="margin-bottom:20px;"></i>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight:bold; letter-spacing:1px;">
+                        DECRYPTING USER DATA [UID: ${uid}]...
+                    </div>
+                </div>
+            `;
+
+            $.get('admin_fetch_user.php', { id: uid }, function(data) {
+                content.innerHTML = data;
+            }).fail(function() {
+                content.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px; margin-top:50px;">Hiba történt az adatok lekérésekor!</div>';
+            });
+        }
+
+        function closeQuickProfile() {
+            document.getElementById('quickProfileModal').style.display = 'none';
+        }
+
+        window.isCAdmin = <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === 'C') ? 'true' : 'false'; ?>;
+
+        function adminAction(action, uid) {
+            if(!uid || uid == 0) return;
+            if (!window.isCAdmin && (action === 'kick' || action === 'ban')) {
+                Swal.fire({
+                    title: 'Nincs jogosultság',
+                    text: 'Ezeket a műveleteket csak a C rang használhatja.',
+                    icon: 'error',
+                    background: '#0f172a',
+                    color: '#f8fafc'
+                });
+                return;
+            }
+
+            let titleText = "Biztonsági megerősítés";
+            let messageText = "Valóban végrehajtja a kért műveletet ezen a felhasználón?";
+            let btnText = "Igen";
+            let btnColor = "#b4865a";
+
+            if(action === 'ban') { titleText = "Felhasználó Tiltása"; messageText = "A felhasználó nem fog tudni belépni a rendszerbe."; btnText = "Tiltás"; btnColor = "#ef4444"; }
+            if(action === 'kick') { titleText = "Kényszerített Kiléptetés"; messageText = "A felhasználó azonnal ki lesz dobva a rendszerből."; btnText = "Kirúgás"; btnColor = "#f59e0b"; }
+            if(action === 'reset_pw') { titleText = "Jelszó Reset"; messageText = "Új ideiglenes jelszó generálása. Ezt el kell juttatnod a felhasználónak."; btnText = "Reset"; btnColor = "#38bdf8"; }
+
+            Swal.fire({
+                title: titleText,
+                text: messageText,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: btnColor,
+                cancelButtonColor: '#334155',
+                confirmButtonText: btnText,
+                cancelButtonText: 'Mégse',
+                background: '#0f172a',
+                color: '#f8fafc'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post('admin_process_action.php', { action: action, uid: uid }, function(res) {
+                        const isError = res.toLowerCase().includes("hiba") || res.toLowerCase().includes("jogosultság");
+                        Swal.fire({
+                            title: isError ? 'Hiba történt!' : 'Sikeres művelet!',
+                            text: res,
+                            icon: isError ? 'error' : 'success',
+                            background: '#0f172a',
+                            color: '#f8fafc',
+                            timer: isError ? 4000 : 2500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            if(!isError) location.reload();
+                        });
+                    });
+                }
+            });
+        }
+
+        function reportPost(idx) {
+            Swal.fire({
+                title: 'Bejegyzés jelentése 🏴',
+                text: 'Kérjük, válaszd ki az okot:',
+                input: 'select',
+                inputOptions: {
+                    'spam': 'Spam / Kéretlen hirdetés',
+                    'hate': 'Gyűlöletbeszéd / Bántó tartalom',
+                    'harassment': 'Zaklatás',
+                    'other': 'Egyéb probléma'
+                },
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Jelentés küldése',
+                cancelButtonText: 'Mégse',
+                background: '#0f172a',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Rögzítve!', text: 'A moderátoraink hamarosan átnézik a bejegyzést.', icon: 'success', background: '#0f172a', color: '#fff' });
+                }
+            });
+        }
+    </script>
+
+    <script>
         setTimeout(() => {
             const msg = document.querySelector('.status-msg');
             if (msg) {
@@ -1314,8 +777,6 @@ body.blog-page .premium-footer {
                 setTimeout(() => msg.remove(), 600);
             }
         }, 4000);
-    </script>                
-    <script src="js/main.js"></script>
-    <?php include "weather_mobile.php"; ?>
+    </script>
 </body>
 </html>

@@ -175,8 +175,9 @@ jQuery(document).ready(function($) {
         window.history.replaceState(null, null, window.location.href);
     } 
 
+
     // =========================================================================
-    // 8. OKOS MOBIL MENÜ: Eltűnik lefelé, megjelenik felfelé görgetéskor (Blog)
+    // 8. OKOS MOBIL MENÜ: Eltűnik lefelé, megjelenik felfelé (Blog)
     // =========================================================================
     if ($('header.blog-mobile-nav').length) {
         var didScroll;
@@ -220,6 +221,26 @@ jQuery(document).ready(function($) {
         }
     }
 
+    // =========================================================================
+    // 9. OLDALSÁV HARMONIKA MENÜ: (Csak desktopon)
+    // =========================================================================
+    if ($(window).width() >= 767) {
+        $('.sidebar-navigation .menu-section').on('click', function() {
+            var $this = $(this);
+            var $submenu = $this.next('.submenu');
+
+            if ($this.hasClass('active')) {
+                $this.removeClass('active');
+                $submenu.stop(true, true).slideUp(300);
+            } else {
+                $('.sidebar-navigation .menu-section').removeClass('active');
+                $('.sidebar-navigation .submenu').stop(true, true).slideUp(300);
+                $this.addClass('active');
+                $submenu.stop(true, true).slideDown(300);
+            }
+        });
+    }
+
 }); // <--- EZ ZÁRJA LE A LEGELSŐ SORBAN MEGNYITOTT JQUERY BLOKKOT.
 
 // =========================================================================
@@ -236,3 +257,12 @@ function updateMap(placeName, element) {
     }
     element.classList.add('active-tour');
 }
+$(document).ready(function() {
+    // Használjunk Class-t (.) az ID (#) helyett, ha a gombnak nincs ID-ja
+    $('.navbar-toggle').on('click', function(e) {
+        e.preventDefault();
+        $(this).toggleClass('active');
+        $('#main-nav').stop().slideToggle(300);
+    });
+
+});
