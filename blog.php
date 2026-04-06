@@ -245,7 +245,7 @@ $adItems = [
             box-sizing: border-box;
             resize: vertical;
         }
-        @media (min-width: 768px) and (max-width: 1000px) {
+        @media (min-width: 767px) and (max-width: 1000px) {
             body.blog-page .composer,
             body.blog-page .feed {
                 margin-left: 260px !important;
@@ -254,7 +254,7 @@ $adItems = [
                 max-width: none !important;
             }
         }
-        @media (min-width: 768px) and (max-width: 1001px) {
+        @media (min-width: 767px) and (max-width: 1001px) {
             body.blog-page .page-content { padding-right: 0 !important; }
             body.blog-page .feed,
             body.blog-page .composer {
@@ -266,7 +266,7 @@ $adItems = [
             }
         }
         @media (max-width: 767px) { body.blog-page .page-content { padding-top: 10px !important; } .section-heading { margin-top: -40px !important; padding-top: 0 !important; } }
-        @media (min-width: 768px) { body.blog-page .page-content { padding: 0 20px 110px 0 !important; } }
+        @media (min-width: 767px) { body.blog-page .page-content { padding: 0 20px 110px 0 !important; } }
         @media (max-width: 767px) { body.blog-page .page-content{ padding-top:115px !important; } }
         @media (max-width: 767px) { body.blog-page .feed .post-content, body.blog-page .feed p, body.blog-page .post-text { font-size: 25px !important; line-height: 1.7 !important; color: #161616 !important; } body.blog-page .feed h2, body.blog-page .feed h3, body.blog-page .post-title { font-size: 1.5rem !important; margin-bottom: 10px !important; } body.blog-page .post, body.blog-page .feed-item { padding: 15px !important; margin-bottom: 20px !important; width: 100% !important; box-sizing: border-box !important; } body.blog-page .post-meta, body.blog-page .user-info span { font-size: 25px !important; } }
         body.blog-page .content-section{ display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
@@ -292,25 +292,18 @@ $adItems = [
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         body.blog-page .composer{ background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #45489a; }
         body.blog-page .composer textarea, body.blog-page .composer button{ font-size: 1rem; }
-        body.blog-page .ads-container { width: 125px; height: 600px; position: fixed; right: 20px; top: 100px; background: rgba(0,0,0,0.5); border: 1px solid #45489a; overflow: hidden; z-index: 10; }
-        body.blog-page .ad-train { position: absolute; width: 100%!important; min-height: 35px !important; animation: infiniteVertical 12s linear infinite; }
-        @keyframes infiniteVertical { 0% { top: 0; } 100% { top: -50%; } }
-        body.blog-page .mobile-ad-train { position: absolute; left: 0; top: 0; display: flex; align-items: center; width: max-content; min-width: 100%; height: 100%; animation: mobileAdTrainMove 70s linear infinite; will-change: transform; }
-        @keyframes mobileAdTrainMove { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        body.blog-page .mobile-ad-bar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #2b2d51; color: white; padding: 0; z-index: 9999; overflow: hidden; }
-        body.blog-page .ad-box { background: rgba(0,0,0,0.22); color: rgba(255,255,255,0.92); margin: 0 5px !important; padding: 2px 12px !important; text-align: center; font-size: 11px !important; font-weight: 800; border: 1px solid rgba(255,255,255,0.22); border-radius: 12px; display: flex; align-items: center; height: 31px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); white-space: nowrap; }
-        body.blog-page .ad-box i{ width: 28px; text-align: center; }
         .footer-wrapper { clear: both; display: block; width: 100%; text-align: center; }
         body.blog-page .premium-footer { background: transparent !important; padding: 20px 0 !important; margin: 0 auto !important; display: block !important; width: 100% !important; }
+        @media (min-width: 767px) { body.blog-page .premium-footer { margin-left: 260px !important; width: calc(100% - 260px) !important; } }
         footer.premium-footer { padding: 30px !important; text-align: center !important; clear: both; margin-top: 50px !important; background: none !important; }
         footer.premium-footer p { font-family: 'Georgia', serif !important; font-style: italic !important; color: #000000 !important; font-size: 14px !important; display: inline-block; padding: 10px 25px !important; background: rgba(255, 255, 255, 0.9) !important; border: 2px solid #d4af37 !important; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         @media (max-width: 767px) { footer.premium-footer { padding: 20px !important; } footer.premium-footer p { font-size: 12px !important; padding: 8px 14px !important; max-width: calc(100vw - 40px); white-space: normal; overflow-wrap: anywhere; word-break: break-word; line-height: 1.5; } }
-        @media (min-width: 768px) {
+        @media (min-width: 767px) {
             body.blog-page .page-content { padding-right: 185px; }
             body.blog-page .page-content .col-md-12 { width: 100% !important; float: none !important; max-width: 980px; margin-left: auto; margin-right: auto; }
             body.blog-page .post-card { width: 100%; max-width: 900px; }
         }
-        @media (max-width: 1001px) and (min-width: 768px) { body.blog-page .ads-container { display: none !important; } body.blog-page .page-content { padding-right: 40px; } }
+        @media (max-width: 1001px) and (min-width: 767px) { body.blog-page .ads-container { display: none !important; } body.blog-page .page-content { padding-right: 40px; } }
         @media (max-width: 1001px) { body.blog-page .page-content { display: block !important; height: auto !important; min-height: 100vh; padding-bottom: 110px !important; } body.blog-page .ad-box { font-size: 15px; padding: 1px 31px; margin: 0 6px; } body.blog-page .mobile-ad-bar { display: block !important; position: fixed !important; bottom: 0; left: 250px; width: calc(100% - 250px); height: 35px; background: #45489a; z-index: 99999; } body.blog-page .page-content { padding-bottom: 120px !important; } }
         @media (max-width: 767px) { body.blog-page .ads-container { display: none; } body.blog-page .mobile-ad-bar { left: 0 !important; width: 100% !important; display: block !important; } body.blog-page .page-content { margin-left: 0 !important; width: 100% !important; padding: 20px; padding-bottom: 140px; padding-right: 0 !important; box-sizing: border-box !important; } body.blog-page .col-md-12 { width: 100% !important; float: none !important; } body.blog-page .post-card { width: 100%; margin-left: 0 !important; max-width: none; } body.blog-page .section-heading h1 { font-size: clamp(26px, 7vw, 32px); } body.blog-page .section-heading p{ font-size: 1rem !important; } body.blog-page .post-card p, body.blog-page .post-card strong, body.blog-page textarea, body.blog-page button { font-size: 1rem !important; } body.blog-page .post-card small{ font-size: clamp(12px, 0.85rem, 14px) !important; } }
         @media (max-width: 767px){
@@ -485,18 +478,6 @@ $adItems = [
             </div>
         </section>
 
-        <div class="ads-container hidden-sm hidden-xs">
-            <div class="ad-train">
-                <?php for ($i = 0; $i < 2; $i++): ?>
-                    <?php foreach($adItems as $ad): ?>
-                        <div class="ad-box">
-                            <i class="fa <?php echo htmlspecialchars($ad['icon']); ?>" style="color: <?php echo htmlspecialchars($ad['color']); ?>;"></i>
-                            <?php echo htmlspecialchars($ad['text']); ?>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endfor; ?>
-            </div>
-        </div>
 
         <div class="footer-wrapper">
            
@@ -510,18 +491,6 @@ $adItems = [
         </div>
     </div>
 
-    <div class="mobile-ad-bar">
-        <div class="mobile-ad-train">
-            <?php for ($i = 0; $i < 2; $i++): ?>
-                <?php foreach($adItems as $ad): ?>
-                    <div class="ad-box">
-                        <i class="fa <?php echo htmlspecialchars($ad['icon']); ?>" style="color: <?php echo htmlspecialchars($ad['color']); ?>;"></i>
-                        <?php echo htmlspecialchars($ad['text']); ?>
-                    </div>
-                <?php endforeach; ?>
-            <?php endfor; ?>
-        </div>
-    </div>
     <style>
         :root {
             --modal-accent: <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === 'C') ? '#0ea5e9' : '#b4865a'; ?>;
@@ -778,5 +747,6 @@ $adItems = [
             }
         }, 4000);
     </script>
+    <?php include "valuta/api_valuta.php"; ?>
 </body>
 </html>

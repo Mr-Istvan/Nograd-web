@@ -118,3 +118,203 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     echo "Hiba: Érvénytelen kérés!";
 }
 ?>
+
+1
+Castellum Hotel Hollókő
+
+
+2
+Tó Wellness Hotel
+
+
+3
+Főnix Wellness Resort
+
+
+4
+Cédrus Club Hotel
+
+
+5
+Salgó Hotel
+
+
+6
+Kastélyhotel Sasvár
+
+
+7
+Boróka Vendégház
+
+
+8
+Bánki-tó Vendégház
+
+
+9
+Prónay-kastély
+
+
+10
+Mátra Mona Luxury Apartment
+
+
+11
+Nádas fogadó Teresztenye
+
+
+12
+Teleki-Degenfeld Kastély
+
+
+13
+Piros Csizma Vendégház
+
+
+14
+Galagonya Vendégház térképe
+
+
+
+15
+Hétlámpás Vendégház Hollókő
+
+
+16
+Felső Fogadó
+
+
+17
+FeteKert Apartmanok
+
+
+18
+Napfénydomb Vendégház
+
+
+19
+Nádas Camping
+
+
+20
+Bárna Vadász- és Pihenőház
+
+
+21
+Cédrus Club Hotel
+
+
+22
+Somoskői Kirándulóközpont
+
+
+23
+Kaláris Vendégház
+
+
+24
+Templomvölgy Resort
+
+
+25
+Tó Wellness Hotel
+
+
+26
+Mátra Kemping
+
+
+27
+Tóparti Apartman
+
+
+28
+Zagyva-völgyi Vendégház
+
+
+29
+Várhegy Panzió
+
+
+30
+Cserhát Kapuja
+
+
+31
+Hollóköves Vendégház
+
+
+32
+Eresztvényi Turistaház
+
+
+33
+Rétsági Panzió
+
+
+34
+Tereskei Vendégház
+
+
+35
+Berceli Kastély
+
+
+36
+Kutasó Apartman
+
+
+37
+Palotási Tóparti Ház
+
+
+38
+Mátraverebélyi Zarándokház
+
+
+39
+Szentkúti Kegyhely Szálló
+
+
+40
+Legéndi Vendégház
+
+
+41
+Nógrádsipeki Pihenő
+
+
+42
+Felsőpetényi Vendégház
+
+
+43
+Karancssági Fogadó
+
+
+44
+Ipolyvecei Pihenőház
+
+
+45
+Diósjenői Kemping
+
+
+46
+Börzsönyi Turistaház
+
+
+47
+Somlyó-hegyi Apartman
+
+
+48
+Cserhátsurányi Kastélyszálló
+
+
+49
+Endrefalvai Vendégház
+
+
+50
+Garábi Élményszálló

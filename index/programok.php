@@ -377,5 +377,6 @@ include '../kozos_mobile.php';
             });
         });
     </script>
+    <?php include "../valuta/api_valuta.php"; ?>
 </body>
 </html>

@@ -396,6 +396,6 @@ include '../kozos_mobile.php';
         }
         document.getElementById("tour-note-modal").addEventListener("click", function (e) { if (e.target === this) closeTourNote(); });
     </script>
-
+<?php include "../valuta/api_valuta.php"; ?>
 </body>
 </html>

@@ -47,7 +47,9 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
 
     <body>
         <div class="e">
+            
             <?= $kozos_menu ?>
+            
             <?= $kozos_mobile ?>
                 
 
@@ -77,7 +79,7 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
                 }
 
                 /* --- ASZTALI NÉZETRE KORLÁTOZZUK AZ ELTOLÁST --- */
-                @media (min-width: 768px) {
+                @media (min-width: 767px) {
                     .rating-link-container {
                         position: relative !important;
                         margin-left: 0px !important;
@@ -105,6 +107,9 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
                         margin-left: 0 !important;
                         width: 100% !important;
                         left: 0 !important;
+                    }
+                    .premium-footer {
+                        bottom: 30px !important;
                     }
                     .PrevArrow,
                     .NextArrow {
@@ -491,9 +496,9 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
                         <a href="ertekeles.php" class="btn-sentra-index">⭐ ÉRTÉKELÉS MEGKEZDÉSE</a>
                     </div>
 
-                    <div class="credits-container">
+                    <div class="credits-container" style="margin-bottom: 5px;">
                         <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
-                            <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
+                            <p class="site-footer-fixed__pill" style="margin-bottom: 5px;">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
                         </a>
                     </div>
                 </div>
@@ -554,7 +559,7 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
     /* ÉRTÉKELÉS DOBOZ KONTÉNER */
     .rating-link-container {
         text-align: center;
-        margin: 40px auto;
+        margin: 40px auto 5px;
         padding: 30px;
         background: rgba(0, 0, 0, 0.7);
         border: 2px solid #345af2;
@@ -563,6 +568,11 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
         max-width: 500px;
         color: white;
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .premium-footer {
+        position: relative;
+        bottom: 30px;
     }
 
     /* AZ ÉRTÉKELÉS GOMB */
@@ -578,6 +588,7 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
         border-radius: 50px;
         transition: 0.4s;
         margin-top: 15px;
+        margin-bottom: 5px;
         box-shadow: 0 4px 15px rgba(52, 90, 242, 0.3);
     }
 
@@ -612,6 +623,7 @@ function like() {
 
 </script>
       
-</div>
+
+<?php include "valuta/api_valuta.php"; ?>
 </body>
 </html>

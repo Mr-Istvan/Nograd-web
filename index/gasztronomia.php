@@ -367,6 +367,6 @@ include '../kozos_mobile.php';
             background: #fec107 !important;
         }
     </style>
-
+<?php include "../valuta/api_valuta.php"; ?>
 </body>
 </html>

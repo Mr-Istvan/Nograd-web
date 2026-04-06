@@ -478,6 +478,6 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
         });
     });
     </script>
-
+<?php include "../valuta/api_valuta.php"; ?>
 </body>
 </html>

@@ -22,7 +22,7 @@ p {
   display: none !important;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 767px) {
   /* Asztalin jelenik meg a fix menü */
   .sidebar-navigation {
     display: block !important;
@@ -1499,7 +1499,7 @@ nav .active-section span {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 767px) {
   .content-section,
   .Modern-Slider,
   #map,
@@ -1972,7 +1972,7 @@ html, body {
   box-sizing: border-box !important;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 767px) {
   .content-section,
   .Modern-Slider,
   #map,
