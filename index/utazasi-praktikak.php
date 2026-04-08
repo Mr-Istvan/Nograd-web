@@ -248,6 +248,7 @@ include '../kozos_mobile.php';
             });
         });
     </script>
+    <?php include '../ertekeles_statisztika.php'; ?> 
     <?php include "../valuta/api_valuta.php"; ?>
 </body>
 </html>

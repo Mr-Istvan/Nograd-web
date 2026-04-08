@@ -91,9 +91,10 @@ ob_start();
     </ul>
 
     <div style="margin-top: 20px; padding: 0 15px;">
+        
         <?php include "weather.php"; ?>
     </div>
-
+    
     <ul class="social-icons" style="padding: 3px; margin: 3px;">
         <li><a href="https://www.facebook.com/" target="_blank"><i class="fa fa-facebook-official"></i></a></li>
         <li><a href="https://twitter.com/" target="_blank"><i class="fa fa-twitter"></i></a></li>
@@ -147,5 +148,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <?php
+
 $kozos_menu = ob_get_clean();
 ?>

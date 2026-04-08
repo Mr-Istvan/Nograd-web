@@ -5,6 +5,26 @@ AddDefaultCharset UTF-8
 
 RewriteEngine On
 
+# Az "index" mappában lévő fájlok átirányítása
+RewriteRule ^szallasok/?$ index/szallasok.php [NC,L]
+RewriteRule ^latnivalok/?$ index/latnivalok.php [NC,L]
+RewriteRule ^programok/?$ index/programok.php [NC,L]
+RewriteRule ^gasztronomia/?$ index/gasztronomia.php [NC,L]
+RewriteRule ^turazas/?$ index/turazas.php [NC,L]
+RewriteRule ^utazasi-praktikak/?$ index/utazasi-praktikak.php [NC,L]
+
+# Egyedi elnevezésű oldalak
+RewriteRule ^registracion/?$ reg_id.php [NC,L]
+RewriteRule ^forgot-password/?$ forgot_password.php [NC,L]
+RewriteRule ^HelpDesk/?$ helpdesk.php [NC,L]
+RewriteRule ^gallery/?$ galeria.php [NC,L]
+RewriteRule ^assessment/?$ ertekeles.php [NC,L]
+RewriteRule ^editors/?$ Proofiles.php [NC,L]
+
+# Főoldali ál-URL-ek (Ezek betöltik az index.php-t)
+RewriteRule ^introduce/?$ index.php [NC,L]
+
+
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f
 RewriteRule ^(.*)$ $1.php [NC,L]

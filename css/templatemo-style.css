@@ -116,7 +116,7 @@ p {
 .section-heading em {
   font-style: normal;
   font-weight: 700;
-  color: #45489a;
+  color: #4649a5;
 }
 
 .section-heading p {
@@ -1355,7 +1355,7 @@ nav .active-section span {
 
 .premium-footer {
   width: calc(100% - 20px) !important;
-  margin: 0 auto !important;
+  margin: 0 auto 35px auto !important;
   padding: 10px !important;
   margin-top: 50px !important;
   clear: both !important;
@@ -1469,6 +1469,7 @@ nav .active-section span {
     width: 100% !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
+    margin-bottom: 35px !important;
     padding: 20px 10px !important;
     text-align: center !important;
     display: block !important;
@@ -1989,10 +1990,11 @@ html, body {
   }
 
   .premium-footer {
-    margin-left: 250px !important;
-    margin-right: 0 !important;
-    width: calc(100% - 250px) !important;
+    margin-left: 260px !important;
+    margin-right: 10px !important;
+    width: calc(100% - 290px) !important;
     padding: 10px !important;
+    margin-bottom: 35px !important;
     display: block !important;
     align-items: center !important;
     justify-content: center !important;
@@ -2085,6 +2087,7 @@ html, body {
         box-sizing: border-box !important;
     }
 }
+
 @media (max-width: 767px) {
     #main-nav {
         display: none; /* Alapból zárt */

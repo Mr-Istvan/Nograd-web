@@ -4,6 +4,24 @@ require_once __DIR__ . '/init.php';
 // 1. Értékelés indítása (AJAX kérésnél)
 if (isset($_GET['action']) && $_GET['action'] == 'start') {
     $ip_hash = hash('sha256', $_SERVER['REMOTE_ADDR']);
+    $cooldownHours = 24;
+    $cooldownSeconds = $cooldownHours * 3600;
+
+    $checkSql = "SELECT eid, evege FROM ertekelo WHERE ip_hash = '$ip_hash' AND evege IS NOT NULL ORDER BY evege DESC LIMIT 1";
+    $checkRes = mysqli_query($conn, $checkSql);
+    $lastEval = $checkRes ? mysqli_fetch_assoc($checkRes) : null;
+
+    if ($lastEval && !empty($lastEval['evege'])) {
+        $lastTime = strtotime($lastEval['evege']);
+        if ($lastTime !== false && (time() - $lastTime) < $cooldownSeconds) {
+            $remaining = $cooldownSeconds - (time() - $lastTime);
+            $hours = floor($remaining / 3600);
+            $minutes = floor(($remaining % 3600) / 60);
+            echo "WAIT|" . $hours . "|" . $minutes;
+            exit;
+        }
+    }
+
     $sql = "INSERT INTO ertekelo (ip_hash) VALUES ('$ip_hash')";
     if (mysqli_query($conn, $sql)) {
         $_SESSION['current_eval_id'] = mysqli_insert_id($conn);

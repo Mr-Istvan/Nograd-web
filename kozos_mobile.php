@@ -175,6 +175,7 @@ ob_start();
     <div class="header-right"></div>
 </header>
 <?php include "weather_mobile.php"; ?>
+
 <nav id="mobile-panel">
     <ul class="mobile-nav-list">
         <li><a href="<?= $path_prefix ?>index.php" style="background: #1a1a1a; font-weight: bold;">Kezdőlap</a></li>
@@ -270,3 +271,4 @@ $(document).ready(function() {
 </script>
 
 <?php $kozos_mobile = ob_get_clean(); ?>
+

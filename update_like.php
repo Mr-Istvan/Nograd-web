@@ -1,15 +1,35 @@
 <?php
-require_once 'db.php';
+// update_like.php
+require_once __DIR__ . '/init.php';
+
 header('Content-Type: application/json');
 
-// Feltételezzük, hogy az 'ertekelesek' táblában van egy sor (id=1), ami a statisztikát tárolja
-$sql = "UPDATE ertekelesek SET likes = likes + 1 WHERE id = 1";
+// 1. Ujjnyomat generálása (Salted Fingerprint)
+// Ugyanazt a sót használjuk, mint a megjelenítőben!
+$ip = $_SERVER['REMOTE_ADDR'];
+$ua = $_SERVER['HTTP_USER_AGENT'];
+$salt = "NogradCsoda2026_Unique_Like"; 
+$fingerprint = hash('sha256', $ip . $ua . $salt);
 
-if (mysqli_query($conn, $sql)) {
-    $res = mysqli_query($conn, "SELECT likes FROM ertekelesek WHERE id = 1");
-    $row = mysqli_fetch_assoc($res);
-    echo json_encode(['success' => true, 'new_likes' => $row['likes']]);
-} else {
-    echo json_encode(['success' => false]);
+$success = false;
+
+// 2. Ellenőrizzük az adatbázisban
+$check = mysqli_query($conn, "SELECT lid FROM web_like WHERE ip_hash = '$fingerprint' LIMIT 1");
+
+if (mysqli_num_rows($check) == 0) {
+    // Ha még nem lájkolt: Mentés
+    $insert = mysqli_query($conn, "INSERT INTO web_like (ip_hash) VALUES ('$fingerprint')");
+    $success = (bool) $insert;
 }
-?>
+
+// 3. Lekérjük a friss darabszámot a VIEW-ból (amit a képeken mutattál)
+$res = mysqli_query($conn, "SELECT likes FROM ErtekelesekSzama LIMIT 1");
+$row = mysqli_fetch_assoc($res);
+$newLikes = $row ? (int) $row['likes'] : 0;
+
+// Válasz küldése a JavaScriptnek
+echo json_encode([
+    'success' => $success,
+    'new_likes' => $newLikes
+]);
+exit;

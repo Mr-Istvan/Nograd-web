@@ -13,17 +13,25 @@ function backWithError($err) {
     exit();
 }
 
-// Adatok tisztítása
-$uname     = mysqli_real_escape_string($conn, trim($_POST['uname'] ?? ''));
+// Kötelező mezők beolvasása
 $uusername = mysqli_real_escape_string($conn, trim($_POST['uusername'] ?? ''));
-$uemail    = mysqli_real_escape_string($conn, trim($_POST['uemail'] ?? ''));
-$pass1     = $_POST['pass1'] ?? '';
-$pass2     = $_POST['pass2'] ?? '';
-$usecret_q = mysqli_real_escape_string($conn, $_POST['usecret_q'] ?? '');
-$usecret_a = mysqli_real_escape_string($conn, strtolower(trim($_POST['usecret_a'] ?? '')));
+$uemail_user = trim($_POST['uemail_user'] ?? '');
+$uemail_domain = trim($_POST['uemail_domain'] ?? '');
+$uemail_tld = trim($_POST['uemail_tld'] ?? '');
+$pass1 = $_POST['pass1'] ?? '';
+$pass2 = $_POST['pass2'] ?? '';
 
-// 1. Üres mezők ellenőrzése
-if (empty($uname) || empty($uusername) || empty($uemail) || empty($pass1)) {
+$uemail_user = preg_replace('/\s+/', '', $uemail_user);
+$uemail_domain = preg_replace('/\s+/', '', $uemail_domain);
+$uemail_tld = preg_replace('/\s+/', '', $uemail_tld);
+$uemail = strtolower($uemail_user . '@' . $uemail_domain . '.' . $uemail_tld);
+
+// 1. Kötelező mezők ellenőrzése
+if (empty($uusername) || empty($uemail_user) || empty($uemail_domain) || empty($uemail_tld) || empty($pass1) || empty($pass2)) {
+    backWithError('empty');
+}
+
+if (!filter_var($uemail, FILTER_VALIDATE_EMAIL)) {
     backWithError('empty');
 }
 
@@ -35,7 +43,9 @@ if (strlen($pass1) < 6) {
     backWithError('short');
 }
 
-// 3. Foglaltság ellenőrzése
+/**
+ * 3. Foglaltság ellenőrzése
+ */
 $check = mysqli_query($conn, "SELECT uid FROM felhasznalok WHERE uemail = '$uemail' OR uusername = '$uusername'");
 if (mysqli_num_rows($check) > 0) {
     backWithError('taken');
@@ -54,11 +64,10 @@ while ($talalt) {
 
 // 5. Mentés az adatbázisba
 $upw = password_hash($pass1, PASSWORD_DEFAULT);
-$sql = "INSERT INTO felhasznalok (uname, uusername, uemail, upw, usess, ustatus, usecret_q, usecret_a, uregdata) 
-        VALUES ('$uname', '$uusername', '$uemail', '$upw', '$usess', 'A', '$usecret_q', '$usecret_a', NOW())";
+$sql = "INSERT INTO felhasznalok (uusername, uemail, upw, usess, ustatus, uregdata) 
+        VALUES ('$uusername', '$uemail', '$upw', '$usess', 'A', NOW())";
 
 if (mysqli_query($conn, $sql)) {
-    // SIKER: Átirányítás a loginra a sikerüzenet kódjával
     echo "<script>window.location.replace('login.php?msg=reg_kesz');</script>";
     exit();
 } else {

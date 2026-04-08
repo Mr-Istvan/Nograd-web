@@ -375,12 +375,14 @@ $adItems = [
     </style>
 </head>
 <body class="blog-page">
+    
     <div class="e">
             <?= $kozos_menu ?>
             <?= $kozos_mobile ?>
     </di>
     <div class="page-content">
         <section class="content-section">
+
             <div class="section-heading" style="text-align:center;">
                 <h1>Blog-<em>fal</em></h1>
                 <p>"Nógrád élmények és top ajánlatok"</p>
@@ -393,6 +395,39 @@ $adItems = [
                             <div class="status-msg msg-success">✅ A bejegyzésed sikeresen törölve!</div>
                         <?php endif; ?>
                     </div>
+<div class="hidden-xs hidden-sm" style="margin-left: 260px; margin-bottom: 20px; text-align: center;">
+    <a href="../tetris/tetris.php" 
+       style="display: inline-block; cursor: pointer; transition: transform 0.1s ease-in-out;"
+       onmouseover="this.style.transform='scale(1.05)';"
+       onmouseout="this.style.transform='scale(1)';">
+        <img src="../tetris/tetris_button.png" 
+             alt="Nógrád Tetris - Játssz!" 
+             style="width: 180px; /* PC-n egy picit lehet nagyobb */
+                    height: auto;
+                    border-radius: 12px; 
+                    border: 2px solid #5a5db8; 
+                    box-shadow: 0 6px 20px rgba(70, 73, 154, 0.5); 
+                    display: block;">
+    </a>
+</div>
+
+<div class="visible-xs visible-sm" style="margin-top: -50px; margin-bottom: 20px; text-align: center; position: relative; z-index: 10;">
+    <a href="../tetris/tetris.php" 
+       style="display: inline-block; cursor: pointer; transition: transform 0.1s ease-in-out;"
+       onmousedown="this.style.transform='scale(0.95)';"
+       onmouseup="this.style.transform='scale(1)';"
+       ontouchstart="this.style.transform='scale(0.95)';"
+       ontouchend="this.style.transform='scale(1)';">
+        <img src="../tetris/tetris_button.png" 
+             alt="Nógrád Tetris - Játssz!" 
+             style="width: 140px; /* Mobilon marad a kompakt méret */
+                    height: auto;
+                    border-radius: 12px; 
+                    border: 2px solid #5a5db8; 
+                    box-shadow: 0 4px 15px rgba(70, 73, 154, 0.4); 
+                    display: block;">
+    </a>
+</div>
 
                     <?php if($userLoggedIn): ?>
                         <div class="composer">
@@ -747,6 +782,7 @@ $adItems = [
             }
         }, 4000);
     </script>
+       <?php include 'ertekeles_statisztika.php'; ?> 
     <?php include "valuta/api_valuta.php"; ?>
 </body>
 </html>

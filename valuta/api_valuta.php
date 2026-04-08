@@ -1,41 +1,39 @@
 <?php
 /**
- * VALUTA MODUL - MOTOR ÉS KIJELZŐ EGYBEN
- * Verzió: 2.1 (Színjavított nyilakkal és fix 250px eltolással)
+ * VALUTA MODUL - FULL AUTOMATA PROFESSZIONÁLIS VERZIÓ
+ * Verzió: 2.7 (60s frissítés, végtelenített görgetés, fix eltolás)
  */
 
-// 1. MOTOR RÉSZ: Adatfrissítés logika
-if (isset($_GET['update'])) {
-    require_once '../init.php'; // Adatbázis kapcsolat ($conn)
+// 1. MOTOR RÉSZ - Adatbázis és Frissítés
+if (!isset($conn)) {
+    // Az init.php betöltése (egy mappával feljebb)
+    require_once __DIR__ . '/../init.php'; 
+}
 
-    // --- KVÓTA VÉDELEM ---
-    $check_sql = mysqli_query($conn, "SELECT MAX(lup_date) as utolso FROM api_valuta");
-    $check_row = mysqli_fetch_assoc($check_sql);
-    $utolso_idopont = strtotime($check_row['utolso'] ?? '');
-    $mostani_idopont = time();
+// --- KONFIGURÁCIÓ ---
+$api_key = "0371648dd0ea39ce59e22996";
+$frissites_gyakorisaga = 86400; // 24 óra (86400s)
 
-    // Napi 1 limit (86400 mp)
-    if ($utolso_idopont && ($mostani_idopont - $utolso_idopont) < 86400) {
-        die("STOP: Az árfolyamok ma már frissítve lettek! (Napi 1 limit aktív)");
-    }
+// Utolsó frissítés ellenőrzése
+$check_sql = mysqli_query($conn, "SELECT MAX(lup_date) as utolso FROM api_valuta");
+$check_row = mysqli_fetch_assoc($check_sql);
+$utolso_idopont = strtotime($check_row['utolso'] ?? '2026-04-06');
+$most = time();
 
-    // --- API LEKÉRÉS ---
-    $api_key = "0371648dd0ea39ce59e22996";
+
+if (($most - $utolso_idopont) >= $frissites_gyakorisaga) {
     $url = "https://v6.exchangerate-api.com/v6/{$api_key}/latest/HUF";
-
     $raw = @file_get_contents($url);
     $data = json_decode($raw, true);
 
     if ($data && $data['result'] === 'success') {
         $rates = $data['conversion_rates'];
-        $valutak_listaja = ['EUR', 'USD', 'GBP', 'AUD', 'CZK', 'DKK', 'JPY', 'CAD', 'PLN', 'NOK', 'RUB', 'RON', 'CHF', 'SEK', 'RSD', 'TRY'];
-        $json_puffer = [];
+        $valutak = ['EUR', 'USD', 'GBP', 'AUD', 'CZK', 'DKK', 'JPY', 'CAD', 'PLN', 'NOK', 'RUB', 'RON', 'CHF', 'SEK', 'RSD', 'TRY'];
 
-        foreach ($valutak_listaja as $kod) {
+        foreach ($valutak as $kod) {
             if (isset($rates[$kod])) {
-                $v = $rates[$kod];
-
-                // SQL: UPSERT logika
+                $v = (float)$rates[$kod];
+                // UPSERT: elmentjük az újat, a régit átmozgatjuk az elozo_ertek oszlopba
                 $sql = "INSERT INTO api_valuta (valuta_kod, elozo_ertek, valto_ertek, lup_date) 
                         VALUES ('$kod', $v, $v, NOW()) 
                         ON DUPLICATE KEY UPDATE 
@@ -43,33 +41,23 @@ if (isset($_GET['update'])) {
                         valto_ertek = $v, 
                         lup_date = NOW()";
                 mysqli_query($conn, $sql);
-
-                $res = mysqli_query($conn, "SELECT elozo_ertek FROM api_valuta WHERE valuta_kod = '$kod'");
-                $row = mysqli_fetch_assoc($res);
-                $json_puffer[$kod] = [
-                    'v' => (float)$v,
-                    'e' => (float)$row['elozo_ertek']
-                ];
             }
         }
-        file_put_contents(__DIR__ . '/valuta.json', json_encode($json_puffer));
-        die("SIKER: Az árfolyamok frissítve!");
-    } else {
-        die("HIBA: Az API nem érhető el.");
+        $utolso_idopont = time(); // Frissítjük a változót a kijelzéshez
     }
 }
 
-// 2. KIJELZŐ RÉSZ
+// 2. ADATOK LEKÉRÉSE A KIJELZÉSHEZ
 $valuta_lekerdezes = mysqli_query($conn, "SELECT * FROM api_valuta ORDER BY valuta_kod ASC");
 $van_adat = ($valuta_lekerdezes && mysqli_num_rows($valuta_lekerdezes) > 0);
 ?>
 
 <style>
-    /* A KONTÉNER - Fixen alul, helyet hagyva a menünek */
+    /* A KONTÉNER - Fixen alul, 250px-es eltolással */
     .led-fix-footer {
         position: fixed; 
         bottom: 0; 
-        left: 250px; /* 250px eltolás a sidebar miatt */
+        left: 250px; 
         width: calc(100% - 250px); 
         height: 24px; 
         background: #000;
@@ -85,8 +73,8 @@ $van_adat = ($valuta_lekerdezes && mysqli_num_rows($valuta_lekerdezes) > 0);
     .led-track {
         display: inline-block;
         white-space: nowrap;
-        padding-left: 100%;
-        animation: led-scroll 75s linear infinite;
+        padding-left: 100%; /* Kívülről indul */
+        animation: led-scroll 95s linear infinite;
         font-family: 'Courier New', Courier, monospace;
         font-size: 21px;
         line-height: 0; 
@@ -95,12 +83,22 @@ $van_adat = ($valuta_lekerdezes && mysqli_num_rows($valuta_lekerdezes) > 0);
         text-shadow: 0 0 5px rgba(255, 179, 0, 0.5);
     }
 
-    /* SZÍNEK - A nyilakhoz */
+    /* TREND SZÍNEK */
     .up { color: #00D2FF !important; }   /* Kék emelkedés */
     .down { color: #FF3131 !important; } /* Piros csökkenés */
     .sep { color: #fdfdfdd1; margin: 0 24px; }
-    .valuta-nev { color: #5e63ebed;
-; }
+    .valuta-nev { color: #5e63ebed; }
+    
+    /* UTOLSÓ FRISSÍTÉS IDŐPONTJA (Debug) */
+    .last-refresh-time {
+        position: absolute;
+        right: 10px;
+        bottom: 2px;
+        font-size: 11px;
+        color: #666666e7;
+        z-index: 10001;
+        font-family: Arial, sans-serif;
+    }
 
     @keyframes led-scroll {
         0% { transform: translateX(0); }
@@ -111,41 +109,46 @@ $van_adat = ($valuta_lekerdezes && mysqli_num_rows($valuta_lekerdezes) > 0);
         animation-play-state: paused;
     }
 
+    /* Mobilnézet: eltolás megszüntetése */
     @media (max-width: 768px) {
         .led-fix-footer {
             left: 0;
             width: 100%;
         }
     }
-
 </style>
 
 <div class="led-fix-footer" id="tickerBox">
+    <div class="last-refresh-time">L.U.P: <?php echo date("H:i:s", $utolso_idopont); ?></div>
     <div class="led-track" id="tickerTrack">
         <?php
         if ($van_adat) {
+            $output = "";
             while ($row = mysqli_fetch_assoc($valuta_lekerdezes)) {
                 $kod = $row['valuta_kod'];
                 if ($row['valto_ertek'] > 0) {
+                    // Mivel HUF alapú az API, átváltjuk (1 / érték)
                     $kozep = 1 / $row['valto_ertek'];
                     $elozo = ($row['elozo_ertek'] > 0) ? 1 / $row['elozo_ertek'] : $kozep;
                     
+                    // Vételi és eladási ár képzése
                     $veszek = number_format($kozep * 0.985, 1, ',', ' ');
                     $adok = number_format($kozep * 1.015, 1, ',', ' ');
                     
-                    // Meghatározzuk a színt (osztályt) és a nyilat
+                    // Nyíl és szín meghatározása
                     $trend = ($kozep >= $elozo) ? 'up' : 'down';
                     $nyil = ($trend == 'up') ? '▲' : '▼';
 
-                    // A nyilakat belerakjuk a span-ba, hogy színesek legyenek
-                    echo " <span class='valuta-nev'>$kod</span> ";
-                    echo "$veszek <span class='$trend'>$nyil</span> ";
-                    echo "$adok <span class='$trend'>$nyil</span> ";
-                    echo "<span class='sep'>//</span>";
+                    $output .= " <span class='valuta-nev'>$kod</span> ";
+                    $output .= "$veszek <span class='$trend'>$nyil</span> ";
+                    $output .= "$adok <span class='$trend'>$nyil</span> ";
+                    $output .= "<span class='sep'>//</span>";
                 }
             }
+            // DUPLÁZÁS: Így nem lesz üres rész a csíkban, amikor az eleje már kiment
+            echo $output . $output;
         } else {
-            echo "<span style='color:#fff;'>FRISSÍTÉS SZÜKSÉGES... (/?update=1)</span>";
+            echo "<span style='color:#fff;'>ADATOK FRISSÍTÉSE...</span>";
         }
         ?>
     </div>
@@ -156,6 +159,7 @@ $van_adat = ($valuta_lekerdezes && mysqli_num_rows($valuta_lekerdezes) > 0);
         const tBox = document.getElementById('tickerBox');
         const tTrack = document.getElementById('tickerTrack');
         if (tBox && tTrack) {
+            // Mobil érintés védelem
             tBox.addEventListener('touchstart', () => { tTrack.style.animationPlayState = 'paused'; }, {passive: true});
             tBox.addEventListener('touchend', () => { tTrack.style.animationPlayState = 'running'; }, {passive: true});
         }

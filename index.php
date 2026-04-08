@@ -20,6 +20,9 @@ $is_open = function (array $pages) use ($current_page) {
 // 2. CSAK EZUTÁN HÍVJUK BE A MENÜT (így már látja a fenti változókat)
 include 'kozos_menu.php';   // Létrehozza a $kozos_menu-t
 include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
+$v_hash = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . "NogradCsoda2026_Unique_Like");
+$check_like = mysqli_query($conn, "SELECT lid FROM web_like WHERE ip_hash = '$v_hash' LIMIT 1");
+$already_liked = (mysqli_num_rows($check_like) > 0);
 ?>
 <!DOCTYPE html>
 <html>
@@ -51,7 +54,7 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
             <?= $kozos_menu ?>
             
             <?= $kozos_mobile ?>
-                
+            
 
             <style>
                 .sidebar-stats {
@@ -97,6 +100,20 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
                         width: calc(100% - 100px) !important;
                         text-align: center !important;
                     }
+
+                    #map .row {
+                        margin-left: 250px !important;
+                        width: calc(100% - 250px) !important;
+                    }
+
+                    #map .col-md-12 {
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                    }
+
+                    #contact.map-fix-container {
+                        width: 100% !important;
+                    }
                 }
 
                 /* --- MOBIL NÉZET (Marad az eredeti) --- */
@@ -138,22 +155,7 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
                     transform: translateY(-3px);
                 }
             </style>
-
-               <!--  <div class="sidebar-stats">          //ezen ahelyen ez értékelési statisztikák lennének, müködik, de a Like-olási gomb miatt most nem fér el szépen, így egyelőre félretettem. 
-                     <div style="margin-bottom: 8px;">
-                           <i class="fa fa-users" style="color: #ffffff; width: 20px;"></i> 
-                          <span id="eszam"><?= $row['eszam'] ?></span> kitöltő
-                      </div>
-                     <div style="margin-bottom: 8px;">                                              // Ez az értékelési átlag, de mivel a Like gomb miatt nem fér el szépen, így egyelőre félretettem.             +                          <i class="fa fa-star" style="color: #ffffff; width: 20px;"></i> 
-                           <span id="atlag"><?= round($row['atlag'], 2) ?></span> / 5
-                       </div>                        <div style="margin-bottom: 8px;">                         <i class="fa fa-thumbs-up" style="color: #f0f0f0; width: 20px;"></i> // Ez a Like-ok száma, de mivel a Like gomb miatt nem fér el szépen, így egyelőre félretettem.                            <span id="likes"><?= $row['likes'] ?></span> like
-                       </div>
-                      <button onclick="like()" class="btn-like-sidebar">👍 LIKE</button>
-                   </div>  -->                    
-               
-           
-
-                
+                        
             <div class="Modern-Slider content-section" id="top">
                 <div class="item item-1">
                     <div class="img-fill">
@@ -470,26 +472,27 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
             <?php endif; ?>
         </div>
     <?php endif; ?>
-
-            <div class="section-content">
+<div class="section-content">
                 <form action="contact_process.php" method="POST" class="contact-form-fix">
-            <div class="form-input-container">
-                <label for="visitor_email">Email:</label>
-                <input type="email" id="visitor_email" name="visitor_email" placeholder="pelda@email.hu" class="form-control-custom" required>
-            </div>
+                    <div class="form-input-container">
+                        <label for="visitor_email">Email:</label>
+                        <input type="email" id="visitor_email" name="visitor_email" placeholder="pelda@email.hu" class="form-control-custom" required>
+                    </div>
 
-            <div class="form-input-container">
-                <label for="message">Üzenet:</label>
-                <textarea id="message" name="message" placeholder="Írd le az üzenetedet..." class="textarea-custom" required></textarea>
-            </div>
+                    <div class="form-input-container">
+                        <label for="message">Üzenet:</label>
+                        <textarea id="message" name="message" placeholder="Írd le az üzenetedet..." class="textarea-custom" required></textarea>
+                    </div>
 
-            <div class="button-container">
-                <button type="submit" class="btn btn-sentra">KÜLDÉS</button>
-            </div>
-        </form>
-            </div>
-
-            <footer class="premium-footer">
+                    <div class="contact-action-buttons">
+                        <button type="submit" class="btn btn-sentra contact-action-btn">KÜLDÉS</button>
+                        
+                        <button type="button" onclick="handleLike()" id="mainLikeBtn" class="btn btn-sentra contact-action-btn <?= $already_liked ? 'btn-liked' : '' ?>" <?= $already_liked ? 'disabled' : '' ?>>
+                            👍 <span id="btn-like-text"><?= $already_liked ? 'KÖSZÖNJÜK!' : 'LIKE' ?></span>
+                        </button>
+                    </div>
+                </form>
+            </div> <footer class="premium-footer">
                 <div class="footer-inner-wrapper">
                     <div class="rating-link-container">
                         <p class="site-footer-fixed__pill">Tetszett a látogatás? Oszd meg velünk a véleményed!</p>
@@ -599,31 +602,76 @@ include 'kozos_mobile.php'; // Létrehozza a $kozos_mobile-t
         box-shadow: 0 0 25px #00ffff;
         transform: translateY(-3px);
     }
+
+    .contact-action-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 15px;
+        width: 100%;
+        flex-wrap: nowrap;
+    }
+
+    .contact-action-btn {
+        flex: 1 1 0;
+        min-width: 0;
+        margin: 0 !important;
+        white-space: nowrap;
+    }
+
+    .contact-action-btn.btn-liked {
+        background: #2ecc71 !important;
+        border-color: #2ecc71 !important;
+    }
+
+    @media (max-width: 767px) {
+        .contact-action-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .contact-action-btn {
+            width: 100%;
+        }
+    }
         </style>
 
     <script>
-function like() {
-    fetch('update_like.php')
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) {
-            const likeSpan = document.getElementById('likes');
-            likeSpan.innerText = data.new_likes;
-            
-            likeSpan.style.transition = "color 0.3s";
-            likeSpan.style.color = "#7fd0ff";
-            setTimeout(() => {
-                likeSpan.style.color = "";
-            }, 500);
+function handleLike() {
+    const likeBtn = document.getElementById('mainLikeBtn');
+    const likeText = document.getElementById('btn-like-text');
+
+    if (!likeBtn || !likeText) return;
+
+    likeBtn.disabled = true;
+
+    fetch('update_like.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         }
     })
-    .catch(err => console.error("Hiba:", err));
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            likeBtn.style.background = '#2ecc71';
+            likeBtn.style.borderColor = '#2ecc71';
+            likeText.innerText = 'KÖSZÖNJÜK!';
+        } else {
+            likeBtn.disabled = false;
+            alert(data.message || 'Nem sikerült rögzíteni a like-ot.');
+        }
+    })
+    .catch(err => {
+        console.error('Hiba:', err);
+        likeBtn.disabled = false;
+        alert('Hiba történt a like küldése közben.');
+    });
 }
-
-
 </script>
       
-
+<?php include 'ertekeles_statisztika.php'; ?> 
 <?php include "valuta/api_valuta.php"; ?>
 </body>
 </html>

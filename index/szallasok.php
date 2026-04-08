@@ -478,6 +478,7 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
         });
     });
     </script>
+       <?php include '../ertekeles_statisztika.php'; ?> 
 <?php include "../valuta/api_valuta.php"; ?>
 </body>
 </html>

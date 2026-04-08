@@ -31,33 +31,47 @@ if (isset($_POST['save_email'])) {
 
 // --- [ B ] PROFILKÉP (Átméretezéssel és konvertálással) ---
 if (isset($_POST['save_avatar']) && isset($_FILES['uavatar']) && $_FILES['uavatar']['error'] === 0) {
-    $target_dir = "img/profiles/";
+    $target_dir = __DIR__ . "/img/profiles/";
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0777, true);
+    }
+
     $img_name = time() . "_" . $uid . ".jpg";
     $source_path = $_FILES['uavatar']['tmp_name'];
-    $info = getimagesize($source_path);
+    $info = @getimagesize($source_path);
 
     if ($info) {
-        // Kép betöltése típus szerint (rövidített forma)
-        $src = ($info[2] == IMAGETYPE_JPEG) ? imagecreatefromjpeg($source_path) : 
-               (($info[2] == IMAGETYPE_PNG) ? imagecreatefrompng($source_path) : 
-               (($info[2] == IMAGETYPE_GIF) ? imagecreatefromgif($source_path) : null));
+        $src = null;
+        if ($info[2] === IMAGETYPE_JPEG) {
+            $src = imagecreatefromjpeg($source_path);
+        } elseif ($info[2] === IMAGETYPE_PNG) {
+            $src = imagecreatefrompng($source_path);
+        } elseif ($info[2] === IMAGETYPE_GIF) {
+            $src = imagecreatefromgif($source_path);
+        }
 
         if ($src) {
             $new_img = imagecreatetruecolor(100, 100);
-            imagealphablending($new_img, false); imagesavealpha($new_img, true);
+            imagealphablending($new_img, false);
+            imagesavealpha($new_img, true);
+            $bg = imagecolorallocate($new_img, 255, 255, 255);
+            imagefilledrectangle($new_img, 0, 0, 100, 100, $bg);
             imagecopyresampled($new_img, $src, 0, 0, 0, 0, 100, 100, $info[0], $info[1]);
-            
+
             if (imagejpeg($new_img, $target_dir . $img_name, 85)) {
                 mysqli_query($conn, "UPDATE felhasznalok SET uavatar = '$img_name' WHERE uid = $uid");
-                // Régi kép törlése, ha nem az alapértelmezett
-                if (!empty($user_data['uavatar']) && $user_data['uavatar'] != 'default.png' && file_exists($target_dir . $user_data['uavatar'])) {
+                if (!empty($user_data['uavatar']) && $user_data['uavatar'] !== 'auto_profile.png' && file_exists($target_dir . $user_data['uavatar'])) {
                     @unlink($target_dir . $user_data['uavatar']);
                 }
+                redirect("profile.php?msg=kep_kesz&v=" . time());
             }
-            imagedestroy($new_img); imagedestroy($src);
+
+            imagedestroy($new_img);
+            imagedestroy($src);
         }
     }
-    redirect("profile.php?msg=kep_kesz&v=".time());
+
+    redirect("profile.php?error=avatar_fail&v=" . time());
 }
 
 // --- [ C ] JELSZÓ MÓDOSÍTÁSA ---

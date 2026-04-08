@@ -179,7 +179,24 @@ if (!$isFinished) {
         function startEvaluation() {
             fetch('process_eval.php?action=start')
                 .then(r => r.text())
-                .then(d => { if(d.trim() === "OK") changeStep('block-0'); });
+                .then(d => {
+                    const response = d.trim();
+                    if (response === "OK") {
+                        changeStep('block-0');
+                        return;
+                    }
+
+                    if (response.startsWith("WAIT|")) {
+                        const parts = response.split("|");
+                        const hours = parseInt(parts[1], 10) || 0;
+                        const minutes = parseInt(parts[2], 10) || 0;
+                        alert(`Már értékeltél. Új értékelés ${hours} óra ${minutes} perc múlva lehetséges.`);
+                        return;
+                    }
+
+                    alert('Nem sikerült elindítani az értékelést.');
+                })
+                .catch(() => alert('Hiba történt az értékelés indításakor.'));
         }
 
         // Lépés váltás logikája
