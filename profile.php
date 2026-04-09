@@ -246,7 +246,7 @@ $avatar_path = (!empty($avatar_file) && file_exists(__DIR__ . '/img/profiles/' .
             </div>
 
             <div class="mb-4">
-                <label class="small text-warning">Becenév</label>
+                <label class="small text-warning">Felhasználónév</label>
                 <input type="text" class="form-control" value="<?php echo htmlspecialchars($user['uusername']); ?>" readonly tabindex="-1">
             </div>
 

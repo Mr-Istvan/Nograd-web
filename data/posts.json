@@ -1,154 +1,170 @@
-[
-    {
-        "user": "Nándy",
-        "text": "Végre megérkeztünk a hegyi panzióba, a kilátás valami elképesztő!",
-        "time": "16:20",
-        "likes": 1
-    },
-    {
-        "user": "Nándy",
-        "text": "Kipróbáltuk a helyi kemencés lángost, verhetetlen az íze.",
-        "time": "16:20"
-    },
-    {
-        "user": "Nándy",
-        "text": "Holnapi terv:\r\n- Reggeli túra a vízeséshez\r\n- Ebéd a völgyben\r\n- Esti wellness",
-        "time": "16:30"
-    },
-    {
-        "user": "aaaaa",
-        "text": "Micsoda ez a környék! Hogyan lehet feljutni a legfelső kilátóhoz?",
-        "time": "16:33"
-    },
-    {
+{
+    "2": {
         "user": "aaaaa",
         "text": "Azta, nézzétek ezeket a sziklaformációkat a tanösvény mellett!",
-        "time": "16:34"
+        "time": "16:34",
+        "dislikes": 1,
+        "likes": 8,
+        "votes": {
+            "proba": "liked"
+        }
     },
-    {
+    "3": {
         "user": "aaaaa",
         "text": "Éppen most foglaltam le a szállást a jövő havi balatoni hétvégére.",
-        "time": "16:47"
+        "time": "16:47",
+        "dislikes": 2,
+        "likes": 2
     },
-    {
+    "4": {
         "user": "aaaaa",
         "text": "A hotel reggelije egyszerűen fenséges, imádom a házi lekvárokat.",
-        "time": "16:47"
+        "time": "16:47",
+        "likes": 1
     },
-    {
+    "5": {
         "user": "aaaaa",
         "text": "Találtam egy eldugott kis éttermet az erdő szélén, isteni a vadpörkölt.",
-        "time": "16:48"
+        "time": "16:48",
+        "votes": [],
+        "dislikes": 0,
+        "likes": 0
     },
-    {
+    "6": {
         "user": "aaaaa",
         "text": "A túraútvonal kicsit meredek volt, de a panoráma kárpótolt mindenért.",
-        "time": "16:52"
+        "time": "16:52",
+        "dislikes": 1,
+        "likes": 1,
+        "votes": []
     },
-    {
+    "7": {
         "user": "aaaaa",
         "text": "Béreltünk bicikliket, körbetekerjük a tavat délután.",
         "time": "16:52"
     },
-    {
+    "8": {
         "user": "aaaaa",
         "text": "A szállásadó nagyon kedves, még házi pálinkával is megkínált minket.",
         "time": "16:59"
     },
-    {
-        "user": "aaaaa",
-        "text": "Valaki tudna ajánlani egy jó kutyabarát szállást Eger környékén?",
-        "time": "17:56"
-    },
-    {
+    "9": {
         "user": "aaaaa",
         "text": "Ma este a főtéren lesz egy nagy gasztrofesztivál, mindenképp kimegyünk.",
         "time": "17:56"
     },
-    {
+    "10": {
         "user": "aaaaa",
         "text": "Frissítettem a profilomat, most már látszanak a legutóbbi túrafotóim.",
         "time": "19:32",
-        "avatar": "default_avatar.png"
+        "avatar": "default_avatar.png",
+        "votes": [],
+        "dislikes": 0,
+        "likes": 0
     },
-    {
+    "11": {
         "user": "aaaaa",
         "text": "A faházban nincs térerő, de pont erre a nyugalomra volt szükségem.",
-        "time": "19:59"
+        "time": "19:59",
+        "likes": 10,
+        "dislikes": 13,
+        "votes": {
+            "proba": "disliked"
+        }
     },
-    {
+    "12": {
         "user": "aaaaa",
         "text": "Sikerült asztalt foglalni a város legjobb steakhouse-ába, alig várom!",
-        "time": "20:08"
+        "time": "20:08",
+        "votes": {
+            "proba": "liked"
+        },
+        "likes": 1
     },
-    {
+    "13": {
         "user": "aaaaa",
         "text": "Megnéztük a naplementét a várból, csodás befejezése volt a napnak.",
-        "time": "20:25"
+        "time": "20:25",
+        "likes": 1,
+        "dislikes": 1
     },
-    {
+    "14": {
         "user": "aaaaa",
         "text": "A holnapi reggeli kávét már a tóparti stégen fogom meginni.",
-        "time": "20:25"
+        "time": "20:25",
+        "votes": {
+            "proba": "disliked"
+        },
+        "dislikes": 1
     },
-    {
+    "15": {
         "user": "aaaaa",
         "text": "Kicsit későn értünk vissza a túráról, de a csillagos ég kárpótolt.",
         "time": "02:23"
     },
-    {
+    "16": {
         "user": "aaaaa",
         "text": "Már most hiányzik a hegyi levegő és a csend.",
         "time": "02:23"
     },
-    {
+    "17": {
         "user": "aaaaa",
         "text": "Jó reggelt! Indul a nap egy kiadós rántottával a hotel teraszán.",
-        "time": "07:13"
+        "time": "07:13",
+        "likes": 2,
+        "votes": {
+            "proba": "liked"
+        },
+        "dislikes": 0
     },
-    {
+    "18": {
         "user": "aaaaa",
         "text": "Hatalmas adagokat adnak ebben a kis útmenti vendéglőben!",
-        "time": "07:13"
+        "time": "07:13",
+        "likes": 1
     },
-    {
+    "19": {
         "user": "aaaaa",
         "text": "A kirándulás során találtunk egy elhagyatott kolostorromot is.",
         "time": "07:13"
     },
-    {
+    "20": {
         "user": "aaaaa",
         "text": "Összeállítottam egy listát a legjobb bükki kilátóhelyekről.",
         "time": "08:10"
     },
-    {
+    "21": {
         "user": "aaaaa",
         "text": "A kemping tiszta, a mosdók modernek, bátran ajánlom sátrazóknak.",
         "time": "08:15"
     },
-    {
+    "22": {
         "user": "aaaaa",
         "text": "Még egy utolsó csobbanás a medencében indulás előtt.",
         "time": "08:56"
     },
-    {
+    "23": {
         "user": "aaaaa",
         "text": "Sziasztok! Megérkeztem a gasztrotúrám első állomására.",
         "time": "09:22",
-        "likes": 1
+        "likes": 2,
+        "dislikes": 1
     },
-    {
+    "24": {
         "user": "aaaaa",
         "text": "Kipróbáltam a szarvasgombás tésztát, felejthetetlen élmény volt.",
-        "time": "09:23"
-    },
-    {
-        "user": "aaaaa",
-        "text": "10/10-es pontszámot adok erre a szállodai kiszolgálásra!",
         "time": "09:23",
-        "likes": 1
+        "likes": 1,
+        "dislikes": 1
     },
-    {
+    "25": {
+        "user": "aaaaa",
+        "text": "10\/10-es pontszámot adok erre a szállodai kiszolgálásra!",
+        "time": "09:23",
+        "likes": 1,
+        "dislikes": 1
+    },
+    "26": {
         "user": "aaaaa",
         "avatar": "1773813440_5.jpg",
         "text": "Ezt a kilátást nem lehet megunni!",
@@ -156,34 +172,36 @@
         "time": "2026-03-18 09:34",
         "likes": 1
     },
-    {
+    "27": {
         "user": "aaaaa",
         "name": "aaaaa",
         "avatar": "1773813440_5.jpg",
         "text": "Nem rossz ez a foglalási rendszer, de mobilon kicsit nehézkes a dátumválasztás.",
         "image": "",
         "time": "09:48",
-        "likes": 0
+        "likes": 1
     },
-    {
+    "28": {
         "user": "aaaaa",
         "name": "aaaaa",
         "avatar": "1773813440_5.jpg",
         "text": "Találtam egy hibát az étlapunkon, de a pincér azonnal orvosolta.",
         "image": "1773824365_1000089643.jpg",
         "time": "09:59",
-        "likes": 5
+        "likes": 6,
+        "dislikes": 8
     },
-    {
+    "29": {
         "user": "Krisztike23",
         "name": "Kiss Krisztina",
         "avatar": "1773824858_3.jpg",
         "text": "Azta, de szép autóval vágtatok neki a kirándulásnak! :D",
         "image": "1773825116_Névtelen.jpg",
         "time": "10:11",
-        "likes": 1
+        "likes": 2,
+        "dislikes": 1
     },
-    {
+    "30": {
         "user": "feher@banan.hu",
         "name": "fehér banán",
         "avatar": "1773829438_4.jpg",
@@ -192,58 +210,91 @@
         "time": "11:25",
         "likes": 1
     },
-    {
+    "31": {
         "user": "Nándy",
         "name": "Magyar Nándor",
         "avatar": "1773830354_1.jpg",
         "text": "Sziaszzzztok, mizujs? Ki hol eszik ma valami finomat?",
         "image": "1773830384_ab67616d00001e024621b6d46cfcec9d5998714b.jfif",
         "time": "11:39",
-        "likes": 1
+        "likes": 2
     },
-    {
+    "32": {
         "user": "aaaaa",
         "name": "aaaaa",
         "avatar": "1773813440_5.jpg",
         "text": "Sziasztok, küldök egy képet a mai ebédről!",
         "image": "1773849931_felad.jpg",
         "time": "17:05",
-        "likes": 1
+        "likes": 2
     },
-    {
-        "user": "aaaaa",
-        "name": "aaaaa",
-        "avatar": "1773813440_5.jpg",
-        "text": "Kora reggeli túra a ködben, fantasztikus hangulata van az erdőnek.",
-        "image": "",
-        "time": "06:35",
-        "likes": 0
-    },
-    {
-        "user": "aaaaa",
-        "name": "aaaaa",
-        "avatar": "1773813440_5.jpg",
-        "text": "Minden akadályt elhárítottunk, szabad az út a csúcs felé!",
-        "image": "",
-        "time": "09:22",
-        "likes": 0
-    },
-    {
+    "33": {
         "user": "tészta",
         "name": "azta paszta",
         "avatar": "1774033114_14.jpg",
         "text": "Akkor jó, nagyon finom lett ez a házi tészta a helyi trattoriában!",
         "image": "1774033164_letöltés.jpg",
         "time": "19:59",
-        "likes": 0
+        "likes": 31
     },
-    {
+    "34": {
         "user": "tészta",
         "name": "azta paszta",
         "avatar": "1774033114_14.jpg",
         "text": "Desszertnek pedig megkóstoltuk a környék híres somlói galuskáját is.",
         "image": "1774045157_1773954645_7.jpg",
         "time": "23:19",
-        "likes": 0
+        "likes": 1
+    },
+    "35": {
+        "user": "Actim",
+        "name": "Juhász Patrik",
+        "avatar": "1774865443_22.jpg",
+        "text": "asd",
+        "image": "1774865458_PNG_transparency_demonstration_1.png",
+        "time": "12:10",
+        "likes": 5
+    },
+    "36": {
+        "user": "HD",
+        "name": "HD",
+        "avatar": "1774865492_21.jpg",
+        "text": "Nem fogom!",
+        "image": "",
+        "time": "12:26",
+        "likes": 4
+    },
+    "37": {
+        "user": "aaaaa",
+        "name": "aaaaa",
+        "avatar": "1774827856_5.jpg",
+        "text": "Kedves Felhasználók! \r\nEttől a perctől, mindeki ki tudja törölni a Posztját!\r\nNagyon köszi, hogy rászántátok az időt a weboldalunk tesztelésére! A visszajelzéseitek rengeteget segítenek a fejlesztésben 😊\r\nKösöznjük!",
+        "image": "1774881423_bagg.jpg",
+        "time": "16:37",
+        "likes": 1
+    },
+    "38": {
+        "user": "Admin17",
+        "name": "helpdesk",
+        "avatar": "1774922369_20.jpg",
+        "text": "Tisztelt Látogatók!\r\nA Blog.oldal fejlesztés alatt!\r\nHa nem működik a felső menüsor ,akkor csak vissza lépéssel tudják elhagyni az oldalt.\r\nMegértésüket. Köszönjük.  ",
+        "image": "1775034192_images (10).jpeg",
+        "time": "11:03",
+        "likes": 2,
+        "dislikes": 1
+    },
+    "39": {
+        "user": "Nyuszi02",
+        "name": "",
+        "avatar": "1775612227_28.jpg",
+        "text": "Próba szerencse! :D",
+        "image": "",
+        "time": "12:37",
+        "likes": 2,
+        "votes": {
+            "Nyuszi02": "liked",
+            "proba": "liked"
+        },
+        "dislikes": 0
     }
-]
+}

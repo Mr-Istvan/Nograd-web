@@ -328,7 +328,7 @@ include '../kozos_mobile.php';
 
             <footer class="premium-footer" style="padding: 12px; text-align: center; color: #0a1f98;">
                 <div class="credits-container">
-                    <a href="../Editors.php" class="credits-link" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
+                    <a href="../Proofiles.php" class="credits-link" style="display:inline-block; color: inherit; text-decoration: none; cursor: pointer;">
                         <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
                     </a>
                 </div>
