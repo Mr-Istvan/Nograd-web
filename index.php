@@ -500,7 +500,7 @@ $already_liked = (mysqli_num_rows($check_like) > 0);
                     </div>
 
                     <div class="credits-container" style="margin-bottom: 5px;">
-                        <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Proofiles.php" class="credits-link">
+                        <a href="<?php echo (isset($base_url) ? $base_url : ''); ?>Editors.php" class="credits-link">
                             <p class="site-footer-fixed__pill" style="margin-bottom: 5px;">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
                         </a>
                     </div>

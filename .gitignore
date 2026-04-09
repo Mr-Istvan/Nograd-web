@@ -7,3 +7,5 @@ helpdesk.php
 reset.php
 send_reset_mail.php
 init.php
+admin_fetch_reports.php
+nograd_php_jegyzet.txt

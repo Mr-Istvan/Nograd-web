@@ -232,7 +232,7 @@ include '../kozos_mobile.php';
             </section>
 
             <footer class="premium-footer" style="padding: 17px; text-align: center; color: #0a1f98;">
-                <a href="../Proofiles.php" class="credits-link" style="display:block; color: inherit; text-decoration: none; cursor: pointer; text-align:center; width:100%;">
+                <a href="../Editors.php" class="credits-link" style="display:block; color: inherit; text-decoration: none; cursor: pointer; text-align:center; width:100%;">
                     <p class="site-footer-fixed__pill" style="margin:0 auto; text-align:center; display:inline-block;">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
                 </a>
             </footer>

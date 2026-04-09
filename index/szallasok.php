@@ -438,7 +438,7 @@ $atlag_ar = round($stats['atlag_ar'] ?? 0);
             <footer class="premium-footer">
                 <div class="footer-inner-wrapper">
                     <div class="credits-container">
-                        <a href="../Proofiles.php" class="credits-link">
+                        <a href="../Editors.php" class="credits-link">
                             <p class="site-footer-fixed__pill">Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István</p>
                         </a>
                     </div>

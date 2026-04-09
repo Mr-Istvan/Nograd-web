@@ -113,37 +113,13 @@ $final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
             color: #fff;
         }
 
-        .email-split {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .email-container {
             margin-bottom: 12px;
         }
 
-        .email-split .form-control {
+        .email-full {
+            width: 100%;
             margin-bottom: 0;
-        }
-
-        .email-split span {
-            color: #0ea5e9;
-            font-weight: 800;
-            flex: 0 0 auto;
-        }
-
-        .email-split .email-user { flex: 1 1 40%; }
-        .email-split .email-domain { flex: 1 1 40%; }
-        .email-split .email-tld { flex: 0 0 110px; }
-
-        @media (max-width: 520px) {
-            .email-split {
-                flex-wrap: wrap;
-            }
-
-            .email-split .email-user,
-            .email-split .email-domain,
-            .email-split .email-tld {
-                flex: 1 1 100%;
-            }
         }
 
         .btn-sentra {
@@ -336,13 +312,13 @@ $final_x_url = $_SESSION['user_origin_url'] ?? 'index.php';
             <input type="text" name="uusername" placeholder="Felhasználónév" class="form-control" required>
 
             <label class="form-label">Email cím</label>
-            <div class="email-split">
-                <input type="text" name="uemail_user" placeholder="Email felhasználónév" class="form-control email-user" required>
-                <span>@</span>
-                <input type="text" name="uemail_domain" placeholder="Szolgáltató" class="form-control email-domain" required>
-                <span>.</span>
-                <input type="text" name="uemail_tld" placeholder="hu / com / eu / ro" class="form-control email-tld" required>
-            </div>
+            <input type="email" 
+                   name="uemail" 
+                   class="form-control" 
+                   placeholder="nev@pelda.hu" 
+                   required 
+                   pattern="^[^ ]+@[^ ]+\.[a-z]{2,6}$"
+                   title="Kérjük, adj meg egy teljes email címet (pl. .hu vagy .com végződéssel)!">
 
             <label class="form-label">Jelszó</label>
             <input type="password" name="pass1" id="pass1" placeholder="Jelszó (min 6)" class="form-control" maxlength="36" required>

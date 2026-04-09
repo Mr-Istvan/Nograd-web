@@ -5,6 +5,8 @@ AddDefaultCharset UTF-8
 
 RewriteEngine On
 
+RewriteBase /
+
 # Az "index" mappában lévő fájlok átirányítása
 RewriteRule ^szallasok/?$ index/szallasok.php [NC,L]
 RewriteRule ^latnivalok/?$ index/latnivalok.php [NC,L]
@@ -20,11 +22,23 @@ RewriteRule ^HelpDesk/?$ helpdesk.php [NC,L]
 RewriteRule ^gallery/?$ galeria.php [NC,L]
 RewriteRule ^assessment/?$ ertekeles.php [NC,L]
 RewriteRule ^editors/?$ Proofiles.php [NC,L]
+RewriteRule ^Blog/?$ blog.php [NC,L]
+RewriteRule ^login/?$ login.php [NC,L]
+RewriteRule ^tetris/tetris/?$ tetris/tetris.php [NC,L]
 
 # Főoldali ál-URL-ek (Ezek betöltik az index.php-t)
 RewriteRule ^introduce/?$ index.php [NC,L]
+RewriteRule ^/$ index.php [L]
+RewriteRule ^$ index.php [L]
 
+# Kanonikus átirányítások: ha valaki közvetlenül .php URL-t kér,
+# a szép URL-re irányítjuk át, de csak a publikusan használt oldalaknál.
+RewriteCond %{THE_REQUEST} \s/+(login|reg_id|forgot_password|helpdesk|galeria|ertekeles|Proofiles|blog)\.php[\s?] [NC]
+RewriteRule ^(login|reg_id|forgot_password|helpdesk|galeria|ertekeles|Proofiles|blog)\.php$ /$1 [R=301,L,NC]
+
+RewriteCond %{THE_REQUEST} \s/+(index/szallasok|index/latnivalok|index/programok|index/gasztronomia|index/turazas|index/utazasi-praktikak)\.php[\s?] [NC]
+RewriteRule ^(index/szallasok|index/latnivalok|index/programok|index/gasztronomia|index/turazas|index/utazasi-praktikak)\.php$ /%1 [R=301,L,NC]
 
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}\.php -f
-RewriteRule ^(.*)$ $1.php [NC,L]
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+?)/?$ $1.php [NC,L]

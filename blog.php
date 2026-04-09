@@ -79,11 +79,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userData && isset($_POST['text']))
 if (isset($_GET['like'])) {
     $id = (int)$_GET['like'];
     $postsAll = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
-    if (isset($postsAll[$id])) {
-        $postsAll[$id]['likes'] = (int)($postsAll[$id]['likes'] ?? 0) + 1;
-        file_put_contents($postsFile, json_encode($postsAll, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+
+    if (!isset($postsAll[$id])) {
+        header("Location: blog.php");
+        exit();
     }
-    header("Location: blog.php");
+
+    if (!isset($_SESSION['user_name'])) {
+        header("Location: login.php?msg=like_login");
+        exit();
+    }
+
+    $likeKey = 'liked_posts';
+    if (!isset($_SESSION[$likeKey]) || !is_array($_SESSION[$likeKey])) {
+        $_SESSION[$likeKey] = [];
+    }
+
+    if (in_array($id, $_SESSION[$likeKey], true)) {
+        header("Location: blog.php?msg=already_liked");
+        exit();
+    }
+
+    $postsAll[$id]['likes'] = (int)($postsAll[$id]['likes'] ?? 0) + 1;
+    $_SESSION[$likeKey][] = $id;
+
+    file_put_contents($postsFile, json_encode($postsAll, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    header("Location: blog.php?msg=liked");
+    exit();
+}
+
+// DISLIKE
+if (isset($_GET['dislike'])) {
+    $id = (int)$_GET['dislike'];
+    $postsAll = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
+
+    if (!isset($postsAll[$id])) {
+        header("Location: blog.php");
+        exit();
+    }
+
+    if (!isset($_SESSION['user_name'])) {
+        header("Location: login.php?msg=like_login");
+        exit();
+    }
+
+    $dislikeKey = 'disliked_posts';
+    if (!isset($_SESSION[$dislikeKey]) || !is_array($_SESSION[$dislikeKey])) {
+        $_SESSION[$dislikeKey] = [];
+    }
+
+    if (in_array($id, $_SESSION[$dislikeKey], true)) {
+        header("Location: blog.php?msg=already_disliked");
+        exit();
+    }
+
+    $postsAll[$id]['dislikes'] = (int)($postsAll[$id]['dislikes'] ?? 0) + 1;
+    $_SESSION[$dislikeKey][] = $id;
+
+    file_put_contents($postsFile, json_encode($postsAll, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    header("Location: blog.php?msg=disliked");
     exit();
 }
 
@@ -91,71 +145,7 @@ if (isset($_GET['like'])) {
 $posts = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
 $userLoggedIn = ($userData !== null);
 
-$adItems = [
-    ["icon" => "fa-star", "color" => "#ffcc00", "text" => "Castellum Hotel Hollókő"],
-    ["icon" => "fa-tint", "color" => "#00d2ff", "text" => "Tó Wellness Hotel Bánk"],
-    ["icon" => "fa-leaf", "color" => "#a2d043", "text" => "Főnix Wellness Resort"],
-    ["icon" => "fa-bed", "color" => "#90a4ae", "text" => "Cédrus Club Hotel"],
-    ["icon" => "fa-building-o", "color" => "#78909c", "text" => "Salgó Hotel"],
-    ["icon" => "fa-fort-awesome", "color" => "#e1bee7", "text" => "Kastélyhotel Sasvár"],
-    ["icon" => "fa-home", "color" => "#8d6e63", "text" => "Boróka Vendégház"],
-    ["icon" => "fa-water", "color" => "#4fc3f7", "text" => "Bánki-tó Vendégház"],
-    ["icon" => "fa-university", "color" => "#cfd8dc", "text" => "Prónay-kastély"],
-    ["icon" => "fa-diamond", "color" => "#b3e5ff", "text" => "Mátra Mona Luxury"],
-    ["icon" => "fa-coffee", "color" => "#a1887f", "text" => "Nádas fogadó Teresztenye"],
-    ["icon" => "fa-header", "color" => "#546e7a", "text" => "Teleki-Degenfeld Kastély"],
-    ["icon" => "fa-home", "color" => "#ffab91", "text" => "Piros Csizma Vendégház"],
-    ["icon" => "fa-map", "color" => "#81c784", "text" => "Galagonya Vendégház"],
-    ["icon" => "fa-lightbulb-o", "color" => "#fff176", "text" => "Hétlámpás Vendégház"],
-    ["icon" => "fa-cutlery", "color" => "#ff8a65", "text" => "Felső Fogadó Felsőtold"],
-    ["icon" => "fa-building", "color" => "#ce93d8", "text" => "FeteKert Apartmanok"],
-    ["icon" => "fa-sun-o", "color" => "#ffd54f", "text" => "Napfénydomb Vendégház"],
-    ["icon" => "fa-tent", "color" => "#4db6ac", "text" => "Nádas Camping Bánk"],
-    ["icon" => "fa-tree", "color" => "#66bb6a", "text" => "Bárna Vadász- és Pihenőház"],
-    ["icon" => "fa-fire", "color" => "#ff7043", "text" => "Somoskői Kirándulóközpont"],
-    ["icon" => "fa-tag", "color" => "#ba68c8", "text" => "Kaláris Vendégház"],
-    ["icon" => "fa-university", "color" => "#90caf9", "text" => "Templomvölgy Resort"],
-    ["icon" => "fa-compass", "color" => "#4caf50", "text" => "Mátra Kemping Sástó"],
-    ["icon" => "fa-home", "color" => "#9575cd", "text" => "Tóparti Apartman"],
-    ["icon" => "fa-bed", "color" => "#4fc3f7", "text" => "Zagyva-völgyi Vendégház"],
-    ["icon" => "fa-fort-awesome", "color" => "#8d6e63", "text" => "Várhegy Panzió Nógrád"],
-    ["icon" => "fa-key", "color" => "#f48fb1", "text" => "Cserhát Kapuja Nézsa"],
-    ["icon" => "fa-home", "color" => "#a5d6a7", "text" => "Hollóköves Vendégház"],
-    ["icon" => "fa-university", "color" => "#b0bec5", "text" => "Eresztvényi Turistaház"],
-    ["icon" => "fa-building-o", "color" => "#90a4ae", "text" => "Rétsági Panzió"],
-    ["icon" => "fa-bed", "color" => "#81c784", "text" => "Tereskei Vendégház"],
-    ["icon" => "fa-header", "color" => "#5c6bc0", "text" => "Berceli Kastély"],
-    ["icon" => "fa-home", "color" => "#ffcc80", "text" => "Kutasó Apartman"],
-    ["icon" => "fa-tint", "color" => "#81d4fa", "text" => "Palotási Tóparti Ház"],
-    ["icon" => "fa-users", "color" => "#ce93d8", "text" => "Mátraverebélyi Zarándokház"],
-    ["icon" => "fa-university", "color" => "#d1c4e9", "text" => "Szentkúti Kegyhely Szálló"],
-    ["icon" => "fa-bed", "color" => "#aed581", "text" => "Legéndi Vendégház"],
-    ["icon" => "fa-money", "color" => "#66bb6a", "text" => "Nógrádsipeki Pihenő"],
-    ["icon" => "fa-money", "color" => "#9ccc65", "text" => "Felsőpetényi Vendégház"],
-    ["icon" => "fa-cutlery", "color" => "#ffb74d", "text" => "Karancssági Fogadó"],
-    ["icon" => "fa-home", "color" => "#4fc3f7", "text" => "Ipolyvecei Pihenőház"],
-    ["icon" => "fa-tent", "color" => "#26a69a", "text" => "Diósjenői Kemping"],
-    ["icon" => "fa-tree", "color" => "#8d6e63", "text" => "Börzsönyi Turistaház"],
-    ["icon" => "fa-mountain", "color" => "#78909c", "text" => "Somlyó-hegyi Apartman"],
-    ["icon" => "fa-university", "color" => "#9575cd", "text" => "Cserhátsurányi Kastélyszálló"],
-    ["icon" => "fa-bed", "color" => "#dce775", "text" => "Endrefalvai Vendégház"],
-    ["icon" => "fa-star", "color" => "#f06292", "text" => "Garábi Élményszálló"],
-    ["icon" => "fa-star", "color" => "#ffcc00", "text" => "Castellum Hotel Hollókő 4⭐"],
-    ["icon" => "fa-tint", "color" => "#00d2ff", "text" => "Tó Wellness Hotel Bánk 4⭐"],
-    ["icon" => "fa-leaf", "color" => "#a2d043", "text" => "Főnix Wellness Resort 4 ⭐"],
-    ["icon" => "fa-bed", "color" => "#90a4ae", "text" => "Cédrus Club Hotel 4⭐"],
-    ["icon" => "fa-building-o", "color" => "#78909c", "text" => "Salgó Hotel 3⭐"],
-    ["icon" => "fa-fort-awesome", "color" => "#e1bee7", "text" => "Kastélyhotel Sasvár 4⭐"],
-    ["icon" => "fa-home", "color" => "#8d6e63", "text" => "Boróka Vendégház 3⭐"],
-    ["icon" => "fa-water", "color" => "#4fc3f7", "text" => "Bánki-tó Vendégház 3⭐"],
-    ["icon" => "fa-university", "color" => "#cfd8dc", "text" => "Prónay-kastély Alsópetény 💎"],
-    ["icon" => "fa-diamond", "color" => "#b3e5ff", "text" => "Mátra Mona Luxury Apartment 💎"],
-    ["icon" => "fa-header", "color" => "#546e7a", "text" => "Teleki-Degenfeld Kastélyszálló"],
-    ["icon" => "fa-tent", "color" => "#4db6ac", "text" => "Nádas Camping Bánk ⛺"],
-    ["icon" => "fa-tree", "color" => "#66bb6a", "text" => "Börzsönyi Turistaház Diósjenő"],
-    ["icon" => "fa-sun-o", "color" => "#ffd54f", "text" => "Napfénydomb Vendégház Mátraszele"],
-    ["icon" => "fa-users", "color" => "#ce93d8", "text" => "Mátraverebélyi Zarándokház 🏨"],
-];
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -288,6 +278,7 @@ $adItems = [
         .delete-post-btn:hover { background-color: #cc0000 !important; transform: scale(1.15); }
         .delete-post-btn i { font-size: 14px; }
         .status-msg { padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 20px; font-weight: 600; font-size: 20px; backdrop-filter: blur(8px); animation: fadeInDown 0.5s ease; }
+        .post-feedback { display: none; margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 700; color: #000 !important; text-shadow: none !important; }
         .msg-success { background: rgba(25, 135, 84, 0.3); border: 1px solid #198754; color: #2ecc71; }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         body.blog-page .composer{ background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #45489a; }
@@ -393,6 +384,14 @@ $adItems = [
                     <div id="msg-box">
                         <?php if (isset($_GET['msg']) && $_GET['msg'] == 'torolve'): ?>
                             <div class="status-msg msg-success">✅ A bejegyzésed sikeresen törölve!</div>
+                        <?php elseif (isset($_GET['msg']) && $_GET['msg'] == 'liked'): ?>
+                            <div class="status-msg msg-success">❤️ A like rögzítve!</div>
+                        <?php elseif (isset($_GET['msg']) && $_GET['msg'] == 'already_liked'): ?>
+                            <div class="status-msg msg-success">⚠️ Ezt a bejegyzést már like-oltad.</div>
+                        <?php elseif (isset($_GET['msg']) && $_GET['msg'] == 'disliked'): ?>
+                            <div class="status-msg msg-success">👎 A "Nem tetszik" rögzítve!</div>
+                        <?php elseif (isset($_GET['msg']) && $_GET['msg'] == 'already_disliked'): ?>
+                            <div class="status-msg msg-success">⚠️ Ezt a bejegyzést már jelölted "Nem tetszik"-kel.</div>
                         <?php endif; ?>
                     </div>
 <div class="hidden-xs hidden-sm" style="margin-left: 260px; margin-bottom: 20px; text-align: center;">
@@ -430,8 +429,16 @@ $adItems = [
 </div>
 
                     <?php if($userLoggedIn): ?>
-                        <div class="composer">
-                            <form action="blog.php" method="POST" enctype="multipart/form-data">
+                        <div class="composer" style="
+    max-width: 900px !important; 
+    width: 100%; 
+    margin-left: auto; 
+    margin-right: auto; 
+    display: block; 
+    box-sizing: border-box; 
+    padding: 10px;
+">
+                            <form action="/Blog" method="POST" enctype="multipart/form-data">
                                 <textarea name="text" class="form-control" rows="5" placeholder="Írj valamit a falra..." required style="background: #fff; color: #000; font-size: 18px; min-height: 66px;"></textarea>
                                 <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                                     <input type="file" name="image" class="form-control" style="max-width: 320px; background:#fff;">
@@ -490,11 +497,11 @@ $adItems = [
 
                             <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.03); padding:10px 15px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
                                 <div style="display:flex; gap:20px; align-items:center;">
-                                    <a href="?like=<?php echo (int)$idx; ?>" style="text-decoration:none; color:<?php echo $likes > 0 ? '#ef4444' : '#94a3b8'; ?>; font-size:22px; display:flex; align-items:center; gap:6px; font-weight:bold;">
-                                        <i class="fa <?php echo $likes > 0 ? 'fa-heart' : 'fa-heart-o'; ?>"></i> <span><?php echo $likes; ?></span>
+                                    <a href="?like=<?php echo (int)$idx; ?>" class="like-btn" data-post-id="<?php echo (int)$idx; ?>" style="text-decoration:none; color:<?php echo $likes > 0 ? '#ef4444' : '#94a3b8'; ?>; font-size:22px; display:flex; align-items:center; gap:6px; font-weight:bold;">
+                                        <i class="fa <?php echo $likes > 0 ? 'fa-heart' : 'fa-heart-o'; ?>"></i> <span class="like-count"><?php echo $likes; ?></span>
                                     </a>
-                                    <a href="javascript:void(0)" onclick="alert('Nem tetszik rögzítve!');" style="text-decoration:none; color:#94a3b8; font-size:22px; display:flex; align-items:center; gap:6px;" title="Nem tetszik">
-                                        <i class="fa fa-thumbs-down"></i>
+                                    <a href="?dislike=<?php echo (int)$idx; ?>" class="dislike-btn" data-post-id="<?php echo (int)$idx; ?>" style="text-decoration:none; color:#94a3b8; font-size:22px; display:flex; align-items:center; gap:6px;" title="Nem tetszik">
+                                        <i class="fa fa-thumbs-down"></i> <span class="dislike-count"><?php echo (int)($p['dislikes'] ?? 0); ?></span>
                                     </a>
                                     <a href="javascript:void(0)" onclick="reportPost(<?php echo $idx; ?>)" style="text-decoration:none; color:#64748b; font-size:14px; display:flex; align-items:center; gap:6px;" title="Bejegyzés jelentése">
                                         <i class="fa fa-flag"></i> Jelentés
@@ -506,6 +513,7 @@ $adItems = [
                                     </a>
                                 <?php endif; ?>
                             </div>
+                            <div class="post-feedback" style="display:none; margin-top:10px; padding:10px 12px; border-radius:10px; font-size:14px; font-weight:600;"></div>
                         </div>
                         <?php endforeach; ?>
                     </div>
@@ -518,7 +526,7 @@ $adItems = [
            
             <footer class="premium-footer">
                 <p>
-                    <a href="../Proofiles.php" class="credits-link" style="color: inherit; text-decoration: none; cursor: pointer;">
+                    <a href="/editors" class="credits-link" style="color: inherit; text-decoration: none; cursor: pointer;">
                         Nógrádi csodák © Vizsgaremek . 2026 // Készítette: #F.Melinda és #M.István
                     </a>
                 </p>
@@ -765,8 +773,35 @@ $adItems = [
                 background: '#0f172a',
                 color: '#fff'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({ title: 'Rögzítve!', text: 'A moderátoraink hamarosan átnézik a bejegyzést.', icon: 'success', background: '#0f172a', color: '#fff' });
+                if (result.isConfirmed && result.value) {
+                    fetch('report_process.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                        body: `post_idx=${encodeURIComponent(idx)}&reason=${encodeURIComponent(result.value)}`
+                    })
+                    .then(response => response.text().then(text => ({ ok: response.ok, text: text.trim() })))
+                    .then(result => {
+                        if (!result.ok) {
+                            throw new Error(result.text || 'Hiba');
+                        }
+
+                        Swal.fire({
+                            title: 'Rögzítve!',
+                            text: 'A moderátoraink hamarosan átnézik...',
+                            icon: 'success',
+                            background: '#0f172a',
+                            color: '#fff'
+                        });
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            title: 'Hiba!',
+                            text: 'Nem sikerült elküldeni a jelentést.',
+                            icon: 'error',
+                            background: '#0f172a',
+                            color: '#fff'
+                        });
+                    });
                 }
             });
         }
@@ -781,6 +816,103 @@ $adItems = [
                 setTimeout(() => msg.remove(), 600);
             }
         }, 4000);
+    </script>
+
+    <script>
+        function showPostFeedback(btn, message, isError) {
+            const postCard = btn.closest('.post-card');
+            if (!postCard) return;
+
+            const box = postCard.querySelector('.post-feedback');
+            if (!box) return;
+
+            box.style.display = 'block';
+            box.style.background = isError ? 'rgba(239, 68, 68, 0.18)' : 'rgba(34, 197, 94, 0.18)';
+            box.style.border = isError ? '1px solid rgba(239, 68, 68, 0.45)' : '1px solid rgba(34, 197, 94, 0.45)';
+            box.style.color = '#000000';
+            box.style.textShadow = 'none';
+            box.style.fontWeight = '700';
+            box.textContent = message;
+
+            clearTimeout(box._hideTimer);
+            box._hideTimer = setTimeout(function() {
+                box.style.display = 'none';
+                box.textContent = '';
+            }, 2500);
+        }
+
+        document.querySelectorAll('.like-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(event) {
+                event.preventDefault();
+                const likeUrl = this.getAttribute('href');
+                const likeCountEl = this.querySelector('.like-count');
+                const iconEl = this.querySelector('i');
+
+                fetch(likeUrl, { credentials: 'same-origin' })
+                    .then(function(response) {
+                        return response.text().then(function(text) {
+                            return { ok: response.ok, text: text.trim() };
+                        });
+                    })
+                    .then(function(result) {
+                        if (result.text.indexOf('already_liked') !== -1) {
+                            showPostFeedback(btn, 'Ezt már like-oltad.', true);
+                            return;
+                        }
+                        if (result.text.indexOf('liked') !== -1) {
+                            const currentCount = parseInt(likeCountEl.textContent, 10) || 0;
+                            if (currentCount === 0) {
+                                likeCountEl.textContent = '1';
+                                iconEl.classList.remove('fa-heart-o');
+                                iconEl.classList.add('fa-heart');
+                                btn.style.color = '#ef4444';
+                            }
+                            showPostFeedback(btn, 'Like rögzítve.', false);
+                            return;
+                        }
+                        showPostFeedback(btn, 'Nem sikerült a like.', true);
+                    })
+                    .catch(function() {
+                        showPostFeedback(btn, 'Hiba történt a like mentésekor.', true);
+                    });
+            });
+        });
+
+        document.querySelectorAll('.dislike-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(event) {
+                event.preventDefault();
+                const dislikeUrl = this.getAttribute('href');
+                const countEl = this.querySelector('.dislike-count');
+                const iconEl = this.querySelector('i');
+
+                fetch(dislikeUrl, { credentials: 'same-origin' })
+                    .then(function(response) {
+                        return response.text().then(function(text) {
+                            return { ok: response.ok, text: text.trim() };
+                        });
+                    })
+                    .then(function(result) {
+                        if (result.text.indexOf('already_disliked') !== -1) {
+                            showPostFeedback(btn, 'Ezt már dislike-oltad.', true);
+                            return;
+                        }
+                        if (result.text.indexOf('disliked') !== -1) {
+                            const currentCount = parseInt(countEl.textContent, 10) || 0;
+                            if (currentCount === 0) {
+                                countEl.textContent = '1';
+                                iconEl.style.color = '#ef4444';
+                                btn.style.color = '#ef4444';
+                            }
+                            showPostFeedback(btn, 'Dislike rögzítve.', false);
+                            return;
+                        }
+                        showPostFeedback(btn, 'Nem sikerült a dislike mentése.', true);
+                    })
+                    .catch(function() {
+                        showPostFeedback(btn, 'Hiba történt a dislike mentésekor.', true);
+                    });
+            });
+        });
     </script>
        <?php include 'ertekeles_statisztika.php'; ?> 
     <?php include "valuta/api_valuta.php"; ?>

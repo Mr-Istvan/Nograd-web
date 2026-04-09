@@ -3,25 +3,19 @@ require_once __DIR__ . '/init.php';
 
 // 1. Értékelés indítása (AJAX kérésnél)
 if (isset($_GET['action']) && $_GET['action'] == 'start') {
-    $ip_hash = hash('sha256', $_SERVER['REMOTE_ADDR']);
+    $cookie_nev = "mar_szavazott_24h";
     $cooldownHours = 24;
     $cooldownSeconds = $cooldownHours * 3600;
 
-    $checkSql = "SELECT eid, evege FROM ertekelo WHERE ip_hash = '$ip_hash' AND evege IS NOT NULL ORDER BY evege DESC LIMIT 1";
-    $checkRes = mysqli_query($conn, $checkSql);
-    $lastEval = $checkRes ? mysqli_fetch_assoc($checkRes) : null;
-
-    if ($lastEval && !empty($lastEval['evege'])) {
-        $lastTime = strtotime($lastEval['evege']);
-        if ($lastTime !== false && (time() - $lastTime) < $cooldownSeconds) {
-            $remaining = $cooldownSeconds - (time() - $lastTime);
-            $hours = floor($remaining / 3600);
-            $minutes = floor(($remaining % 3600) / 60);
-            echo "WAIT|" . $hours . "|" . $minutes;
-            exit;
-        }
+    if (isset($_COOKIE[$cookie_nev])) {
+        $remaining = $cooldownSeconds;
+        $hours = floor($remaining / 3600);
+        $minutes = floor(($remaining % 3600) / 60);
+        echo "WAIT|" . $hours . "|" . $minutes;
+        exit;
     }
 
+    $ip_hash = hash('sha256', $_SERVER['REMOTE_ADDR']);
     $sql = "INSERT INTO ertekelo (ip_hash) VALUES ('$ip_hash')";
     if (mysqli_query($conn, $sql)) {
         $_SESSION['current_eval_id'] = mysqli_insert_id($conn);
@@ -53,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answers'])) {
     mysqli_query($conn, "UPDATE ertekelo SET evege = NOW(), osszp = $total_points, eatlag = $eatlag WHERE eid = $eid");
 
     unset($_SESSION['current_eval_id']);
+
+    setcookie("mar_szavazott_24h", "igen", time() + 86400, "/");
     
     // Átirányítás sikerüzenettel
     header("Location: ertekeles.php?msg=send");
