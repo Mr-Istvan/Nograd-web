@@ -15,6 +15,11 @@ if (isset($_SESSION['status'])) {
 $path_prefix = (basename(dirname($_SERVER['PHP_SELF'])) == 'index') ? '../' : '';
 $turizm_base = ($path_prefix == '') ? 'index/' : '';
 
+if (isset($_SERVER['REQUEST_URI']) && preg_match('~/(index/)?(szallasok|latnivalok|programok|gasztronomia|turazas|utazasi-praktikak)(?:\.php)?/?$~', $_SERVER['REQUEST_URI'])) {
+    $path_prefix = '../';
+    $turizm_base = '';
+}
+
 ob_start(); 
 ?>
 
@@ -209,7 +214,6 @@ ob_start();
 
             <?php 
             if (isset($_SESSION['status']) && ($_SESSION['status'] === 'C' || $_SESSION['status'] === 'B')): 
-                // Szín meghatározása a rang alapján
                 $hd_color = ($_SESSION['status'] === 'C') ? '#0ea5e9' : '#b4865a';
             ?>
             <li>
@@ -229,7 +233,6 @@ ob_start();
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Hamburger és panel
     $('#mobile-hamburger').on('click', function(e) {
         e.preventDefault();
         $(this).toggleClass('active');
@@ -237,7 +240,6 @@ $(document).ready(function() {
         $('body').css('overflow', $(this).hasClass('active') ? 'hidden' : 'auto');
     });
 
-    // Lenyitható kategóriák (mint PC-n)
     $('.m-section-toggle').on('click', function() {
         var parent = $(this).parent('.m-has-submenu');
         var submenu = $(this).next('.m-submenu');
@@ -245,10 +247,9 @@ $(document).ready(function() {
         submenu.slideToggle(300);
         parent.toggleClass('open');
 
-        $('.m-has-submenu').not(parent).removeClass('open').find('.m-submenu').slideUp(300); // Csak egy lehet nyitva
+        $('.m-has-submenu').not(parent).removeClass('open').find('.m-submenu').slideUp(300);
     });
 
-    // Automatikus zárás minden menüpont kattintásnál
     $('.mobile-nav-list a').on('click', function() {
         var href = $(this).attr('href') || '';
 
@@ -256,13 +257,11 @@ $(document).ready(function() {
         $('#mobile-panel').stop(true, true).slideUp(300);
         $('body').css('overflow', 'auto');
 
-        // Ha almenü link volt, a szülő almenüt is zárjuk
         if (href.indexOf('#') !== -1) {
             $(this).closest('.m-has-submenu').removeClass('open').find('.m-submenu').stop(true, true).slideUp(300);
         }
     });
 
-    // Biztos reset oldalbetöltéskor, hogy ne ugráljon vissza a profil blokk
     $('#mobile-panel').hide();
     $('.m-has-submenu').removeClass('open').find('.m-submenu').hide();
     $('#mobile-hamburger').removeClass('active');
@@ -271,4 +270,3 @@ $(document).ready(function() {
 </script>
 
 <?php $kozos_mobile = ob_get_clean(); ?>
-

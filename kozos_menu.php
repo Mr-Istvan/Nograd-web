@@ -14,9 +14,6 @@ if (isset($_SESSION['status'])) {
 // Biztosítjuk, hogy az elérési útvonalak a blogból is jók legyenek
 $path_prefix = (basename(dirname($_SERVER['PHP_SELF'])) == 'index') ? '../' : '';
 $turizm_base = ($path_prefix == '') ? 'index/' : '';
-$pretty_url = function($prettyPath, $fallbackPath) use ($path_prefix) {
-    return ($path_prefix == '../') ? '../' . ltrim($prettyPath, '/') : $prettyPath;
-};
 
 $back_url = function($fallbackPath) use ($path_prefix) {
     return $path_prefix . $fallbackPath;
@@ -36,7 +33,7 @@ ob_start();
         <li class="menu-section pc-menu-section <?= (in_array($current_page, $kiemelt_pages ?? []) || ($current_page == 'index.php' && strpos($_SERVER['REQUEST_URI'], '#') !== false)) ? 'active' : '' ?>">
             <span class="menu-label" style="cursor: pointer;">Kiemelt</i></span>
             <ul class="submenu pc-submenu <?= (in_array($current_page, $kiemelt_pages ?? []) || ($current_page == 'index.php' && strpos($_SERVER['REQUEST_URI'], '#') !== false)) ? 'open' : '' ?>" style="display: <?= (in_array($current_page, $kiemelt_pages ?? []) || ($current_page == 'index.php' && strpos($_SERVER['REQUEST_URI'], '#') !== false)) ? 'block' : 'none' ?>;">
-        <li><a href="<?= $pretty_url('/gallery', $path_prefix . 'galeria.php') ?>">Galéria</a></li>
+                <li><a href="<?= $path_prefix ?>galeria.php">Galéria</a></li>
                 <li><a href="<?= $path_prefix ?>index.php#video">Bemutató</a></li>
                 <li><a href="<?= $path_prefix ?>index.php#map">Térképek</a></li>
                 <li><a href="<?= $path_prefix ?>index.php#contact">Kapcsolat</a></li>
@@ -44,14 +41,14 @@ ob_start();
         </li>
 
         <li class="menu-section pc-menu-section <?= in_array($current_page, $felfedezes_pages ?? []) ? 'active' : '' ?>">
-            <span class="menu-label" style="cursor: pointer;">Felfedezés</i></span>
+            <span class="menu-label" style="cursor: pointer;">Felfedezés</span>
             <ul class="submenu pc-submenu <?= in_array($current_page, $felfedezes_pages ?? []) ? 'open' : '' ?>" style="display: <?= in_array($current_page, $felfedezes_pages ?? []) ? 'block' : 'none' ?>;">
-                <li><a href="<?= $pretty_url('/latnivalok', $turizm_base . 'latnivalok.php') ?>">Látnivalók</a></li>
-                <li><a href="<?= $pretty_url('/programok', $turizm_base . 'programok.php') ?>">Programok</a></li>
-                <li><a href="<?= $pretty_url('/szallasok', $turizm_base . 'szallasok.php') ?>">Szállások</a></li>
-                <li><a href="<?= $pretty_url('/gasztronomia', $turizm_base . 'gasztronomia.php') ?>">Gasztro</a></li>
-                <li><a href="<?= $pretty_url('/turazas', $turizm_base . 'turazas.php') ?>">Túrázás</a></li>
-                <li><a href="<?= $pretty_url('/utazasi-praktikak', $turizm_base . 'utazasi-praktikak.php') ?>">Praktikák</a></li>
+                <li><a href="<?= $turizm_base ?>latnivalok.php">Látnivalók</a></li>
+                <li><a href="<?= $turizm_base ?>programok.php">Programok</a></li>
+                <li><a href="<?= $turizm_base ?>szallasok.php">Szállások</a></li>
+                <li><a href="<?= $turizm_base ?>gasztronomia.php">Gasztro</a></li>
+                <li><a href="<?= $turizm_base ?>turazas.php">Túrázás</a></li>
+                <li><a href="<?= $turizm_base ?>utazasi-praktikak.php">Praktikák</a></li>
             </ul>
         </li>
 
@@ -61,7 +58,7 @@ ob_start();
     <ul class="submenu pc-submenu" style="display: none;">
         
         <li class="<?= $current_page == 'blog.php' ? 'active' : '' ?>">
-                <a href="<?= $pretty_url('/Blog', $path_prefix . 'blog.php') ?>">Blog-fal</a>
+                <a href="<?= $path_prefix ?>blog.php">Blog-fal</a>
         </li>
 
         <?php if(isset($_SESSION['user_name'])): ?>
@@ -76,7 +73,7 @@ ob_start();
                 $hd_color = ($_SESSION['status'] === 'C') ? '#0ea5e9' : '#b4865a';
             ?>
             <li>
-                <a href="<?= $pretty_url('/HelpDesk', $path_prefix . 'helpdesk.php') ?>" style="color: <?= $hd_color ?>; font-weight: 800; text-shadow: 0 0 10px <?= $hd_color ?>88;">
+                <a href="<?= $path_prefix ?>helpdesk.php" style="color: <?= $hd_color ?>; font-weight: 800; text-shadow: 0 0 10px <?= $hd_color ?>88;">
                     <i class="fa fa-shield"></i> HelpDesk
                 </a>
             </li>

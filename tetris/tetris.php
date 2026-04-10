@@ -130,7 +130,7 @@ require_once __DIR__ . '/init.php';
         </div>
 
         <div class="controls">
-            <button onclick="window.location.href='Blog.php'" id="nogradBtn" class="control-btn">Nógrád</button>
+            <button onclick="window.location.href='../blog.php'" id="nogradBtn" class="control-btn">Nógrád</button>
             <button onclick="startGame()" id="startBtn" class="control-btn">Start</button>
             <button onclick="pauseGame()" id="pauseBtn" class="control-btn">Pause</button>
             <button onclick="exitGameBtn()" id="exitBtn" class="control-btn">Exit</button>
@@ -206,7 +206,7 @@ require_once __DIR__ . '/init.php';
         <div id="leaderboardList"></div>
         
         <button onclick="backToGame()" id="backBtn">VISSZA A FŐMENÜBE</button>
-        <button onclick="window.location.href='http://nogradcsodak.szakdoga.net/blog.php'" id="nogradBackBtn">NÓGRÁD BLOG OLDALRA</button>
+        <button onclick="window.location.href='../blog.php'" id="nogradBackBtn">NÓGRÁD BLOG OLDALRA</button>
     </div>
 </div>
 
