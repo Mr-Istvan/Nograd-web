@@ -1,300 +1,791 @@
-{
-    "2": {
+[
+    {
         "user": "aaaaa",
         "text": "Azta, nézzétek ezeket a sziklaformációkat a tanösvény mellett!",
-        "time": "16:34",
+        "date": "2026-03-01",
+        "time": "09:34:00",
         "dislikes": 1,
         "likes": 8,
         "votes": {
-            "proba": "liked"
-        }
+            "Bodree": "liked"
+        },
+        "replies": [
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775611652_20.jpg",
+                "text": "Gyönyörű kép! Melyik nógrádi tanösvény ez pontosan?",
+                "date": "2026-03-01",
+                "time": "11:04:00"
+            }
+        ]
     },
-    "3": {
+    {
         "user": "aaaaa",
         "text": "Éppen most foglaltam le a szállást a jövő havi balatoni hétvégére.",
-        "time": "16:47",
+        "date": "2026-03-02",
+        "time": "12:47:00",
         "dislikes": 2,
         "likes": 2
     },
-    "4": {
+    {
         "user": "aaaaa",
         "text": "A hotel reggelije egyszerűen fenséges, imádom a házi lekvárokat.",
-        "time": "16:47",
+        "date": "2026-03-02",
+        "time": "12:47:30",
         "likes": 1
     },
-    "5": {
+    {
         "user": "aaaaa",
         "text": "Találtam egy eldugott kis éttermet az erdő szélén, isteni a vadpörkölt.",
-        "time": "16:48",
+        "date": "2026-03-04",
+        "time": "13:48:00",
         "votes": [],
         "dislikes": 0,
         "likes": 0
     },
-    "6": {
+    {
         "user": "aaaaa",
         "text": "A túraútvonal kicsit meredek volt, de a panoráma kárpótolt mindenért.",
-        "time": "16:52",
+        "date": "2026-03-06",
+        "time": "16:52:00",
         "dislikes": 1,
         "likes": 1,
         "votes": []
     },
-    "7": {
+    {
         "user": "aaaaa",
         "text": "Béreltünk bicikliket, körbetekerjük a tavat délután.",
-        "time": "16:52"
+        "date": "2026-03-06",
+        "time": "16:52:30"
     },
-    "8": {
+    {
         "user": "aaaaa",
         "text": "A szállásadó nagyon kedves, még házi pálinkával is megkínált minket.",
-        "time": "16:59"
+        "date": "2026-03-08",
+        "time": "10:59:00"
     },
-    "9": {
+    {
         "user": "aaaaa",
         "text": "Ma este a főtéren lesz egy nagy gasztrofesztivál, mindenképp kimegyünk.",
-        "time": "17:56"
+        "date": "2026-03-10",
+        "time": "17:56:00"
     },
-    "10": {
+    {
         "user": "aaaaa",
         "text": "Frissítettem a profilomat, most már látszanak a legutóbbi túrafotóim.",
-        "time": "19:32",
+        "date": "2026-03-12",
+        "time": "19:32:00",
         "avatar": "default_avatar.png",
         "votes": [],
         "dislikes": 0,
         "likes": 0
     },
-    "11": {
+    {
         "user": "aaaaa",
         "text": "A faházban nincs térerő, de pont erre a nyugalomra volt szükségem.",
-        "time": "19:59",
+        "date": "2026-03-14",
+        "time": "19:59:00",
         "likes": 10,
         "dislikes": 13,
         "votes": {
-            "proba": "disliked"
+            "Zoli88": "disliked"
         }
     },
-    "12": {
+    {
         "user": "aaaaa",
         "text": "Sikerült asztalt foglalni a város legjobb steakhouse-ába, alig várom!",
-        "time": "20:08",
+        "date": "2026-03-16",
+        "time": "20:08:00",
         "votes": {
-            "proba": "liked"
+            "Kati99": "liked"
         },
         "likes": 1
     },
-    "13": {
+    {
         "user": "aaaaa",
         "text": "Megnéztük a naplementét a várból, csodás befejezése volt a napnak.",
-        "time": "20:25",
+        "date": "2026-03-18",
+        "time": "20:25:00",
         "likes": 1,
         "dislikes": 1
     },
-    "14": {
+    {
         "user": "aaaaa",
         "text": "A holnapi reggeli kávét már a tóparti stégen fogom meginni.",
-        "time": "20:25",
+        "date": "2026-03-20",
+        "time": "08:25:30",
         "votes": {
-            "proba": "disliked"
+            "Bodree": "disliked"
         },
-        "dislikes": 1
+        "dislikes": 1,
+        "replies": [
+            {
+                "user": "Bodree",
+                "name": "@Bodree",
+                "avatar": "1775071099_2.jpg",
+                "text": "Szállás oldal nagyon jól megváltozott és még 1 kattintásra elvisz a szállás foglalásra :D ,nagyon szuper",
+                "image": "",
+                "date": "2026-03-20",
+                "time": "09:38:25"
+            },
+            {
+                "user": "TuraMester",
+                "name": "@TuraMester",
+                "avatar": "1775071099_2.jpg",
+                "text": "Jó pihenést! A tó környéki erdő is megér egy nagy sétát.",
+                "image": "",
+                "date": "2026-03-20",
+                "time": "09:38:30"
+            },
+            {
+                "user": "Zoli88",
+                "name": "@Zoli88",
+                "avatar": "1775071099_2.jpg",
+                "text": "Irigykedem, gyönyörű lehet ott a reggel!",
+                "image": "",
+                "date": "2026-03-20",
+                "time": "09:38:35"
+            }
+        ],
+        "reply_count": 3
     },
-    "15": {
+    {
         "user": "aaaaa",
         "text": "Kicsit későn értünk vissza a túráról, de a csillagos ég kárpótolt.",
-        "time": "02:23"
+        "date": "2026-03-22",
+        "time": "02:23:00"
     },
-    "16": {
+    {
         "user": "aaaaa",
         "text": "Már most hiányzik a hegyi levegő és a csend.",
-        "time": "02:23"
+        "date": "2026-03-22",
+        "time": "02:23:30"
     },
-    "17": {
+    {
         "user": "aaaaa",
         "text": "Jó reggelt! Indul a nap egy kiadós rántottával a hotel teraszán.",
-        "time": "07:13",
+        "date": "2026-03-24",
+        "time": "07:13:00",
         "likes": 2,
         "votes": {
-            "proba": "liked"
+            "TuraMester": "liked"
         },
         "dislikes": 0
     },
-    "18": {
+    {
         "user": "aaaaa",
         "text": "Hatalmas adagokat adnak ebben a kis útmenti vendéglőben!",
-        "time": "07:13",
+        "date": "2026-03-26",
+        "time": "12:13:30",
         "likes": 1
     },
-    "19": {
+    {
         "user": "aaaaa",
         "text": "A kirándulás során találtunk egy elhagyatott kolostorromot is.",
-        "time": "07:13"
+        "date": "2026-03-28",
+        "time": "14:13:45"
     },
-    "20": {
+    {
         "user": "aaaaa",
         "text": "Összeállítottam egy listát a legjobb bükki kilátóhelyekről.",
-        "time": "08:10"
+        "date": "2026-03-30",
+        "time": "18:10:00"
     },
-    "21": {
+    {
+        "user": "proba",
+        "name": "Próba",
+        "avatar": "1775071099_2.jpg",
+        "text": "Sziasztok! Én is csatlakoztam az oldalhoz. Nagyon tetszik a kezdeményezés, Nógrád a kedvenc megyém!",
+        "date": "2026-03-31",
+        "time": "10:15:00",
+        "likes": 3,
+        "dislikes": 0
+    },
+    {
         "user": "aaaaa",
         "text": "A kemping tiszta, a mosdók modernek, bátran ajánlom sátrazóknak.",
-        "time": "08:15"
+        "date": "2026-04-01",
+        "time": "08:15:00"
     },
-    "22": {
+    {
         "user": "aaaaa",
         "text": "Még egy utolsó csobbanás a medencében indulás előtt.",
-        "time": "08:56"
+        "date": "2026-04-01",
+        "time": "08:56:00"
     },
-    "23": {
+    {
+        "user": "proba",
+        "name": "Próba",
+        "avatar": "1775071099_2.jpg",
+        "text": "Tegnap voltunk Hollókőn, az ófalu még mindig varázslatos. Kár, hogy kicsit esett az eső.",
+        "date": "2026-04-01",
+        "time": "14:20:00",
+        "likes": 5,
+        "dislikes": 0
+    },
+    {
+        "user": "proba",
+        "name": "Próba",
+        "avatar": "1775071099_2.jpg",
+        "text": "Mit szóltok a salgói vár túrához? Gyerekkoromban voltam ott utoljára, érdemes mostanában felmenni?",
+        "date": "2026-04-02",
+        "time": "09:05:00",
+        "likes": 2,
+        "dislikes": 0,
+        "replies": [
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775611652_20.jpg",
+                "text": "Mindenképpen! Hatalmas élmény, nemrég voltunk mi is.",
+                "date": "2026-04-02",
+                "time": "10:10:00"
+            }
+        ]
+    },
+    {
         "user": "aaaaa",
         "text": "Sziasztok! Megérkeztem a gasztrotúrám első állomására.",
-        "time": "09:22",
+        "date": "2026-04-03",
+        "time": "13:22:00",
         "likes": 2,
         "dislikes": 1
     },
-    "24": {
+    {
         "user": "aaaaa",
         "text": "Kipróbáltam a szarvasgombás tésztát, felejthetetlen élmény volt.",
-        "time": "09:23",
+        "date": "2026-04-04",
+        "time": "14:23:00",
         "likes": 1,
         "dislikes": 1
     },
-    "25": {
+    {
         "user": "aaaaa",
-        "text": "10\/10-es pontszámot adok erre a szállodai kiszolgálásra!",
-        "time": "09:23",
+        "text": "10/10-es pontszámot adok erre a szállodai kiszolgálásra!",
+        "date": "2026-04-04",
+        "time": "14:23:30",
         "likes": 1,
         "dislikes": 1
     },
-    "26": {
+    {
         "user": "aaaaa",
         "avatar": "1773813440_5.jpg",
         "text": "Ezt a kilátást nem lehet megunni!",
         "image": "69ba63991df2a.jpg",
-        "time": "2026-03-18 09:34",
+        "date": "2026-04-05",
+        "time": "15:34:00",
         "likes": 1
     },
-    "27": {
+    {
+        "user": "proba",
+        "name": "Próba",
+        "avatar": "1775071099_2.jpg",
+        "text": "Fantasztikus ez az új foglalási rendszer, pikk-pakk találtam szállást a jövő heti kiruccanáshoz.",
+        "date": "2026-04-05",
+        "time": "16:40:00",
+        "likes": 4,
+        "dislikes": 0
+    },
+    {
         "user": "aaaaa",
         "name": "aaaaa",
         "avatar": "1773813440_5.jpg",
         "text": "Nem rossz ez a foglalási rendszer, de mobilon kicsit nehézkes a dátumválasztás.",
         "image": "",
-        "time": "09:48",
+        "date": "2026-04-05",
+        "time": "18:48:00",
         "likes": 1
     },
-    "28": {
+    {
         "user": "aaaaa",
         "name": "aaaaa",
         "avatar": "1773813440_5.jpg",
         "text": "Találtam egy hibát az étlapunkon, de a pincér azonnal orvosolta.",
         "image": "1773824365_1000089643.jpg",
-        "time": "09:59",
+        "date": "2026-04-06",
+        "time": "09:59:00",
         "likes": 6,
         "dislikes": 8
     },
-    "29": {
+    {
         "user": "Krisztike23",
         "name": "Kiss Krisztina",
         "avatar": "1773824858_3.jpg",
         "text": "Azta, de szép autóval vágtatok neki a kirándulásnak! :D",
         "image": "1773825116_Névtelen.jpg",
-        "time": "10:11",
+        "date": "2026-04-06",
+        "time": "10:11:00",
         "likes": 2,
         "dislikes": 1
     },
-    "30": {
+    {
+        "user": "proba",
+        "name": "Próba",
+        "avatar": "1775071099_2.jpg",
+        "text": "Kipróbáltam egy helyi receptet, a palóclevest. Nem lett olyan, mint a nagymamámé, de elfogyott! :D",
+        "date": "2026-04-07",
+        "time": "11:11:00",
+        "likes": 8,
+        "dislikes": 0
+    },
+    {
         "user": "feher@banan.hu",
         "name": "fehér banán",
         "avatar": "1773829438_4.jpg",
         "text": "Hello mindenki! Üdv a blogon, itt mindent megtudtok a legjobb szállásokról.",
         "image": "1773829539_monkki.jpg",
-        "time": "11:25",
+        "date": "2026-04-07",
+        "time": "11:25:00",
         "likes": 1
     },
-    "31": {
+    {
         "user": "Nándy",
         "name": "Magyar Nándor",
         "avatar": "1773830354_1.jpg",
         "text": "Sziaszzzztok, mizujs? Ki hol eszik ma valami finomat?",
         "image": "1773830384_ab67616d00001e024621b6d46cfcec9d5998714b.jfif",
-        "time": "11:39",
-        "likes": 2
+        "date": "2026-04-08",
+        "time": "11:39:00",
+        "likes": 2,
+        "replies": [
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775611652_20.jpg",
+                "text": "Én ma egy jó kis palóclevest főzök otthon!",
+                "date": "2026-04-08",
+                "time": "12:00:00"
+            },
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775611652_20.jpg",
+                "text": "És utána irány a Nógris, döntöm a rekordokat! :D",
+                "date": "2026-04-08",
+                "time": "12:02:00"
+            }
+        ]
     },
-    "32": {
+    {
         "user": "aaaaa",
         "name": "aaaaa",
         "avatar": "1773813440_5.jpg",
         "text": "Sziasztok, küldök egy képet a mai ebédről!",
         "image": "1773849931_felad.jpg",
-        "time": "17:05",
-        "likes": 2
+        "date": "2026-04-09",
+        "time": "09:05:00",
+        "likes": 2,
+        "replies": [
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775611652_20.jpg",
+                "text": "Nagyon jól néz ki! Hol ettétek?",
+                "date": "2026-04-09",
+                "time": "09:59:00"
+            },
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775611652_20.jpg",
+                "text": "Esetleg valami helyi Nógrádi finomság?",
+                "date": "2026-04-09",
+                "time": "10:00:00"
+            },
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775611652_20.jpg",
+                "text": "Amúgy a Nógrisben már 2000 pontom van a Tetris táblán!",
+                "date": "2026-04-09",
+                "time": "10:02:00"
+            },
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775611652_20.jpg",
+                "text": "Gyertek játszani ti is az Üzenőfalon!",
+                "date": "2026-04-09",
+                "time": "10:03:00"
+            }
+        ]
     },
-    "33": {
+    {
         "user": "tészta",
         "name": "azta paszta",
         "avatar": "1774033114_14.jpg",
         "text": "Akkor jó, nagyon finom lett ez a házi tészta a helyi trattoriában!",
         "image": "1774033164_letöltés.jpg",
-        "time": "19:59",
-        "likes": 31
+        "date": "2026-04-09",
+        "time": "10:59:00",
+        "likes": 31,
+        "replies": [
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775611652_20.jpg",
+                "text": "Egészségetekre! A kép alapján el is hiszem, hogy szuper volt.",
+                "date": "2026-04-09",
+                "time": "11:15:00"
+            }
+        ]
     },
-    "34": {
+    {
         "user": "tészta",
         "name": "azta paszta",
         "avatar": "1774033114_14.jpg",
         "text": "Desszertnek pedig megkóstoltuk a környék híres somlói galuskáját is.",
         "image": "1774045157_1773954645_7.jpg",
-        "time": "23:19",
+        "date": "2026-04-09",
+        "time": "11:19:00",
         "likes": 1
     },
-    "35": {
-        "user": "Actim",
-        "name": "Juhász Patrik",
-        "avatar": "1774865443_22.jpg",
-        "text": "asd",
-        "image": "1774865458_PNG_transparency_demonstration_1.png",
-        "time": "12:10",
-        "likes": 5
+    {
+        "user": "proba",
+        "name": "Próba",
+        "avatar": "1775071099_2.jpg",
+        "text": "Láttátok már az új Tetris (Nógris) játékot az oldalon? Zseniális ötlet a fejlesztőktől!",
+        "date": "2026-04-09",
+        "time": "18:30:00",
+        "likes": 12,
+        "dislikes": 0
     },
-    "36": {
+    {
         "user": "HD",
         "name": "HD",
         "avatar": "1774865492_21.jpg",
         "text": "Nem fogom!",
         "image": "",
-        "time": "12:26",
-        "likes": 4
+        "date": "2026-04-10",
+        "time": "11:26:00",
+        "likes": 5,
+        "votes": {
+            "Admin17": "liked"
+        }
     },
-    "37": {
-        "user": "aaaaa",
-        "name": "aaaaa",
-        "avatar": "1774827856_5.jpg",
-        "text": "Kedves Felhasználók! \r\nEttől a perctől, mindeki ki tudja törölni a Posztját!\r\nNagyon köszi, hogy rászántátok az időt a weboldalunk tesztelésére! A visszajelzéseitek rengeteget segítenek a fejlesztésben 😊\r\nKösöznjük!",
-        "image": "1774881423_bagg.jpg",
-        "time": "16:37",
-        "likes": 1
-    },
-    "38": {
+    {
         "user": "Admin17",
         "name": "helpdesk",
         "avatar": "1774922369_20.jpg",
         "text": "Tisztelt Látogatók!\r\nA Blog.oldal fejlesztés alatt!\r\nHa nem működik a felső menüsor ,akkor csak vissza lépéssel tudják elhagyni az oldalt.\r\nMegértésüket. Köszönjük.  ",
         "image": "1775034192_images (10).jpeg",
-        "time": "11:03",
+        "date": "2026-04-10",
+        "time": "11:45:00",
         "likes": 2,
         "dislikes": 1
     },
-    "39": {
+    {
         "user": "Nyuszi02",
         "name": "",
         "avatar": "1775612227_28.jpg",
-        "text": "Próba szerencse! :D",
+        "text": "Kipróbáltam a Nógris-t, nagyon adja! :D",
         "image": "",
-        "time": "12:37",
-        "likes": 2,
+        "date": "2026-04-10",
+        "time": "12:00:00",
+        "likes": 3,
         "votes": {
             "Nyuszi02": "liked",
-            "proba": "liked"
+            "Admin17": "liked",
+            "Bodree": "liked"
         },
+        "dislikes": 0,
+        "replies": [
+            {
+                "user": "Kati99",
+                "name": "@Kati99",
+                "avatar": "1775071099_2.jpg",
+                "text": "Tényleg? Én még csak most fogom tesztelni.",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:01:00"
+            },
+            {
+                "user": "Zoli88",
+                "name": "@Zoli88",
+                "avatar": "1775071099_2.jpg",
+                "text": "Király lett az oldal, a Tetris meg hab a tortán!",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:02:00"
+            },
+            {
+                "user": "Bodree",
+                "name": "@Bodree",
+                "avatar": "1775071099_2.jpg",
+                "text": "Szállás oldal nagyon jól megváltozott és még 1 kattintásra elvisz a szállás foglalásra :D ,nagyon szuper",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:03:00"
+            },
+            {
+                "user": "Peti_kalandor",
+                "name": "@Peti_kalandor",
+                "avatar": "1775071099_2.jpg",
+                "text": "Hol van ez a gomb pontosan? Meg akarom dönteni a rekordot!",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:04:00"
+            },
+            {
+                "user": "Nyuszi02",
+                "name": "@Nyuszi02",
+                "avatar": "1775071099_2.jpg",
+                "text": "A bal oldali menüben találod a Nógris feliratot.",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:05:00"
+            },
+            {
+                "user": "Peti_kalandor",
+                "name": "@Peti_kalandor",
+                "avatar": "1775071099_2.jpg",
+                "text": "Megvan, köszi! Eddig 400 pont...",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:06:00"
+            },
+            {
+                "user": "Geri_77",
+                "name": "@Geri_77",
+                "avatar": "1775071099_2.jpg",
+                "text": "Én már 3400-nál tartok, gyakoroljatok! :P",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:07:00"
+            },
+            {
+                "user": "Laura_N",
+                "name": "@Laura_N",
+                "avatar": "1775071099_2.jpg",
+                "text": "Nekem a szállásos rész is tetszik, nagyon letisztult.",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:08:00"
+            },
+            {
+                "user": "Laura_N",
+                "name": "@Laura_N",
+                "avatar": "1775071099_2.jpg",
+                "text": "A sziklaformációs képek pedig mesések a galériában.",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:09:00"
+            },
+            {
+                "user": "Kati99",
+                "name": "@Kati99",
+                "avatar": "1775071099_2.jpg",
+                "text": "Na, sikerült egy sort is kiraknom a Tetrisben XD",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:10:00"
+            },
+            {
+                "user": "LaciBá",
+                "name": "@LaciBá",
+                "avatar": "1775071099_2.jpg",
+                "text": "Üdvözlet mindenkinek Nógrádból! Szép lett a blog.",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:11:00"
+            },
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775071099_2.jpg",
+                "text": "Örülünk, hogy tetszik nektek a fejlesztés, jó szórakozást és posztolást!",
+                "image": "",
+                "date": "2026-04-10",
+                "time": "12:12:00"
+            }
+        ],
+        "reply_count": 12
+    },
+    {
+        "user": "proba",
+        "name": "Próba",
+        "avatar": "1775071099_2.jpg",
+        "text": "Új rekordom a Nógrisben: 280 pont! Ki tudja überelni? 😎",
+        "date": "2026-04-10",
+        "time": "15:45:00",
+        "likes": 6,
+        "dislikes": 1
+    },
+    {
+        "user": "proba",
+        "name": "Próba",
+        "avatar": "1775071099_2.jpg",
+        "text": "Jó reggelt mindenkinek! Ma is gyönyörű időnk van, irány a természet! Képeket majd hozok.",
+        "date": "2026-04-11",
+        "time": "10:12:56",
+        "likes": 7,
+        "dislikes": 0
+    },
+    {
+        "user": "Admin17",
+        "name": "helpdesk",
+        "avatar": "1775611652_20.jpg",
+        "text": "Köszönjük mindenkinek a visszajelzéseket a Nógrisről!",
+        "image": "",
+        "date": "2026-04-11",
+        "time": "13:00:00",
+        "likes": 0,
+        "dislikes": 0,
+        "replies": [
+            {
+                "user": "TuraMester",
+                "name": "@TuraMester",
+                "avatar": "1775071099_2.jpg",
+                "text": "Remek fejlesztés!",
+                "image": "",
+                "date": "2026-04-11",
+                "time": "13:01:00"
+            },
+            {
+                "user": "Zoli88",
+                "name": "@Zoli88",
+                "avatar": "1775071099_2.jpg",
+                "text": "Esetleg lesz toplista is hozzá?",
+                "image": "",
+                "date": "2026-04-11",
+                "time": "13:02:00"
+            },
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775071099_2.jpg",
+                "text": "Tervezzük a toplistát is, hamarosan érkezik!",
+                "image": "",
+                "date": "2026-04-11",
+                "time": "13:03:00"
+            },
+            {
+                "user": "Kati99",
+                "name": "@Kati99",
+                "avatar": "1775071099_2.jpg",
+                "text": "Akkor addig gyakorlok ezerrel.",
+                "image": "",
+                "date": "2026-04-11",
+                "time": "13:04:00"
+            },
+            {
+                "user": "Geri_77",
+                "name": "@Geri_77",
+                "avatar": "1775071099_2.jpg",
+                "text": "Várom a kihívást!",
+                "image": "",
+                "date": "2026-04-11",
+                "time": "13:05:00"
+            }
+        ],
+        "reply_count": 5
+    },
+    {
+        "user": "Admin17",
+        "name": "helpdesk",
+        "avatar": "1775611652_20.jpg",
+        "text": "Ki lesz a heti Nógris bajnok? Tegyétek fel a képernyőfotókat az Üzenőfalra!",
+        "image": "",
+        "date": "2026-04-11",
+        "time": "13:20:00",
+        "likes": 0,
+        "dislikes": 0,
+        "replies": [
+            {
+                "user": "Geri_77",
+                "name": "@Geri_77",
+                "avatar": "1775071099_2.jpg",
+                "text": "Tessék, itt az én 4500 pontos rekordom!",
+                "date": "2026-04-11",
+                "time": "13:21:00"
+            },
+            {
+                "user": "Zoli88",
+                "name": "@Zoli88",
+                "avatar": "1775071099_2.jpg",
+                "text": "Ez komoly? Én még az 1000-et is alig érem el...",
+                "date": "2026-04-11",
+                "time": "13:22:00"
+            },
+            {
+                "user": "Nyuszi02",
+                "name": "@Nyuszi02",
+                "avatar": "1775071099_2.jpg",
+                "text": "Sok múlik rajta, milyen formákat ad be a gép.",
+                "date": "2026-04-11",
+                "time": "13:23:00"
+            },
+            {
+                "user": "Peti_kalandor",
+                "name": "@Peti_kalandor",
+                "avatar": "1775071099_2.jpg",
+                "text": "Az a hosszú léc sose jön, amikor kéne! :D",
+                "date": "2026-04-11",
+                "time": "13:24:00"
+            },
+            {
+                "user": "Admin17",
+                "name": "@Admin17",
+                "avatar": "1775071099_2.jpg",
+                "text": "Csak türelem, a Tetrisnek az a lényege! ;)",
+                "image": "1775905757_letöltés.png",
+                "date": "2026-04-11",
+                "time": "13:25:00"
+            },
+            {
+                "user": "LaciBá",
+                "name": "@LaciBá",
+                "avatar": "1775071099_2.jpg",
+                "text": "Hát gyerekek, ez a blog egyre jobb és jobb lesz.",
+                "image": "",
+                "date": "2026-04-11",
+                "time": "13:26:00"
+            },
+            {
+                "user": "Laura_N",
+                "name": "@Laura_N",
+                "avatar": "1775071099_2.jpg",
+                "text": "Nógrád vármegye bejárása és a Tetris... nem hittem volna, hogy ilyen jó kombó!",
+                "image": "",
+                "date": "2026-04-11",
+                "time": "13:27:00"
+            }
+        ],
+        "reply_count": 7
+    },
+    {
+        "user": "Admin17",
+        "name": "helpdesk",
+        "avatar": "1775611652_20.jpg",
+        "text": "Hétvégén nagy túrát szervezünk Salgó várához, szeretettel várunk mindenkit! :D",
+        "image": "1775856169_Névtelen.jpg",
+        "date": "2026-04-11",
+        "time": "14:00:00",
+        "likes": 0,
+        "dislikes": 0,
+        "votes": []
+    },
+    {
+        "user": "Admin2",
+        "name": "helpde2sk",
+        "avatar": "1774881876_5.jpg",
+        "text": "Gyertek és értékeljétek a Kezdőlapot is, a lap alján tudtok csillagokat adni!",
+        "image": "",
+        "date": "2026-04-11",
+        "time": "14:45:00",
+        "likes": 0,
+        "dislikes": 0
+    },
+    {
+        "user": "Admin2",
+        "name": "helpde2sk",
+        "avatar": "1774881876_5.jpg",
+        "text": "Ne feledjétek, a bejegyzésekhez már bátran csatolhattok képeket is a kirándulásaitokról!",
+        "image": "",
+        "date": "2026-04-11",
+        "time": "15:00:00",
+        "likes": 0,
         "dislikes": 0
     }
-}
+]

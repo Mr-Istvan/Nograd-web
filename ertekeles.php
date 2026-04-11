@@ -15,8 +15,8 @@ if (!$isFinished) {
     }
 
     // Biztonsági ellenőrzés
-    if (count($kerdesek) < 40) {
-        die("<h1 style='color:white; text-align:center; margin-top:50px;'>Hiba: Az adatbázis nem tartalmazza mind a 40 kérdést!</h1>");
+    if (count($kerdesek) < 44) {
+        die("<h1 style='color:white; text-align:center; margin-top:50px;'>Hiba: Az adatbázis nem tartalmazza mind a 44 kérdést!</h1>");
     }
 }
 ?>
@@ -34,8 +34,12 @@ if (!$isFinished) {
             align-items: center; overflow: hidden; font-family: 'Open Sans', sans-serif;
         }
 
-        /* 1. RÉTEG: Mátrix Háttér */
-        .matrix-layer { position: fixed; inset: 0; z-index: 1; }
+        /* 1. RÉTEG: Háttérkép */
+        .matrix-layer { position: fixed; inset: 0; z-index: 1; background: url('img/nograd_background.png') no-repeat center center fixed; background-size: cover; }
+        
+        @media (max-width: 767px) {
+            .matrix-layer { background-image: url('img/nograd_background_mobile.png'); }
+        }
 
         /* 2. RÉTEG: Sötétítő overlay */
         .overlay-layer { 
@@ -118,8 +122,8 @@ if (!$isFinished) {
 </head>
 <body>
 
-    <!-- MÁTRIX HÁTTÉR ÉS OVERLAY -->
-    <div class="matrix-layer"><?php include "matrix_bg.php"; ?></div>
+    <!-- NÓGRÁD HÁTTÉR ÉS OVERLAY -->
+    <div class="matrix-layer"></div>
     <div class="overlay-layer"></div>
 
     <div class="eval-box">
@@ -142,12 +146,12 @@ if (!$isFinished) {
                 
                 <!-- START OLDAL -->
                 <div class="step active" id="step-start">
-                    <p style="margin-top: 50px; color: #333; font-weight: 600;">Köszönjük, hogy megosztod velünk a véleményed!<br>(Összesen 40 rövid kérdés vár rád)</p>
+                    <p style="margin-top: 50px; color: #333; font-weight: 600;">Köszönjük, hogy megosztod velünk a véleményed!<br>(Összesen 44 rövid kérdés vár rád)</p>
                     <button type="button" class="btn btn-sentra" onclick="startEvaluation()">Értékelés Megkezdése</button>
                 </div>
 
-                <!-- KÉRDÉS BLOKKOK (10x4 kérdés) -->
-                <?php for($b = 0; $b < 10; $b++): ?>
+                <!-- KÉRDÉS BLOKKOK (11x4 kérdés) -->
+                <?php for($b = 0; $b < 11; $b++): ?>
                     <div class="step" id="step-block-<?php echo $b; ?>">
                         <div class="step-content">
                             <?php for($i = 0; $i < 4; $i++): 
@@ -163,8 +167,8 @@ if (!$isFinished) {
                             <?php endfor; ?>
                         </div>
                         <button type="button" id="btn-next-<?php echo $b; ?>" class="btn btn-sentra" disabled 
-                                onclick="<?php echo ($b < 9) ? "changeStep('block-".($b+1)."')" : "this.form.submit()"; ?>">
-                            <?php echo ($b < 9) ? "Tovább" : "Értékelés Beküldése"; ?>
+                                onclick="<?php echo ($b < 10) ? "changeStep('block-".($b+1)."')" : "this.form.submit()"; ?>">
+                            <?php echo ($b < 10) ? "Tovább" : "Értékelés Beküldése"; ?>
                         </button>
                     </div>
                 <?php endfor; ?>

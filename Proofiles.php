@@ -1,4 +1,7 @@
 <?php
+// Kényszerítsük a szervert, hogy UTF-8-at küldjön
+header('Content-Type: text/html; charset=utf-8');
+
 $team = [
     [
         "id"    => "melinda",
@@ -16,119 +19,127 @@ $team = [
     ]
 ];
 
-echo "<style>
-    /* MÓDOSÍTVA: overflow-y: auto és overscroll-behavior a frissítéshez */
-    body, html { 
-        margin: 0; padding: 0; 
-        overflow-x: hidden; 
-        overflow-y: auto; 
-        overscroll-behavior-y: contain; 
-        font-family: 'Segoe UI', sans-serif; 
-        background: #000; 
-        height: 100vh; 
-    }
-    
-    .proof-stage {
-        position: relative; width: 100%; height: 100vh;
-        background: url('img/background.jpg') no-repeat center center;
-        background-size: cover; display: flex; flex-direction: column; justify-content: flex-end;
-    }
+// HTML Fejléc hozzáadása a meta adatokkal
+echo "<!DOCTYPE html>
+<html lang='hu'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Profi profilok</title>
+    <style>
+        body, html { 
+            margin: 0; padding: 0; 
+            overflow-x: hidden; 
+            overflow-y: auto; 
+            overscroll-behavior-y: contain; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #000; 
+            height: 100vh; 
+        }
+        
+        .proof-stage {
+            position: relative; width: 100%; height: 100vh;
+            background: url('img/background.jpg') no-repeat center center;
+            background-size: cover; display: flex; flex-direction: column; justify-content: flex-end;
+        }
 
-    .info-overlay-container {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        pointer-events: none;
-    }
+        .info-overlay-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
 
-    .dev-data {
-        background: rgba(15, 23, 42, 0.98);
-        backdrop-filter: blur(10px);
-        border-left: 5px solid #38bdf8;
-        padding: 40px !important;
-        color: #fff;
-        border-radius: 10px;
-        display: none;
-        pointer-events: auto;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-        box-sizing: border-box;
-        width: 800px !important; 
-        min-width: 800px !important;
-        height: auto;
-        min-height: 250px;
-    }
-
-    .dev-data.active { display: block; animation: slideIn 0.3s ease-out; }
-
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .dev-data h3 { font-size: 32px !important; margin: 0; color: #38bdf8; display: block; }
-    .dev-data span { font-size: 20px !important; color: #888; font-weight: bold; display: block; margin-bottom: 10px; }
-    .dev-data p { 
-        font-size: 22px !important; 
-        line-height: 1.5 !important; 
-        color: #eee; 
-        text-align: left;
-        margin: 0;
-    }
-
-    .dev-wrapper {
-        display: flex;
-        width: 100%;
-        justify-content: space-between;
-        padding: 0 50px;
-        box-sizing: border-box;
-        z-index: 5;
-        height: 55vh; 
-    }
-
-    .dev-box {
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 45%;
-        justify-content: flex-end;
-    }
-
-    .dev-img {
-        height: 100%;
-        width: auto;
-        max-width: 100%;
-        object-fit: contain;
-        filter: brightness(0.7);
-        transition: all 0.4s ease;
-        transform-origin: bottom center;
-    }
-
-    .dev-box.clicked .dev-img {
-        filter: brightness(1.1) drop-shadow(0 0 25px rgba(56, 189, 248, 0.6));
-        transform: scale(1.05);
-    }
-
-    @media (max-width: 820px) {
         .dev-data {
-            width: 95vw !important; 
-            min-width: 350px !important;
-            padding: 20px !important;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(10px);
+            border-left: 5px solid #38bdf8;
+            padding: 40px !important;
+            color: #fff;
+            border-radius: 10px;
+            display: none;
+            pointer-events: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            box-sizing: border-box;
+            width: 800px !important; 
+            min-width: 800px !important;
+            height: auto;
+            min-height: 250px;
         }
-        .dev-wrapper {
-            padding: 0 10px;
-        }
-    }
 
-    .close-proof {
-        position: fixed; top: 15px; right: 15px; z-index: 1100;
-        width: 50px; height: 50px; border: none; border-radius: 50%;
-        background: rgba(15, 23, 42, 0.9); color: #fff; font-size: 30px;
-        cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-</style>";
+        .dev-data.active { display: block; animation: slideIn 0.3s ease-out; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dev-data h3 { font-size: 32px !important; margin: 0; color: #38bdf8; display: block; }
+        .dev-data span { font-size: 20px !important; color: #888; font-weight: bold; display: block; margin-bottom: 10px; }
+        .dev-data p { 
+            font-size: 22px !important; 
+            line-height: 1.5 !important; 
+            color: #eee; 
+            text-align: left;
+            margin: 0;
+        }
+
+        .dev-wrapper {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            padding: 0 50px;
+            box-sizing: border-box;
+            z-index: 5;
+            height: 55vh; 
+        }
+
+        .dev-box {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 45%;
+            justify-content: flex-end;
+        }
+
+        .dev-img {
+            height: 100%;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            filter: brightness(0.7);
+            transition: all 0.4s ease;
+            transform-origin: bottom center;
+        }
+
+        .dev-box.clicked .dev-img {
+            filter: brightness(1.1) drop-shadow(0 0 25px rgba(56, 189, 248, 0.6));
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 820px) {
+            .dev-data {
+                width: 95vw !important; 
+                min-width: 350px !important;
+                padding: 20px !important;
+            }
+            .dev-wrapper {
+                padding: 0 10px;
+            }
+        }
+
+        .close-proof {
+            position: fixed; top: 15px; right: 15px; z-index: 1100;
+            width: 50px; height: 50px; border: none; border-radius: 50%;
+            background: rgba(15, 23, 42, 0.9); color: #fff; font-size: 30px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>";
 
 echo "<div class='proof-stage'>";
     echo "<button class='close-proof' type='button' onclick=\"window.history.back()\">×</button>";
@@ -172,7 +183,6 @@ echo "<script>
         document.querySelectorAll('.dev-box').forEach(box => box.classList.remove('clicked'));
     });
 
-    // --- LEHÚZÁSRA FRISSÍTÉS LOGIKA ---
     let startY = 0;
     document.addEventListener('touchstart', (e) => {
         startY = e.touches[0].pageY;
@@ -182,10 +192,11 @@ echo "<script>
         const currentY = e.touches[0].pageY;
         const diff = currentY - startY;
 
-        // Ha a lap tetején vagyunk és legalább 180px-et húztuk lefelé
         if (window.scrollY === 0 && diff > 180) {
             location.reload();
         }
     }, {passive: true});
-</script>";
+</script>
+</body>
+</html>";
 ?>

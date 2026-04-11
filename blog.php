@@ -49,8 +49,8 @@ if (isset($_GET['delete']) && $userData) {
     exit();
 }
 
-// POSZT MENTÉS (szöveg + opcionális kép)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userData && isset($_POST['text'])) {
+ // POSZT MENTÉS (szöveg + opcionális kép)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userData && isset($_POST['text']) && !isset($_GET['reply'])) {
     $currentPosts = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
 
     $img = "";
@@ -66,12 +66,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userData && isset($_POST['text']))
         "avatar" => $userData['uavatar'] ?? "default.png",
         "text" => $_POST['text'],
         "image" => $img,
-        "time" => date("H:i"),
+        "date" => date("Y-m-d"),
+        "time" => date("H:i:s"),
         "likes" => 0,
         "dislikes" => 0
     ];
 
     file_put_contents($postsFile, json_encode($currentPosts, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+
+    // --- ÚJ EMAIL ÉRTESÍTÉS CSAK AZ 'A' RANGÚAKNAK (HA 'C' RANGÚ RENDSZERGAZDA POSZTOL) ---
+    
+    // Lekérdezzük a posztoló státuszát
+    $posterUsername = mysqli_real_escape_string($conn, $userData['uusername']);
+    $statusCheckQuery = mysqli_query($conn, "SELECT ustatus FROM felhasznalok WHERE uusername = '$posterUsername' LIMIT 1");
+    $posterStatus = '';
+    
+    if ($statusCheckQuery && $statusRow = mysqli_fetch_assoc($statusCheckQuery)) {
+        $posterStatus = $statusRow['ustatus'];
+    }
+
+    // A feltétel mostantól SZIGORÚAN csak a 'C' státuszt engedi át küldőként
+    if ($posterStatus === 'C') {
+        
+        set_time_limit(0); 
+
+        // Lekérjük az 'A' státuszú, kitöltött e-maillel rendelkezőket
+        $allUsersQuery = mysqli_query($conn, "SELECT uname, uemail FROM felhasznalok WHERE uusername IS NOT NULL AND uemail != '' AND ustatus = 'A'");
+        
+        if ($allUsersQuery && mysqli_num_rows($allUsersQuery) > 0) {
+            $subject = "=?UTF-8?B?" . base64_encode("Új közlemény az Üzenőfalon - Nógrád Csodák") . "?=";
+            $safePostText = htmlspecialchars(mb_substr($_POST['text'], 0, 220));
+            $safeAuthor = htmlspecialchars($userData['uname'] ?? $userData['uusername']);
+            
+            $headers = "MIME-Version: 1.0\r\n";
+            $headers .= "Content-type:text/html;charset=UTF-8\r\n";
+            $headers .= "From: Nógrád Csodák <project@nogradcsodak.hu>\r\n";
+            
+            // Közös HTML sablon
+            $emailTemplate = "
+            <html>
+            <head>
+                <style>
+                    body { margin:0; padding:0; background:#f4f4f5; font-family:Arial,sans-serif; }
+                    .wrap { max-width:640px; margin:0 auto; padding:24px; }
+                    .card { background:#ffffff; border:1px solid #dbe4f0; border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+                    .head { padding:18px 22px; background:#ececff; border-bottom:1px solid #d8dcff; display:flex; align-items:center; gap:14px; }
+                    .avatar { width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #45489a; }
+                    .name { font-size:20px; font-weight:800; color:#111827; margin:0; line-height:1.1; }
+                    .time { font-size:12px; color:#64748b; margin-top:4px; }
+                    .body { padding:22px; color:#111827; font-size:15px; line-height:1.65; }
+                    .quote { margin:18px 0; padding:14px 16px; background:#f8fafc; border-left:4px solid #45489a; border-radius:12px; color:#334155; }
+                    .btn { display:inline-block; margin-top:18px; background:#45489a; color:#fff !important; text-decoration:none; padding:12px 18px; border-radius:12px; font-weight:700; }
+                    .foot { padding:16px 22px 22px; color:#64748b; font-size:12px; }
+                </style>
+            </head>
+            <body>
+                <div class='wrap'>
+                    <div class='card'>
+                        <div class='head'>
+                            <img class='avatar' src='https://elmeny.nogradcsodak.hu/img/profiles/" . htmlspecialchars($userData['uavatar'] ?? 'default.png') . "' alt='avatar'>
+                            <div>
+                                <p class='name'>" . $safeAuthor . " (Rendszergazda)</p>
+                                <div class='time'>" . date('H:i') . "</div>
+                            </div>
+                        </div>
+                        <div class='body'>
+                            <h2 style='margin-top:0; color:#45489a;'>Szia {USER_NAME}!</h2>
+                            <div><strong>" . $safeAuthor . "</strong> új közleményt tett közzé az Üzenőfalon:</div>
+                            <div class='quote'>\"" . $safePostText . "...\"</div>
+                            <a class='btn' href='https://elmeny.nogradcsodak.hu/blog.php'>Elolvasom a bejegyzést</a>
+                        </div>
+                        <div class='foot'>Ez egy automatikus értesítés a Nógrád Csodák rendszeréből.</div>
+                    </div>
+                </div>
+            </body>
+            </html>";
+
+            // Végigmegyünk a listán
+            while ($userRow = mysqli_fetch_assoc($allUsersQuery)) {
+                $recipientEmail = trim($userRow['uemail']);
+                
+                // 1. SZŰRŐ: Ellenőrizzük, hogy érvényes email formátum-e (van benne @, pont, stb.)
+                if (filter_var($recipientEmail, FILTER_VALIDATE_EMAIL)) {
+                    
+                    // 2. SZŰRŐ: Csak az élő/valós végződések engedélyezése (.hu, .com, .net, .eu, .org)
+                    if (preg_match('/(\.hu|\.com|\.net|\.eu|\.org)$/i', $recipientEmail)) {
+                        
+                        $recipientName = htmlspecialchars($userRow['uname'] ?? 'Felhasználó');
+                        $personalizedMessage = str_replace('{USER_NAME}', $recipientName, $emailTemplate);
+                        
+                        @mail($recipientEmail, $subject, $personalizedMessage, $headers);
+                    }
+                }
+            }
+        }
+    }
+    // --- ÉRTESÍTÉS VÉGE ---
+
     header("Location: blog.php");
     exit();
 }
@@ -138,32 +229,50 @@ if (isset($_GET['like'])) {
     if (!empty($authorEmail) && $authorEmail !== ($userData['uemail'] ?? '')) {
         $subject = "=?UTF-8?B?" . base64_encode("Új like érkezett a bejegyzésedre - Nógrád Csodák") . "?=";
         $safePostText = htmlspecialchars(mb_substr((string)($postsAll[$id]['text'] ?? ''), 0, 140));
-        $safeLiker = htmlspecialchars((string)$likerName);
+        $safeLiker = htmlspecialchars((string)($userData['uusername'] ?? $userKey));
         $safeAuthorName = htmlspecialchars((string)$authorName);
+        
         $message = "
         <html>
         <head>
             <style>
-                body { background:#f1f5f9; padding:20px; font-family:Arial,sans-serif; }
-                .card { background:#ffffff; color:#0f172a; padding:30px; border-radius:16px; border:1px solid #e2e8f0; max-width:560px; margin:0 auto; }
-                .btn { display:inline-block; margin-top:20px; padding:12px 20px; background:#45489a; color:#fff !important; text-decoration:none; border-radius:10px; font-weight:bold; }
-                .muted { color:#64748b; font-size:13px; margin-top:18px; }
+                body { margin:0; padding:0; background:#f4f4f5; font-family:Arial,sans-serif; }
+                .wrap { max-width:640px; margin:0 auto; padding:24px; }
+                .card { background:#ffffff; border:1px solid #dbe4f0; border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+                .head { padding:18px 22px; background:#ececff; border-bottom:1px solid #d8dcff; display:flex; align-items:center; gap:14px; }
+                .avatar { width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #45489a; }
+                .name { font-size:20px; font-weight:800; color:#111827; margin:0; line-height:1.1; }
+                .time { font-size:12px; color:#64748b; margin-top:4px; }
+                .body { padding:22px; color:#111827; font-size:15px; line-height:1.65; }
+                .quote { margin:18px 0; padding:14px 16px; background:#f8fafc; border-left:4px solid #45489a; border-radius:12px; color:#334155; }
+                .btn { display:inline-block; margin-top:18px; background:#45489a; color:#fff !important; text-decoration:none; padding:12px 18px; border-radius:12px; font-weight:700; }
+                .foot { padding:16px 22px 22px; color:#64748b; font-size:12px; }
             </style>
         </head>
         <body>
-            <div class='card'>
-                <h2 style='margin-top:0; color:#45489a;'>Szia " . $safeAuthorName . "!</h2>
-                <p><strong>" . $safeLiker . "</strong> like-olta az egyik bejegyzésedet.</p>
-                <p style='line-height:1.6; color:#334155;'>Bejegyzés részlete: " . $safePostText . "</p>
-                <a class='btn' href='https://nogradcsodak.szakdoga.net/blog.php'>Ugrás a blogra</a>
-                <div class='muted'>Ez egy automatikus értesítés, kérjük ne válaszolj rá.</div>
+            <div class='wrap'>
+                <div class='card'>
+                    <div class='head'>
+                        <img class='avatar' src='https://elmeny.nogradcsodak.hu/img/profiles/" . htmlspecialchars($userData['uavatar'] ?? 'default.png') . "' alt='avatar'>
+                        <div>
+                            <p class='name'>" . $safeLiker . "</p>
+                            <div class='time'>" . date('H:i') . "</div>
+                        </div>
+                    </div>
+                    <div class='body'>
+                        <div><strong>" . $safeLiker . "</strong> kedveli a bejegyzésedet:</div>
+                        <div class='quote'>" . $safePostText . "...</div>
+                        <a class='btn' href='https://elmeny.nogradcsodak.hu/blog.php'>Megnézem</a>
+                    </div>
+                    <div class='foot'>Ez egy automatikus értesítés, kérjük ne válaszolj rá.</div>
+                </div>
             </div>
         </body>
         </html>";
 
         $headers = "MIME-Version: 1.0\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8\r\n";
-        $headers .= "From: Nógrád Csodák <project@nogradcsodak.szakdoga.net>\r\n";
+        $headers .= "From: Nógrád Csodák <project@nogradcsodak.hu>\r\n";
         @mail($authorEmail, $subject, $message, $headers);
     }
 
@@ -256,15 +365,46 @@ if (isset($_GET['reply']) && $_SERVER['REQUEST_METHOD'] === 'POST' && $userData)
         $postsAll[$id]['replies'] = [];
     }
 
+    $replyImage = '';
+    if (!empty($_FILES['reply_image']['name'])) {
+        $replyImage = time() . "_" . basename($_FILES['reply_image']['name']);
+        @mkdir("img/post_replies/", 0777, true);
+        move_uploaded_file($_FILES['reply_image']['tmp_name'], "img/post_replies/" . $replyImage);
+    }
+
     $replyData = [
         'user' => $userData['uusername'],
         'name' => '@' . ($userData['uusername'] ?? 'user'),
         'avatar' => $userData['uavatar'] ?? 'default.png',
         'text' => $replyText,
-        'time' => date('H:i')
+        'image' => $replyImage,
+        'date' => date('Y-m-d'),
+        'time' => date('H:i:s')
     ];
 
     $postsAll[$id]['replies'][] = $replyData;
+    usort($postsAll[$id]['replies'], function ($a, $b) {
+        $aDate = trim((string)($a['date'] ?? ''));
+        $aTime = trim((string)($a['time'] ?? ''));
+        $bDate = trim((string)($b['date'] ?? ''));
+        $bTime = trim((string)($b['time'] ?? ''));
+        $aTs = strtotime(trim($aDate . ' ' . $aTime));
+        $bTs = strtotime(trim($bDate . ' ' . $bTime));
+        if ($aTs === false && $bTs === false) {
+            return 0;
+        }
+        if ($aTs === false) {
+            return 1;
+        }
+        if ($bTs === false) {
+            return -1;
+        }
+        if ($aTs === $bTs) {
+            return strcmp(trim($bDate . ' ' . $bTime), trim($aDate . ' ' . $aTime));
+        }
+        return $bTs <=> $aTs;
+    });
+    $postsAll[$id]['reply_count'] = count($postsAll[$id]['replies']);
     $saved = file_put_contents($postsFile, json_encode($postsAll, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
     if ($saved === false) {
@@ -290,6 +430,7 @@ if (isset($_GET['reply']) && $_SERVER['REQUEST_METHOD'] === 'POST' && $userData)
         $safeReply = htmlspecialchars(mb_substr($replyText, 0, 220));
         $safeReplier = htmlspecialchars($userData['uusername'] ?? 'user');
         $safeAuthorName = htmlspecialchars($authorName);
+        $replyDateDisplay = formatBlogTime($replyData['date'], $replyData['time']);
         $message = "
         <html>
         <head>
@@ -311,16 +452,17 @@ if (isset($_GET['reply']) && $_SERVER['REQUEST_METHOD'] === 'POST' && $userData)
             <div class='wrap'>
                 <div class='card'>
                     <div class='head'>
-                        <img class='avatar' src='https://nogradcsodak.szakdoga.net/img/profiles/" . htmlspecialchars($userData['uavatar'] ?? 'default.png') . "' alt='avatar'>
+                        <img class='avatar' src='https://elmeny.nogradcsodak.hu/img/profiles/" . htmlspecialchars($userData['uavatar'] ?? 'default.png') . "' alt='avatar'>
                         <div>
                             <p class='name'>" . $safeReplier . "</p>
                             <div class='time'>" . date('H:i') . "</div>
                         </div>
                     </div>
                     <div class='body'>
-                        <div>Kaptál egy új hozzászólást a bejegyzésedhez:</div>
+                        <div><strong>" . $safeReplier . "</strong> hozzászólt az üzenetedhez:</div>
                         <div class='quote'>" . $safeReply . "</div>
-                        <a class='btn' href='https://nogradcsodak.szakdoga.net/blog.php'>Megnézem</a>
+                        <div style='margin-top:10px; color:#334155;'>Dátum: <strong>" . htmlspecialchars($replyDateDisplay) . "</strong></div>
+                        <a class='btn' href='https://elmeny.nogradcsodak.hu/blog.php'>Megnézem</a>
                     </div>
                     <div class='foot'>Ez egy automatikus értesítés, kérjük ne válaszolj rá.</div>
                 </div>
@@ -330,12 +472,17 @@ if (isset($_GET['reply']) && $_SERVER['REQUEST_METHOD'] === 'POST' && $userData)
 
         $headers = "MIME-Version: 1.0\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8\r\n";
-        $headers .= "From: Nógrád Csodák <project@nogradcsodak.szakdoga.net>\r\n";
+        $headers .= "From: Nógrád Csodák <project@nogradcsodak.hu>\r\n";
         @mail($authorEmail, $subject, $message, $headers);
     }
 
-    header('Content-Type: application/json; charset=UTF-8');
-    echo json_encode(['success' => true, 'status' => 'replied', 'name' => $replyData['name'], 'avatar' => $replyData['avatar'], 'text' => $replyData['text'], 'time' => $replyData['time']]);
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode(['success' => true, 'status' => 'replied', 'reply' => $replyData, 'reply_count' => $postsAll[$id]['reply_count']]);
+        exit();
+    }
+
+    header("Location: blog.php?msg=replied");
     exit();
 }
 
@@ -343,6 +490,66 @@ if (isset($_GET['reply']) && $_SERVER['REQUEST_METHOD'] === 'POST' && $userData)
 $posts = file_exists($postsFile) ? json_decode(file_get_contents($postsFile), true) : [];
 $userLoggedIn = ($userData !== null);
 
+function formatBlogTime($dateValue, $timeValue = null) {
+    $dateRaw = trim((string)$dateValue);
+    $timeRaw = trim((string)$timeValue);
+
+    if ($dateRaw === '') {
+        $dateRaw = date('Y-m-d');
+    }
+
+    $combined = trim($dateRaw . ' ' . $timeRaw);
+    $formats = [
+        'Y-m-d H:i:s',
+        'Y-m-d H:i',
+        'Y-m-d',
+        'Y.m.d. H:i:s',
+        'Y.m.d. H:i',
+        'Y.m.d.',
+    ];
+
+    $dt = false;
+    foreach ($formats as $format) {
+        $try = DateTime::createFromFormat($format, $combined);
+        if ($try instanceof DateTime) {
+            $errors = DateTime::getLastErrors();
+            if (($errors['warning_count'] ?? 0) === 0 && ($errors['error_count'] ?? 0) === 0) {
+                $dt = $try;
+                break;
+            }
+        }
+    }
+
+    if (!$dt) {
+        $tsTry = strtotime($combined);
+        if ($tsTry !== false) {
+            $dt = (new DateTime())->setTimestamp($tsTry);
+        }
+    }
+
+    if (!$dt) {
+        return $timeRaw !== '' ? $timeRaw : $dateRaw;
+    }
+
+    $todayMidnight = strtotime('today');
+    $postMidnight = strtotime($dt->format('Y-m-d'));
+    $diffDays = (int)round(($todayMidnight - $postMidnight) / 86400);
+    $clock = $dt->format('H:i');
+
+    if ($diffDays === 0) {
+        return 'Ma ' . $clock;
+    }
+
+    if ($diffDays === 1) {
+        return 'Tegnap ' . $clock;
+    }
+
+    if ($diffDays >= 2 && $diffDays <= 10) {
+        return $diffDays . ' napja ' . $clock;
+    }
+
+    return $dt->format('Y.m.d. H:i');
+}
 
 ?>
 <!DOCTYPE html>
@@ -407,7 +614,6 @@ $userLoggedIn = ($userData !== null);
             .tetris-promo { margin-top: 0 !important; margin-bottom: 20px !important; }
         }
         .feed { max-width: none !important; width: auto !important; margin-left: 15px !important; margin-right: 15px !important; }
-        /* --- 1. ALAPHELYZET (767px alatt: Mobil) --- */
         @media (max-width: 766px) {
             body.blog-page .composer,
             body.blog-page .feed {
@@ -416,24 +622,16 @@ $userLoggedIn = ($userData !== null);
                 width: 100% !important;
             }
         }
-
-        /* --- 2. KÖZTES ÁLLAPOT (767px - 1000px között) --- 
-           Itt már ott a 250px-es menü balra, de jobb oldalon MÉG NINCS reklám.
-        */
         @media (min-width: 767px) and (max-width: 1000px) {
             body.blog-page .composer,
             body.blog-page .feed {
-                margin-left: 270px !important; 
+                margin-left: 270px !important;
                 margin-right: 5px !important;
                 width: calc(100% - 250px) !important;
                 padding: 0 15px !important;
                 box-sizing: border-box;
             }
         }
-
-        /* --- 3. ASZTALI NÉZET (1001px felett) --- 
-           Itt ott a 250px menü ÉS a jobb oldali reklám (kb. 150px sáv) is.
-        */
         @media (min-width: 1001px) {
             body.blog-page .composer,
             body.blog-page .feed {
@@ -444,8 +642,6 @@ $userLoggedIn = ($userData !== null);
                 max-width: none !important;
             }
         }
-
-        /* --- ÍRÁSI FELÜLET JAVÍTÁSA (A textarea kényelme) --- */
         body.blog-page .composer textarea {
             width: 100% !important;
             min-height: 120px;
@@ -486,9 +682,22 @@ $userLoggedIn = ($userData !== null);
         body.blog-page .other-post{ margin-left: 0; background: #e6e6e6 !important; color: #000 !important; }
         body.blog-page .my-post{ margin-left: auto; margin-right: 25px; background: #45489a !important; color: #fff !important; }
         @media (max-width: 420px){ body.blog-page .my-post{ margin-right: 20px; } }
-        body.blog-page .my-post .post-meta strong, body.blog-page .my-post .post-meta small, body.blog-page .my-post .post-text{ color: #fff !important; }
+        body.blog-page .my-post .post-meta strong, body.blog-page .my-post .post-meta small, body.blog-page .my-post .post-text,
+        body.blog-page .my-post .post-meta div,
+        body.blog-page .my-post .post-meta span,
+        body.blog-page .my-post .post-meta i{ color: #fff !important; }
         body.blog-page .other-post .post-meta strong, body.blog-page .other-post .post-text{ color: #000 !important; }
         body.blog-page .other-post .post-meta small{ color: #444 !important; }
+        body.blog-page .other-post,
+        body.blog-page .other-post *,
+        body.blog-page .other-post *:visited,
+        body.blog-page .other-post *:hover,
+        body.blog-page .other-post *:active,
+        body.blog-page .other-post a,
+        body.blog-page .other-post a *{ color: #000 !important; }
+        body.blog-page .other-post .post-meta div,
+        body.blog-page .other-post .post-meta span,
+        body.blog-page .other-post .post-meta i{ color: #000 !important; }
         body.blog-page .post-meta strong{ font-size: calc(1.35em + 1px); font-weight: 800; letter-spacing: 0.2px; }
         body.blog-page .post-meta small{ font-size: clamp(12px, 0.85rem, 14px); color:#888; }
         body.blog-page .post-text{ margin: 0; font-size: calc(1.25em + 1.5px); line-height: 1.5; text-align: left; }
@@ -614,7 +823,7 @@ $userLoggedIn = ($userData !== null);
                         <?php endif; ?>
                     </div>
 <div class="tetris-promo">
-    <a href="../tetris/tetris.php" class="tetris-promo__link">
+    <a href="../tetris/tetris_web.php" class="tetris-promo__link">
         <img src="../tetris/tetris_button.png" alt="Nógrád Tetris - Játssz!" class="tetris-promo__img">
     </a>
     <div class="tetris-promo__text">👉 „Készen állsz? Döntsd meg a rekordot! 👑”</div>
@@ -631,7 +840,7 @@ $userLoggedIn = ($userData !== null);
     box-sizing: border-box; 
     padding: 10px;
 ">
-                            <form action="/Blog" method="POST" enctype="multipart/form-data">
+                            <form action="blog.php" method="POST" enctype="multipart/form-data">
                                 <textarea name="text" class="form-control" rows="5" placeholder="Írj valamit a falra..." required style="background: #fff; color: #000; font-size: 18px; min-height: 66px;"></textarea>
                                 <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                                     <input type="file" name="image" class="form-control" style="max-width: 320px; background:#fff;">
@@ -644,6 +853,21 @@ $userLoggedIn = ($userData !== null);
                     <div class="feed" aria-label="Üzenőfal" role="region">
                         <?php
                         $postsReversed = array_reverse($posts, true);
+                        uasort($postsReversed, function ($a, $b) {
+                            $aDate = trim((string)($a['date'] ?? ''));
+                            $aTime = trim((string)($a['time'] ?? ''));
+                            $bDate = trim((string)($b['date'] ?? ''));
+                            $bTime = trim((string)($b['time'] ?? ''));
+
+                            $aTs = strtotime(trim($aDate . ' ' . $aTime));
+                            $bTs = strtotime(trim($bDate . ' ' . $bTime));
+
+                            if ($aTs === $bTs) {
+                                return strcmp(trim($bDate . ' ' . $bTime), trim($aDate . ' ' . $aTime));
+                            }
+
+                            return $bTs <=> $aTs;
+                        });
                         foreach($postsReversed as $idx => $p):
                             $p_uid = $p['uid'] ?? 0;
                             if($p_uid == 0 && isset($p['user'])) {
@@ -661,22 +885,22 @@ $userLoggedIn = ($userData !== null);
                             $name = '@' . ($p['user'] ?? 'user');
                             $avatar = $p['avatar'] ?? 'default.png';
                         ?>
-                        <div class="post-card <?php echo $isMine ? 'my-post' : 'other-post'; ?>" id="post-<?php echo $idx; ?>" style="background:rgba(0,0,0,0.6); padding:20px; border-radius:15px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.05);">
+                        <div class="post-card <?php echo $isMine ? 'my-post' : 'other-post'; ?>" id="post-<?php echo $idx; ?>" style="background:rgba(0,0,0,0.6); padding:20px; border-radius:15px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.05);" data-post-id="<?php echo (int)$idx; ?>">
                             <div class="post-meta" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:15px;">
                                 <div class="user-trigger" onclick="toggleUserMenu(event, '<?php echo $idx; ?>')" style="display:flex; gap:12px; align-items:center; cursor:pointer; position:relative;">
                                     <img src="img/profiles/<?php echo htmlspecialchars($avatar); ?>" alt="avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #b4865a;">
                                     <div style="line-height:1.2;">
                                         <strong style="color:#fff; font-size:22px;"><?php echo htmlspecialchars($name); ?> <i class="fa fa-caret-down" style="font-size:12px; color:#b4865a; margin-left:3px;"></i></strong>
-                                        <div style="color:#94a3b8; font-size:11px;"><?php echo htmlspecialchars($p['time'] ?? ''); ?></div>
+                                        <div style="color:#94a3b8; font-size:11px;"><?php echo htmlspecialchars(formatBlogTime($p['date'] ?? '', $p['time'] ?? '')); ?></div>
                                     </div>
                                     <div id="dropdown-<?php echo $idx; ?>" class="user-quick-menu" style="display:none; position:absolute; top:45px; left:0; background:#0f172a; border:1px solid #b4865a; border-radius:12px; z-index:100; min-width:180px; box-shadow:0 10px 25px rgba(0,0,0,0.8); overflow:hidden;">
-                                        <a href="javascript:void(0)" onclick="openQuickProfile(<?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#fff; text-decoration:none; border-bottom:1px solid #1e293b; font-weight:600;"><i class="fa fa-user" style="width:25px; text-align:center;"></i> Adatlap</a>
+                                        <a href="javascript:void(0)" onclick="openQuickProfile(<?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#f8fafc !important; text-decoration:none; border-bottom:1px solid #1e293b; font-weight:600;"><i class="fa fa-user" style="width:25px; text-align:center; color:#f8fafc !important;"></i> Adatlap</a>
                                        <?php  if($isAdmin || $isVIP): ?>
-                                            <a href="javascript:void(0)" onclick="adminAction('kick', <?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#f59e0b; text-decoration:none; border-bottom:1px solid #1e293b; font-weight:600;"><i class="fa fa-bolt" style="width:25px; text-align:center;"></i> Kick</a>
-                                            <a href="javascript:void(0)" onclick="adminAction('ban', <?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#ef4444; text-decoration:none; <?php echo $isAdmin ? 'border-bottom:1px solid #1e293b;' : ''; ?> font-weight:600;"><i class="fa fa-ban" style="width:25px; text-align:center;"></i> Tiltás</a>
+                                            <a href="javascript:void(0)" onclick="adminAction('kick', <?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#f59e0b !important; text-decoration:none; border-bottom:1px solid #1e293b; font-weight:600;"><i class="fa fa-bolt" style="width:25px; text-align:center; color:#f59e0b !important;"></i> Kick</a>
+                                            <a href="javascript:void(0)" onclick="adminAction('ban', <?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#ef4444 !important; text-decoration:none; <?php echo $isAdmin ? 'border-bottom:1px solid #1e293b;' : ''; ?> font-weight:600;"><i class="fa fa-ban" style="width:25px; text-align:center; color:#ef4444 !important;"></i> Tiltás</a>
                                         <?php endif; ?>
                                         <?php if($isAdmin): ?>
-                                            <a href="javascript:void(0)" onclick="adminAction('reset_pw', <?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#38bdf8; text-decoration:none; font-weight:600;"><i class="fa fa-key" style="width:25px; text-align:center;"></i> PW Reset</a>
+                                            <a href="javascript:void(0)" onclick="adminAction('reset_pw', <?php echo $p_uid; ?>)" style="display:block; padding:12px 15px; color:#38bdf8 !important; text-decoration:none; font-weight:600;"><i class="fa fa-key" style="width:25px; text-align:center; color:#38bdf8 !important;"></i> PW Reset</a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -696,8 +920,9 @@ $userLoggedIn = ($userData !== null);
                                     <a href="?dislike=<?php echo (int)$idx; ?>" class="dislike-btn" data-post-id="<?php echo (int)$idx; ?>" style="text-decoration:none; color:#94a3b8; font-size:22px; display:flex; align-items:center; gap:6px;" title="Nem tetszik">
                                         <i class="fa fa-thumbs-down"></i> <span class="dislike-count"><?php echo (int)($p['dislikes'] ?? 0); ?></span>
                                     </a>
-                                    <a href="javascript:void(0)" onclick="toggleReplyBox(<?php echo $idx; ?>)" style="text-decoration:none; color:#45489a; font-size:14px; display:flex; align-items:center; gap:6px; font-weight:700;" title="Válasz / hozzászólás">
-                                        <i class="fa fa-commenting-o"></i> 💬
+                                    <?php $replyCount = !empty($p['replies']) && is_array($p['replies']) ? count($p['replies']) : (int)($p['reply_count'] ?? 0); ?>
+                                    <a href="javascript:void(0)" onclick="toggleReplyBox('<?php echo $idx; ?>')" style="text-decoration:none; color:#45489a; font-size:14px; display:flex; align-items:center; gap:6px; font-weight:700;" title="Válasz / hozzászólás">
+                                        <i class="fa fa-commenting-o"></i> <span class="reply-count" id="reply-count-<?php echo $idx; ?>"><?php echo (int)$replyCount; ?></span>
                                     </a>
                                     <a href="javascript:void(0)" onclick="reportPost(<?php echo $idx; ?>)" style="text-decoration:none; color:#64748b; font-size:14px; display:flex; align-items:center; gap:6px;" title="Bejegyzés jelentése">
                                         <i class="fa fa-flag"></i> Jelentés
@@ -711,24 +936,33 @@ $userLoggedIn = ($userData !== null);
                             </div>
                             <div class="post-feedback" style="display:none; margin-top:10px; padding:10px 12px; border-radius:10px; font-size:14px; font-weight:600;"></div>
 
-                            <div class="reply-box" id="reply-box-<?php echo $idx; ?>" style="display:none; margin-top:12px; padding:12px; border-radius:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(69,72,154,0.45);">
-                                <textarea class="form-control reply-text" id="reply-text-<?php echo $idx; ?>" rows="3" placeholder="Írj hozzászólást..." style="width:100%; resize:vertical; background:#fff; color:#000; margin-bottom:10px;"></textarea>
-                                <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
-                                    <button type="button" class="btn btn-primary" style="background:#45489a; border:none;" onclick="submitReply(<?php echo $idx; ?>)">Küldés</button>
-                                    <button type="button" class="btn btn-default" style="background:#cbd5e1; border:none;" onclick="toggleReplyBox(<?php echo $idx; ?>)">Mégse</button>
-                                </div>
+                            <div class="reply-box" id="reply-box-<?php echo $idx; ?>" style="display:none; margin-top:15px; background:#f8fafc; padding:15px; border-radius:8px; text-align:left;">
+                                <form id="reply-form-<?php echo $idx; ?>" onsubmit="submitReply(event, '<?php echo $idx; ?>')" enctype="multipart/form-data" style="text-align:left;">
+                                    <div style="display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; justify-content:flex-start; text-align:left;">
+                                        <textarea id="reply-text-<?php echo $idx; ?>" name="reply_text" placeholder="Írj egy választ..." style="flex:1; min-width:220px; height:80px; padding:10px; border-radius:5px; border:1px solid #ddd; color:#000; background:#fff; text-align:left;"></textarea>
+                                        <div style="display:flex; flex-direction:column; gap:8px; min-width:180px; align-items:flex-start;">
+                                            <input type="file" id="reply-image-<?php echo $idx; ?>" name="reply_image" accept="image/jpeg,image/png,image/gif,image/webp" style="background:#fff; padding:8px; border:1px solid #ddd; border-radius:5px;">
+                                            <button type="submit" style="background:#45489a; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; align-self:flex-start;">
+                                                Küldés
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
 
-                            <div class="reply-thread" id="reply-thread-<?php echo $idx; ?>" style="margin-top:12px;">
+                            <div class="reply-thread" id="reply-thread-<?php echo $idx; ?>" style="display:none; margin-top:12px; text-align:left;">
                                 <?php if (!empty($p['replies']) && is_array($p['replies'])): ?>
                                     <?php foreach ($p['replies'] as $reply): ?>
-                                        <div style="margin-top:10px; margin-left:35px; padding:12px 14px; background:rgba(255,255,255,0.92); border-left:4px solid #45489a; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); color:#111;">
-                                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                                        <div style="margin-top:10px; margin-left:0; margin-right:auto; padding:12px 14px; background:rgba(255,255,255,0.92); border-left:4px solid #45489a; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); color:#111; text-align:left; width:100%; box-sizing:border-box;">
+                                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; justify-content:flex-start;">
                                                 <img src="img/profiles/<?php echo htmlspecialchars($reply['avatar'] ?? 'default.png'); ?>" style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:1px solid #b4865a;">
                                                 <strong style="font-size:14px;"><?php echo htmlspecialchars($reply['name'] ?? ($reply['user'] ?? 'Felhasználó')); ?></strong>
-                                                <small style="color:#64748b;"><?php echo htmlspecialchars($reply['time'] ?? ''); ?></small>
+                                                <small style="color:#64748b;"><?php echo htmlspecialchars(formatBlogTime($reply['date'] ?? '', $reply['time'] ?? '')); ?></small>
                                             </div>
-                                            <div style="font-size:15px; line-height:1.5;"><?php echo nl2br(htmlspecialchars($reply['text'] ?? '')); ?></div>
+                                            <div style="font-size:15px; line-height:1.5; text-align:left;"><?php echo nl2br(htmlspecialchars($reply['text'] ?? '')); ?></div>
+                                            <?php if (!empty($reply['image'])): ?>
+                                                <img src="img/post_replies/<?php echo htmlspecialchars($reply['image']); ?>" alt="reply image" style="max-width:220px; width:100%; height:auto; display:block; margin-top:10px; border-radius:10px; border:1px solid #dbe4f0;">
+                                            <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -739,6 +973,23 @@ $userLoggedIn = ($userData !== null);
                 </div>
             </div>
         </section>
+        <script>
+        function toggleReplyBox(id) {
+            const box = document.getElementById('reply-box-' + id);
+            const thread = document.getElementById('reply-thread-' + id);
+            const postCard = document.getElementById('post-' + id);
+
+            if (!box || !thread) return;
+
+            const shouldShow = box.style.display === 'none' || box.style.display === '';
+            box.style.display = shouldShow ? 'block' : 'none';
+            thread.style.display = shouldShow ? 'block' : 'none';
+
+            if (shouldShow && postCard) {
+                postCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+</script>
 
 
         <div class="footer-wrapper">
@@ -765,11 +1016,11 @@ $userLoggedIn = ($userData !== null);
             border: 1px solid var(--modal-border) !important;
             border-radius: 20px !important;
             position: relative;
-            width: 90vw !important; 
+            width: 90vw !important;
             max-width: 500px !important;
             min-height: 300px !important;
             max-height: 85vh !important;
-            box-sizing: border-box !important; 
+            box-sizing: border-box !important;
             display: flex;
             flex-direction: column;
             box-shadow: 0 15px 50px rgba(0,0,0,0.9);
@@ -777,8 +1028,8 @@ $userLoggedIn = ($userData !== null);
 
         #quickProfileContent {
             padding: 15px;
-            overflow-y: auto !important; 
-            overflow-x: auto !important; 
+            overflow-y: auto !important;
+            overflow-x: auto !important;
             flex: 1;
             width: 100% !important;
             box-sizing: border-box !important;
@@ -866,6 +1117,8 @@ $userLoggedIn = ($userData !== null);
 
     <script>
         window.__blogUserLoggedIn = <?php echo $userLoggedIn ? 'true' : 'false'; ?>;
+        window.__currentUserName = <?php echo json_encode($userData['uname'] ?? 'Felhasználó'); ?>;
+        window.__currentUserAvatar = <?php echo json_encode($userData['uavatar'] ?? 'default.png'); ?>;
 
         function toggleUserMenu(event, id) {
             event.stopPropagation();
@@ -1001,76 +1254,91 @@ $userLoggedIn = ($userData !== null);
             }
 
             const box = document.getElementById('reply-box-' + idx);
-            if (!box) return;
-            box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+            const thread = document.getElementById('reply-thread-' + idx);
+            const postCard = document.getElementById('post-' + idx);
+            if (!box || !thread) return;
+            const shouldShow = box.style.display === 'none' || box.style.display === '';
+            box.style.display = shouldShow ? 'block' : 'none';
+            thread.style.display = shouldShow ? 'block' : 'none';
+            if (shouldShow) {
+                const target = postCard || box;
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 120);
+            }
         }
 
-        function submitReply(idx) {
+        function submitReply(event, idx) {
+            event.preventDefault();
+
             if (!window.__blogUserLoggedIn) {
                 showLoginRequired();
                 return;
             }
 
             const textarea = document.getElementById('reply-text-' + idx);
-            const box = document.getElementById('reply-box-' + idx);
+            const imageInput = document.getElementById('reply-image-' + idx);
             const thread = document.getElementById('reply-thread-' + idx);
-            const text = textarea ? textarea.value.trim() : '';
+            const countEl = document.getElementById('reply-count-' + idx);
             const feedbackTarget = document.getElementById('post-' + idx);
+            const text = textarea ? textarea.value.trim() : '';
 
-            if (!text) {
-                showPostFeedback(feedbackTarget, 'Kérlek írj hozzászólást.', true);
+            if (!text && !(imageInput && imageInput.files && imageInput.files.length)) {
+                showPostFeedback(feedbackTarget, 'Írj valamit vagy tölts fel képet.', true);
                 return;
             }
 
-            const payload = new URLSearchParams();
-            payload.append('reply_text', text);
-            payload.append('text', text);
-            payload.append('post_idx', String(idx));
+            const formData = new FormData();
+            formData.append('reply_text', text);
+            if (imageInput && imageInput.files && imageInput.files[0]) {
+                formData.append('reply_image', imageInput.files[0]);
+            }
 
             fetch('blog.php?reply=' + encodeURIComponent(idx), {
                 method: 'POST',
+                body: formData,
                 credentials: 'same-origin',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: payload.toString()
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
             })
             .then(function(response) {
-                return response.text().then(function(rawText) {
-                    let data = null;
-                    try {
-                        data = JSON.parse(rawText);
-                    } catch (e) {
-                        data = { success: false, status: 'invalid_json', raw: rawText };
-                    }
-                    return { ok: response.ok, data: data, raw: rawText };
+                return response.json().then(function(data) {
+                    return { ok: response.ok, data: data };
                 });
             })
             .then(function(result) {
                 if (!result.data || result.data.success !== true) {
-                    console.error('Reply save failed:', result.raw || result.data);
-                    showPostFeedback(feedbackTarget, 'Nem sikerült elküldeni a hozzászólást.', true);
+                    showPostFeedback(feedbackTarget, 'Nem sikerült a hozzászólás mentése.', true);
                     return;
                 }
 
+                const reply = result.data.reply || {};
                 const replyItem = document.createElement('div');
                 replyItem.style.cssText = 'margin-top:10px; margin-left:35px; padding:12px 14px; background:rgba(255,255,255,0.92); border-left:4px solid #45489a; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); color:#111;';
-                replyItem.innerHTML = '<div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><img src="img/profiles/' + (result.data.avatar || 'default.png') + '" style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:1px solid #b4865a;"><strong style="font-size:14px;">' + (result.data.name || 'Felhasználó') + '</strong><small style="color:#64748b;">' + (result.data.time || '') + '</small></div><div style="font-size:15px; line-height:1.5;">' + (result.data.text || '') + '</div>';
-
-                if (thread) {
-                    thread.appendChild(replyItem);
-                } else {
-                    console.error('Reply thread container missing for post', idx);
+                let html = '<div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><img src="img/profiles/' + (reply.avatar || 'default.png') + '" style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:1px solid #b4865a;"><strong style="font-size:14px;">' + (reply.name || 'Felhasználó') + '</strong><small style="color:#64748b;">' + ((reply.date && reply.time) ? reply.date + ' ' + reply.time : (reply.time || '')) + '</small></div><div style="font-size:15px; line-height:1.5;">' + String(reply.text || '').replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>') + '</div>';
+                if (reply.image) {
+                    html += '<img src="img/post_replies/' + reply.image + '" alt="reply image" style="max-width:220px; width:100%; height:auto; display:block; margin-top:10px; border-radius:10px; border:1px solid #dbe4f0;">';
                 }
-
+                replyItem.innerHTML = html;
+                if (thread) {
+                    thread.style.display = 'block';
+                    thread.prepend(replyItem);
+                }
+                if (countEl) {
+                    const nextCount = typeof result.data.reply_count === 'number' ? result.data.reply_count : (parseInt(countEl.textContent, 10) || 0) + 1;
+                    countEl.textContent = String(nextCount);
+                }
                 if (textarea) textarea.value = '';
-                if (box) box.style.display = 'none';
-                showPostFeedback(feedbackTarget, 'Hozzászólás elküldve.', false);
+                if (imageInput) imageInput.value = '';
+                if (feedbackTarget) {
+                    feedbackTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                showPostFeedback(feedbackTarget || thread, 'Hozzászólás elmentve.', false);
             })
-            .catch(function(err) {
-                console.error('Reply submit exception:', err);
+            .catch(function() {
                 showPostFeedback(feedbackTarget, 'Hiba történt a hozzászólás mentésekor.', true);
             });
         }
@@ -1210,7 +1478,11 @@ $userLoggedIn = ($userData !== null);
                             iconEl.classList.remove('fa-heart-o');
                             iconEl.classList.add('fa-heart');
                             btn.style.color = '#ef4444';
-                            showPostFeedback(btn, 'Like rögzítve.', false);
+                            const postCard = btn.closest('.post-card');
+                            if (postCard) {
+                                postCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                            showPostFeedback(postCard || btn, 'Like rögzítve.', false);
                             return;
                         }
 
@@ -1267,7 +1539,11 @@ $userLoggedIn = ($userData !== null);
                             countEl.textContent = String((result.data.dislikes !== undefined) ? result.data.dislikes : currentCount + 1);
                             iconEl.style.color = '#ef4444';
                             btn.style.color = '#ef4444';
-                            showPostFeedback(btn, 'Dislike rögzítve.', false);
+                            const postCard = btn.closest('.post-card');
+                            if (postCard) {
+                                postCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                            showPostFeedback(postCard || btn, 'Dislike rögzítve.', false);
                             return;
                         }
 

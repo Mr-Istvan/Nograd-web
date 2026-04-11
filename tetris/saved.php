@@ -17,8 +17,23 @@ if ($data && isset($data['nickname']) && isset($data['record'])) {
     $record   = (int)$data['record'];
     $time     = $data['time'];
     $rank     = $data['rank'];
-    $avatar   = isset($data['avatar']) ? $data['avatar'] : '';
     $date     = $data['date'];
+
+    // --- CSAK EZ A RÉSZ VÁLTOZOTT: Avatar lekérése az adatbázisból ---
+    $avatar = 'default.png'; // Alapértelmezett, ha esetleg nincs neki
+    
+    $avatar_stmt = mysqli_prepare($conn, "SELECT uavatar FROM felhasznalok WHERE uusername = ? LIMIT 1");
+    mysqli_stmt_bind_param($avatar_stmt, "s", $nickname);
+    mysqli_stmt_execute($avatar_stmt);
+    $avatar_res = mysqli_stmt_get_result($avatar_stmt);
+    
+    if ($userRow = mysqli_fetch_assoc($avatar_res)) {
+        if (!empty($userRow['uavatar'])) {
+            $avatar = $userRow['uavatar'];
+        }
+    }
+    mysqli_stmt_close($avatar_stmt);
+    // ------------------------------------------------------------------
 
     // ÚJ LOGIKA: Nincs ellenőrzés, csak simán beszúrjuk az adatbázisba új sorként
     $insert_stmt = mysqli_prepare($conn, "INSERT INTO tetris_scores (nickname, record, time, rank, avatar, date) VALUES (?, ?, ?, ?, ?, ?)");

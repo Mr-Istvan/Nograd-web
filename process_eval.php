@@ -43,7 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['answers'])) {
     }
 
     // Összesítés
-    $eatlag = $total_points / 40;
+    $questionCount = count($answers);
+    if ($questionCount <= 0) {
+        header("Location: ertekeles.php?error=send_failed");
+        exit;
+    }
+    $eatlag = $total_points / $questionCount;
     mysqli_query($conn, "UPDATE ertekelo SET evege = NOW(), osszp = $total_points, eatlag = $eatlag WHERE eid = $eid");
 
     unset($_SESSION['current_eval_id']);

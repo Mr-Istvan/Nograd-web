@@ -130,7 +130,7 @@ require_once __DIR__ . '/init.php';
         </div>
 
         <div class="controls">
-            <button onclick="window.location.href='../blog.php'" id="nogradBtn" class="control-btn">Nógrád</button>
+            <button onclick="window.location.href='https://elmeny.nogradcsodak.hu/blog.php'" id="nogradBtn" class="control-btn">Nógrád</button>
             <button onclick="startGame()" id="startBtn" class="control-btn">Start</button>
             <button onclick="pauseGame()" id="pauseBtn" class="control-btn">Pause</button>
             <button onclick="exitGameBtn()" id="exitBtn" class="control-btn">Exit</button>
@@ -206,7 +206,7 @@ require_once __DIR__ . '/init.php';
         <div id="leaderboardList"></div>
         
         <button onclick="backToGame()" id="backBtn">VISSZA A FŐMENÜBE</button>
-        <button onclick="window.location.href='../blog.php'" id="nogradBackBtn">NÓGRÁD BLOG OLDALRA</button>
+        <button onclick="window.location.href='https://elmeny.nogradcsodak.hu/blog.php'" id="nogradBackBtn">NÓGRÁD BLOG OLDALRA</button>
     </div>
 </div>
 
@@ -261,9 +261,8 @@ const COLORS = [
     '#FFA500'  // 6: L (Narancs)
 ];
 
-const LEVEL_SPEEDS = [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 15]; 
-const LEVEL_THRESHOLDS = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150];
-
+const LEVEL_SPEEDS = [1000, 925, 850, 775, 700, 625, 515, 400,300, 175, 50]; 
+const LEVEL_THRESHOLDS = [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160];
 let piece, nextPieceType;
 let pieceBag = [];
 
@@ -903,13 +902,20 @@ function loadLeaderboard() {
             
             let positionText = (i + 1) + ".";
             
-            let avatarHtml = "";
-            if (p.avatar && p.avatar.trim() !== "") {
-                avatarHtml = `<img src="${p.avatar}" class="avatar-img" alt="avatar">`;
+           let avatarHtml = "";
+            let avatarName = p.uavatar || p.avatar; 
+
+            // Ellenőrizzük, hogy van-e kép (és kiszűrjük a "default.png"-t is, biztos ami biztos)
+            if (avatarName && avatarName.trim() !== "" && avatarName !== "default.png") {
+                
+                // Ha a böngésző nem találja a képet (onerror), kicseréli magát (outerHTML) a 👤 ikonra!
+                avatarHtml = `<img src="../img/profiles/${avatarName}" onerror="this.outerHTML='<span class=\\'avatar-guest\\'>👤</span>'" class="avatar-img" alt="avatar">`;
+                
             } else {
+                // Ha eleve nincs kép megadva az adatbázisban, egyből az ikon jelenik meg
                 avatarHtml = `<span class="avatar-guest">👤</span>`;
             }
-            
+                        
             html += `<tr>
                 <td style="font-weight:bold; text-align:center; color:${i===0?'#ff8800':(i===1?'#aaa':'#cd7f32')};">${positionText}</td>
                 <td style="font-weight:bold; display:flex; align-items:center;">${avatarHtml} ${p.nickname}</td>
